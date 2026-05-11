@@ -62,3 +62,35 @@ nav a:hover {
     margin-bottom: 15px;
     color: #096f27;
 }
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+input,
+textarea,
+button {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    background: #111;
+    color: white;
+}
+
+textarea {
+    min-height: 100px;
+}
+
+button {
+    background: #76ff9f;
+    color: #111;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.entry {
+    border-top: 1px solid #333;
+    padding: 15px 0;
+}

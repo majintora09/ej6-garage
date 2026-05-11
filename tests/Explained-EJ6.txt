@@ -22,3 +22,7 @@ GitHub
 
 Railway
 = shows code as real website
+
+Route = traffic sign
+Controller = worker doing the job
+View = what user sees

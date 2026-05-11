@@ -1,14 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MaintenanceController;
 
 Route::get('/', function () {
     return view('garage');
 });
 
-Route::get('/maintenance', function () {
-    return view('maintenance');
-});
+Route::get('/maintenance', [MaintenanceController::class, 'index']);
+Route::post('/maintenance', [MaintenanceController::class, 'store']);
 
 Route::get('/mods', function () {
     return view('mods');
