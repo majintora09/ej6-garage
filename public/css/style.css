@@ -11,7 +11,7 @@ body {
 }
 
 header {
-    background: #181818;
+    background: linear-gradient(135deg, #102818, #181818);
     padding: 25px;
     border-bottom: 2px solid #2d2d2d;
 }
@@ -21,10 +21,15 @@ header h1 {
     margin-bottom: 8px;
 }
 
+header p {
+    color: #cfcfcf;
+}
+
 nav {
     display: flex;
     gap: 15px;
     margin-top: 15px;
+    flex-wrap: wrap;
 }
 
 nav a {
@@ -56,11 +61,20 @@ nav a:hover {
     border: 1px solid #2d2d2d;
     border-radius: 14px;
     padding: 20px;
+    margin-bottom: 20px;
 }
 
 .card h2 {
     margin-bottom: 15px;
-    color: #096f27;
+    color: #76ff9f;
+}
+
+ul {
+    padding-left: 20px;
+}
+
+li {
+    margin-bottom: 8px;
 }
 
 form {
@@ -90,7 +104,15 @@ button {
     cursor: pointer;
 }
 
+button:hover {
+    opacity: 0.9;
+}
+
 .entry {
     border-top: 1px solid #333;
     padding: 15px 0;
+}
+
+.entry h3 {
+    color: #76ff9f;
 }
