@@ -9,6 +9,7 @@ Route::get('/', function () {
 
 Route::get('/maintenance', [MaintenanceController::class, 'index']);
 Route::post('/maintenance', [MaintenanceController::class, 'store']);
+Route::delete('/maintenance/{maintenance}', [MaintenanceController::class, 'destroy']);
 
 Route::get('/mods', function () {
     return view('mods');

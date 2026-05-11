@@ -26,4 +26,11 @@ class MaintenanceController extends Controller
 
         return redirect('/maintenance');
     }
+
+    public function destroy(Maintenance $maintenance)
+    {
+        $maintenance->delete();
+
+        return redirect('/maintenance');
+    }
 }

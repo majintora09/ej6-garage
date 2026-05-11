@@ -37,10 +37,18 @@
                 <p><strong>Cost:</strong> €{{ $maintenance->cost ?? '0.00' }}</p>
                 <p><strong>Date:</strong> {{ $maintenance->service_date ?? 'No date' }}</p>
                 <p>{{ $maintenance->notes }}</p>
+
+                <form action="/maintenance/{{ $maintenance->id }}" method="POST" onsubmit="return confirm('Delete this maintenance entry?');">
+                    @csrf
+                    @method('DELETE')
+
+                    <button type="submit" class="delete-btn">Delete</button>
+                </form>
             </div>
         @empty
             <p>No maintenance entries yet.</p>
         @endforelse
+
     </div>
 
 @endsection

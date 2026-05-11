@@ -116,3 +116,14 @@ button:hover {
 .entry h3 {
     color: #76ff9f;
 }
+
+.delete-btn {
+    background: #ff7676;
+    color: #111;
+    width: fit-content;
+    margin-top: 10px;
+}
+
+.delete-btn:hover {
+    opacity: 0.85;
+}
