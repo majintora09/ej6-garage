@@ -1,6 +1,19 @@
 @extends('layout')
 
 @section('content')
+    @if (!empty($dbError))
+        <div class="card error-card">
+            <h2>Database Error</h2>
+            <p>{{ $dbError }}</p>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="card error-card">
+            <h2>Save/Delete Error</h2>
+            <p>{{ session('error') }}</p>
+        </div>
+    @endif
 
     <div class="card">
         <h2>Add Maintenance Entry</h2>

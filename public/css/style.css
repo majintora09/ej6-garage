@@ -127,3 +127,12 @@ button:hover {
 .delete-btn:hover {
     opacity: 0.85;
 }
+
+.error-card {
+    border-color: #ff7676;
+    background: #2a1515;
+}
+
+.error-card h2 {
+    color: #ff7676;
+}
