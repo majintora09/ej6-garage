@@ -30,14 +30,22 @@ Route::get('/calculator', function () {
 Route::get('/debug-db', function () {
     return response()->json([
         'config_default' => config('database.default'),
-        'env_DB_CONNECTION' => env('DB_CONNECTION'),
-        'env_DB_HOST' => env('DB_HOST'),
-        'env_DB_PORT' => env('DB_PORT'),
-        'env_DB_DATABASE' => env('DB_DATABASE'),
-        'env_DB_USERNAME' => env('DB_USERNAME'),
-        'env_MYSQLHOST' => env('MYSQLHOST'),
-        'env_MYSQLPORT' => env('MYSQLPORT'),
-        'env_MYSQLDATABASE' => env('MYSQLDATABASE'),
-        'env_MYSQLUSER' => env('MYSQLUSER'),
+
+        'config_host' => config('database.connections.mysql.host'),
+        'config_port' => config('database.connections.mysql.port'),
+        'config_database' => config('database.connections.mysql.database'),
+        'config_username' => config('database.connections.mysql.username'),
+
+        'getenv_DB_CONNECTION' => getenv('DB_CONNECTION'),
+        'getenv_DB_HOST' => getenv('DB_HOST'),
+        'getenv_DB_PORT' => getenv('DB_PORT'),
+        'getenv_DB_DATABASE' => getenv('DB_DATABASE'),
+        'getenv_DB_USERNAME' => getenv('DB_USERNAME'),
+
+        'server_DB_CONNECTION' => $_SERVER['DB_CONNECTION'] ?? null,
+        'server_DB_HOST' => $_SERVER['DB_HOST'] ?? null,
+        'server_DB_PORT' => $_SERVER['DB_PORT'] ?? null,
+        'server_DB_DATABASE' => $_SERVER['DB_DATABASE'] ?? null,
+        'server_DB_USERNAME' => $_SERVER['DB_USERNAME'] ?? null,
     ]);
 });
