@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Str;
 use Pdo\Mysql;
- 
+
 return [
 
     /*
@@ -17,7 +17,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', env('MYSQLHOST') ? 'mysql' : 'sqlite'),
+    'default' => 'mysql',
 
     /*
     |--------------------------------------------------------------------------
