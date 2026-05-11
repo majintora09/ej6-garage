@@ -1,0 +1,24 @@
+1. Make proper pages/tabs
+2. Make database tables
+3. Add maintenance tracker
+4. Add mod wishlist
+5. Add price calculator
+6. Add car parts explanation pages
+7. Add gallery/file uploads
+8. Later: AI suggestions
+
+
+routes/web.php
+= decides what page opens
+
+views/*.blade.php
+= the actual pages
+
+public/css/style.css
+= the design
+
+GitHub
+= saves code online
+
+Railway
+= shows code as real website
