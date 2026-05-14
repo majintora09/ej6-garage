@@ -22,7 +22,7 @@ class MaintenanceController extends Controller
                 . ' | Error: ' . $e->getMessage();
         }
 
-        return view('maintenance', compact('maintenances', 'dbError'));
+        return view('maintenance-disabled', compact('maintenances', 'dbError'));
     }
 
     public function store(Request $request)
