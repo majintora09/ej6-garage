@@ -47,11 +47,6 @@ return [
         'mysql' => [
             'driver' => 'mysql',
             'url' => 'mysql://root:sEsOoChkmerzUjKkdlXujGaEyHbDblOJ@mysql.railway.internal:3306/railway',
-            'host' => 'mysql.railway.internal',
-            'port' => '3306',
-            'database' => 'railway',
-            'username' => 'root',
-            'password' => 'sEsOoChkmerzUjKkdlXujGaEyHbDblOJ',
             'unix_socket' => '',
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
@@ -59,9 +54,7 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
+            ],
         ],
 
         'mariadb' => [
