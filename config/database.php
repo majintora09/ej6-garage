@@ -46,7 +46,7 @@ return [
 
         'mysql' => [
             'driver' => 'mysql',
-            'url' => 'PASTE_FULL_MYSQL_URL_HERE',
+            'url' => 'sEsOoChkmerzUjKkdlXujGaEyHbDblOJ',
             'unix_socket' => '',
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
