@@ -46,7 +46,7 @@ return [
 
         'mysql' => [
             'driver' => 'mysql',
-            'url' => null,
+            'url' => 'mysql://root:sEsOoChkmerzUjKkdlXujGaEyHbDblOJ@mysql.railway.internal:3306/railway',
             'host' => 'mysql.railway.internal',
             'port' => '3306',
             'database' => 'railway',
