@@ -1,14 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MaintenanceController;
 
 Route::get('/', function () {
     return view('garage');
 });
 
-Route::get('/maintenance', function () {
-    return view('maintenance-disabled');
-});
+Route::get('/maintenance', [MaintenanceController::class, 'index']);
+Route::post('/maintenance', [MaintenanceController::class, 'store']);
+Route::delete('/maintenance/{maintenance}', [MaintenanceController::class, 'destroy']);
 
 Route::get('/mods', function () {
     return view('mods');
@@ -24,11 +25,4 @@ Route::get('/gallery', function () {
 
 Route::get('/calculator', function () {
     return view('calculator');
-});
-
-Route::get('/debug-db', function () {
-    return response()->json([
-        'app_is_running' => true,
-        'message' => 'Database temporarily disabled',
-    ]);
 });
