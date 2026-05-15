@@ -46,7 +46,7 @@ return [
 
         'mysql' => [
             'driver' => 'mysql',
-            'url' => 'mysql://root:sEsOoChkmerzUjKkdlXujGaEyHbDblOJ@mysql.railway.internal:3306/railway',
+            'url' => 'PASTE_FULL_MYSQL_URL_HERE',
             'unix_socket' => '',
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
@@ -54,7 +54,6 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
-            ],
         ],
 
         'mariadb' => [
