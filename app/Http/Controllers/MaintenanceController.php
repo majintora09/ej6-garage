@@ -34,3 +34,4 @@ class MaintenanceController extends Controller
         return redirect('/maintenance');
     }
 }
+ 
