@@ -1,114 +1,107 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.161/build/three.module.js';
+import * as THREE from 'three';
+import { STLLoader } from 'three/addons/loaders/STLLoader.js';
 
 const container = document.getElementById('car-viewer');
 
 const scene = new THREE.Scene();
-
-scene.background = new THREE.Color(0x111111);
+scene.background = new THREE.Color(0x101010);
 
 const camera = new THREE.PerspectiveCamera(
-    75,
+    55,
     container.clientWidth / container.clientHeight,
     0.1,
-    1000
+    10000
 );
 
-const renderer = new THREE.WebGLRenderer({
-    antialias: true
-});
-
-renderer.setSize(
-    container.clientWidth,
-    container.clientHeight
-);
-
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(container.clientWidth, container.clientHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
 container.appendChild(renderer.domElement);
 
-const light = new THREE.PointLight(0xffffff, 2);
+// Lights
+scene.add(new THREE.AmbientLight(0xffffff, 1.4));
 
-light.position.set(5, 5, 5);
+const keyLight = new THREE.DirectionalLight(0xffffff, 2);
+keyLight.position.set(5, 6, 5);
+scene.add(keyLight);
 
-scene.add(light);
+const greenLight = new THREE.PointLight(0x76ff9f, 3, 30);
+greenLight.position.set(-5, 3, 4);
+scene.add(greenLight);
 
-const ambient = new THREE.AmbientLight(0xffffff, 1);
+const purpleLight = new THREE.PointLight(0x34205f, 2, 25);
+purpleLight.position.set(5, 3, -4);
+scene.add(purpleLight);
 
-scene.add(ambient);
+// Group
+const carGroup = new THREE.Group();
+scene.add(carGroup);
 
-/*
-    Placeholder car body
-*/
-
-const geometry = new THREE.BoxGeometry(4, 1.2, 2);
-
-const material = new THREE.MeshStandardMaterial({
-    color: 0x1b4d2d,
-    metalness: 0.5,
-    roughness: 0.5
+// Materials
+const carMaterial = new THREE.MeshStandardMaterial({
+    color: 0x0f3b24,
+    metalness: 0.45,
+    roughness: 0.35
 });
-
-const car = new THREE.Mesh(geometry, material);
-
-scene.add(car);
-
-/*
-    Rust markers
-*/
-
-const markerGeometry = new THREE.SphereGeometry(0.12, 16, 16);
 
 const markerMaterial = new THREE.MeshStandardMaterial({
     color: 0xff4444,
-    emissive: 0xff2222,
+    emissive: 0xff1111,
     emissiveIntensity: 2
 });
 
-const points = [
+// Load aligned full model
+const loader = new STLLoader();
 
+loader.load('/models/ej6/civic_em1_all.stl', function (geometry) {
+    geometry.center();
+
+    const car = new THREE.Mesh(geometry, carMaterial);
+
+    car.scale.set(1.5, 1.5, 1.5);
+    car.rotation.x = -Math.PI / 2;
+
+    carGroup.add(car);
+});
+
+// Markers
+const markerGeometry = new THREE.SphereGeometry(0.12, 24, 24);
+const inspectionPoints = [
+    {
+        name: 'Front Bumper / Headlight Alignment',
+        position: [-2.75, -0.05, 0.95],
+        description: 'Check bumper clips, brackets, headlight mounts and front support alignment.'
+    },
+    {
+        name: 'Front Jacking Point / Rocker',
+        position: [-1.05, -0.55, 1.28],
+        description: 'Check the front rocker and jacking area for rust, bending or weak metal.'
+    },
     {
         name: 'Rear Arch Rust',
-        position: [-1.7, 0.3, 1],
-        description:
-            'Common EJ rust area near the rear wheel arch.'
+        position: [1.45, -0.05, 1.28],
+        description: 'Common EJ/EM rear arch rust area. Check bubbling, inner lip corrosion and soft metal.'
     },
-
     {
-        name: 'Jacking Point Rust',
-        position: [-1.2, -0.6, 0.9],
-        description:
-            'Possible structural rust around the rocker/jacking area.'
+        name: 'Rear Jacking Point / Rocker Rust',
+        position: [0.75, -0.55, 1.28],
+        description: 'Structural area near the rear rocker. If it crunches when lifted, repair before cosmetics.'
     },
-
     {
         name: 'Fuel Tank Area',
-        position: [1.5, -0.4, 0],
-        description:
-            'Area to inspect for fuel leaks or corrosion.'
+        position: [1.55, -0.65, 0.65],
+        description: 'Inspect for fuel smell, dripping, wet spots, tank straps and corrosion.'
     },
-
     {
         name: 'Exhaust Alignment',
-        position: [0, -0.4, -0.9],
-        description:
-            'Current exhaust/hanger issue area.'
-    },
-
-    {
-        name: 'Front Bumper Alignment',
-        position: [1.9, 0, 0],
-        description:
-            'Wobbly bumper/headlight alignment zone.'
+        position: [0.55, -0.70, -1.25],
+        description: 'Check hanger, rubber mount, pipe clearance and why the hanger slips out.'
     }
-
 ];
-
 const markers = [];
 
-points.forEach(point => {
-
-    const marker = new THREE.Mesh(
-        markerGeometry,
-        markerMaterial
-    );
+inspectionPoints.forEach(point => {
+    const marker = new THREE.Mesh(markerGeometry, markerMaterial);
 
     marker.position.set(
         point.position[0],
@@ -118,72 +111,61 @@ points.forEach(point => {
 
     marker.userData = point;
 
-    scene.add(marker);
-
+    carGroup.add(marker);
     markers.push(marker);
 });
 
-camera.position.z = 6;
+// Camera
+camera.position.set(0, 1.4, 5);
+camera.lookAt(0, 0, 0);
 
-/*
-    Mouse controls
-*/
-
+// Controls
 let isDragging = false;
-let previousMousePosition = {
-    x: 0,
-    y: 0
-};
+let previousMouse = { x: 0, y: 0 };
 
-container.addEventListener('mousedown', () => {
+container.addEventListener('mousedown', (event) => {
     isDragging = true;
+    previousMouse = { x: event.clientX, y: event.clientY };
 });
 
-container.addEventListener('mouseup', () => {
+window.addEventListener('mouseup', () => {
     isDragging = false;
 });
 
 container.addEventListener('mousemove', (event) => {
-
     if (!isDragging) return;
 
-    const deltaMove = {
-        x: event.offsetX - previousMousePosition.x,
-        y: event.offsetY - previousMousePosition.y
-    };
+    const deltaX = event.clientX - previousMouse.x;
+    const deltaY = event.clientY - previousMouse.y;
 
-    car.rotation.y += deltaMove.x * 0.01;
+    carGroup.rotation.y += deltaX * 0.01;
+    carGroup.rotation.x += deltaY * 0.004;
 
-    markers.forEach(marker => {
-        marker.rotation.y += deltaMove.x * 0.01;
-    });
-
-    previousMousePosition = {
-        x: event.offsetX,
-        y: event.offsetY
-    };
+    previousMouse = { x: event.clientX, y: event.clientY };
 });
 
-/*
-    Click detection
-*/
+container.addEventListener('wheel', (event) => {
+    event.preventDefault();
 
+    camera.position.z += event.deltaY * 0.01;
+    camera.position.z = Math.max(2.5, Math.min(camera.position.z, 10));
+});
+
+// Click markers
 const raycaster = new THREE.Raycaster();
-
 const mouse = new THREE.Vector2();
 
 container.addEventListener('click', (event) => {
+    const rect = container.getBoundingClientRect();
 
-    mouse.x = (event.offsetX / container.clientWidth) * 2 - 1;
-
-    mouse.y = -(event.offsetY / container.clientHeight) * 2 + 1;
+    mouse.x = ((event.clientX - rect.left) / container.clientWidth) * 2 - 1;
+    mouse.y = -((event.clientY - rect.top) / container.clientHeight) * 2 + 1;
 
     raycaster.setFromCamera(mouse, camera);
 
     const intersects = raycaster.intersectObjects(markers);
 
     if (intersects.length > 0) {
-
         const point = intersects[0].object.userData;
 
         document.getElementById('inspection-output').innerHTML = `
@@ -193,11 +175,20 @@ container.addEventListener('click', (event) => {
     }
 });
 
-function animate() {
+// Resize
+window.addEventListener('resize', () => {
+    camera.aspect = container.clientWidth / container.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(container.clientWidth, container.clientHeight);
+});
 
+// Animate
+function animate() {
     requestAnimationFrame(animate);
 
-    car.rotation.y += 0.002;
+    markers.forEach(marker => {
+        marker.scale.setScalar(1 + Math.sin(Date.now() * 0.006) * 0.15);
+    });
 
     renderer.render(scene, camera);
 }

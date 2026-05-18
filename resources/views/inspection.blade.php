@@ -36,6 +36,13 @@
 
     </div>
 
-    <script type="module" src="{{ asset('js/inspection.js') }}"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/"
+            }
+        }
+    </script>
 
-@endsection
+    <script type="module" src="{{ asset('js/inspection.js') }}"></script>@endsection
