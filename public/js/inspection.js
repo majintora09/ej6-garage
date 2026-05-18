@@ -360,6 +360,7 @@ function animate() {
         marker.scale.setScalar(1 + Math.sin(Date.now() * 0.006) * 0.15);
     });
 
+    carGroup.rotation.y += 0.0008;
     renderer.render(scene, camera);
 }
 
