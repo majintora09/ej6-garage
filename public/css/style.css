@@ -293,3 +293,41 @@ select {
     font-weight: bold;
     color: #76ff9f;
 }
+
+.parts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.part-card {
+    background: #1b1b1b;
+    border: 1px solid #2d2d2d;
+    border-radius: 16px;
+    padding: 22px;
+}
+
+.part-card h2 {
+    color: #76ff9f;
+    margin-bottom: 6px;
+}
+
+.part-card h3 {
+    margin-top: 18px;
+    margin-bottom: 8px;
+    color: #d7ffdF;
+}
+
+.part-category {
+    color: #aaa;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.part-card ul {
+    padding-left: 20px;
+}
+
+.part-card li {
+    margin-bottom: 7px;
+}
