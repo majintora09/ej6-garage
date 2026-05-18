@@ -4,7 +4,7 @@ use Illuminate\Support\Str;
 
 return [
 
-    'default' => 'sqlite',
+    'default' => 'mysql',
 
     'connections' => [
 
