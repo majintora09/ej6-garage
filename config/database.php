@@ -19,8 +19,8 @@ return [
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DB_URL'),
-            'host' => 'mysql.railway.internal',
-            'port' => '3306',
+            'host' => 'tramway.proxy.rlwy.net',
+            'port' => '32352',
             'database' => 'railway',
             'username' => 'root',
             'password' => 'sEsOoChkmerzUjKkdlXujGaEyHbDblOJ',
