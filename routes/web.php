@@ -27,3 +27,7 @@ Route::get('/gallery', function () {
 Route::get('/calculator', function () {
     return view('calculator');
 });
+
+Route::get('/inspection', function () {
+    return view('inspection');
+});

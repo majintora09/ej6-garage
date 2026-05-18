@@ -19,6 +19,7 @@
         <a href="/mods">Mods</a>
         <a href="/parts">Learn Parts</a>
         <a href="/gallery">Gallery</a>
+        <a href="/inspection">Inspection Map</a>
         <a href="/calculator">Calculator</a>
     </nav>
 </header>
