@@ -25,6 +25,18 @@
             <label>Title</label>
             <input type="text" name="title" required>
 
+            <label>Category</label>
+            <select name="category">
+                <option value="Body">Body</option>
+                <option value="Rust">Rust</option>
+                <option value="Under Hood">Under Hood</option>
+                <option value="Fuel System">Fuel System</option>
+                <option value="Exhaust">Exhaust</option>
+                <option value="Suspension">Suspension</option>
+                <option value="Brakes">Brakes</option>
+                <option value="Interior">Interior</option>
+            </select>
+
             <label>Mileage</label>
             <input type="number" name="mileage">
 
@@ -33,6 +45,12 @@
 
             <label>Date</label>
             <input type="date" name="service_date">
+
+            <label>Next Due Date</label>
+            <input type="date" name="next_due_date">
+
+            <label>Next Due Mileage</label>
+            <input type="number" name="next_due_mileage">
 
             <label>Notes</label>
             <textarea name="notes"></textarea>
@@ -48,20 +66,20 @@
             <div class="entry">
                 <h3>{{ $maintenance->title }}</h3>
 
-                <p>
-                    <strong>Mileage:</strong>
-                    {{ $maintenance->mileage ?? 'N/A' }} km
-                </p>
+                <p><strong>Category:</strong> {{ $maintenance->category ?? 'N/A' }}</p>
+                <p><strong>Mileage:</strong> {{ $maintenance->mileage ?? 'N/A' }} km</p>
+                <p><strong>Cost:</strong> €{{ $maintenance->cost ?? '0.00' }}</p>
+                <p><strong>Date:</strong> {{ $maintenance->service_date ?? 'No date' }}</p>
 
-                <p>
-                    <strong>Cost:</strong>
-                    €{{ $maintenance->cost ?? '0.00' }}
-                </p>
-
-                <p>
-                    <strong>Date:</strong>
-                    {{ $maintenance->service_date ?? 'No date' }}
-                </p>
+                @if ($maintenance->next_due_date || $maintenance->next_due_mileage)
+                    <p class="reminder-text">
+                        <strong>Reminder:</strong>
+                        {{ $maintenance->next_due_date ?? 'No date set' }}
+                        @if ($maintenance->next_due_mileage)
+                            / {{ $maintenance->next_due_mileage }} km
+                        @endif
+                    </p>
+                @endif
 
                 <p>{{ $maintenance->notes }}</p>
 
@@ -73,9 +91,7 @@
                     @csrf
                     @method('DELETE')
 
-                    <button type="submit" class="delete-btn">
-                        Delete
-                    </button>
+                    <button type="submit" class="delete-btn">Delete</button>
                 </form>
             </div>
         @empty

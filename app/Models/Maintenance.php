@@ -2,18 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Maintenance extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'title',
+        'category',
         'mileage',
         'cost',
         'notes',
         'service_date',
+        'next_due_date',
+        'next_due_mileage',
     ];
 }

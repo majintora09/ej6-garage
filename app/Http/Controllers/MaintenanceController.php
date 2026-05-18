@@ -27,10 +27,13 @@ class MaintenanceController extends Controller
         try {
             Maintenance::create([
                 'title' => $request->title,
+                'category' => $request->category,
                 'mileage' => $request->mileage,
                 'cost' => $request->cost,
                 'notes' => $request->notes,
                 'service_date' => $request->service_date,
+                'next_due_date' => $request->next_due_date,
+                'next_due_mileage' => $request->next_due_mileage,
             ]);
         } catch (Throwable $e) {
             return redirect('/maintenance')->with('error', $e->getMessage());

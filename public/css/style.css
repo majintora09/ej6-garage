@@ -362,3 +362,71 @@ select {
     padding: 15px;
     min-height: 120px;
 }
+
+.inspection-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.inspection-card {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    align-items: start;
+}
+
+#car-viewer {
+    width: 100%;
+    height: 560px;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid #2d2d2d;
+    background: #111;
+}
+
+.inspection-info {
+    background: #161616;
+    border: 1px solid #2d2d2d;
+    border-radius: 16px;
+    padding: 20px;
+}
+
+#inspection-output {
+    margin-top: 20px;
+    background: #101010;
+    border-radius: 12px;
+    padding: 15px;
+    min-height: 140px;
+}
+
+#inspection-output hr {
+    border: none;
+    border-top: 1px solid #333;
+    margin: 15px 0;
+}
+
+.editor-panel {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.hidden {
+    display: none;
+}
+
+.reminder-text {
+    color: #76ff9f;
+}
+
+@media (max-width: 900px) {
+    .inspection-card {
+        grid-template-columns: 1fr;
+    }
+
+    #car-viewer {
+        height: 420px;
+    }
+}
