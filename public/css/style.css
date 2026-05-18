@@ -136,3 +136,11 @@ button:hover {
 .error-card h2 {
     color: #ff7676;
 }
+
+select {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    background: #111;
+    color: white;
+}

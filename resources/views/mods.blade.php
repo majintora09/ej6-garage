@@ -61,36 +61,21 @@
         @forelse ($mods as $mod)
             <div class="entry">
                 <h3>{{ $mod->name }}</h3>
-
                 <p><strong>Category:</strong> {{ $mod->category ?? 'N/A' }}</p>
-
                 <p><strong>Price:</strong> €{{ $mod->price ?? '0.00' }}</p>
-
                 <p><strong>Priority:</strong> {{ $mod->priority ?? 'N/A' }}</p>
-
                 <p><strong>Status:</strong> {{ $mod->status ?? 'N/A' }}</p>
 
-                @if($mod->link)
-                    <p>
-                        <a href="{{ $mod->link }}" target="_blank">
-                            View Part
-                        </a>
-                    </p>
+                @if ($mod->link)
+                    <p><a href="{{ $mod->link }}" target="_blank">View Part</a></p>
                 @endif
 
                 <p>{{ $mod->notes }}</p>
 
-                <form
-                    action="/mods/{{ $mod->id }}"
-                    method="POST"
-                    onsubmit="return confirm('Delete this mod?');"
-                >
+                <form action="/mods/{{ $mod->id }}" method="POST" onsubmit="return confirm('Delete this mod?');">
                     @csrf
                     @method('DELETE')
-
-                    <button type="submit" class="delete-btn">
-                        Delete
-                    </button>
+                    <button type="submit" class="delete-btn">Delete</button>
                 </form>
             </div>
         @empty
