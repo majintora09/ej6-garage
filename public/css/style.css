@@ -144,3 +144,152 @@ select {
     background: #111;
     color: white;
 }
+
+.hero-card {
+    background: linear-gradient(
+        135deg,
+        #122218,
+        #181818
+    );
+
+    border: 1px solid #2d2d2d;
+
+    padding: 40px;
+    border-radius: 20px;
+    margin-bottom: 30px;
+}
+
+.hero-card h1 {
+    font-size: 40px;
+    margin-bottom: 10px;
+    color: #76ff9f;
+}
+
+.hero-subtitle {
+    color: #d0d0d0;
+    margin-bottom: 20px;
+}
+
+.badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.badge {
+    background: #1f3527;
+    color: #76ff9f;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 14px;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit, minmax(320px, 1fr));
+
+    gap: 20px;
+}
+
+.spec-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.issues-list {
+    padding-left: 20px;
+}
+
+.issues-list li {
+    margin-bottom: 10px;
+}
+
+.progress-section {
+    margin-top: 20px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 14px;
+    background: #222;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.progress-fill {
+    width: 35%;
+    height: 100%;
+    background: #76ff9f;
+}
+
+.progress-text {
+    margin-top: 10px;
+    color: #aaa;
+}
+
+.ai-card {
+    border-color: #355f45;
+}
+
+.ai-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.suggestion-box {
+    margin-top: 20px;
+    background: #121212;
+    border: 1px solid #2d2d2d;
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.mod-card {
+    border-top: 1px solid #333;
+    padding: 20px 0;
+}
+
+.mod-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.status-badge {
+    background: #1f3527;
+    color: #76ff9f;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+}
+
+.mod-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit, minmax(150px, 1fr));
+
+    gap: 10px;
+
+    margin: 15px 0;
+}
+
+.mod-link {
+    color: #76ff9f;
+    text-decoration: none;
+}
+
+.mod-notes {
+    margin: 15px 0;
+}
+
+.total-cost {
+    margin-top: 30px;
+    font-size: 22px;
+    font-weight: bold;
+    color: #76ff9f;
+}
