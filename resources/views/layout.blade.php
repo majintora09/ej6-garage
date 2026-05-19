@@ -1,39 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#050807">
-    <title>EJ6 Garage</title>
+    <title>Personal Garage</title>
 
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>
-<body>
+@php
+    $activeCarProfile = $carProfile ?? $currentCarProfile ?? null;
+
+    if (! $activeCarProfile && auth()->check()) {
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('car_profiles')) {
+                $activeCarProfile = auth()->user()->carProfile;
+            }
+        } catch (\Throwable $e) {
+            $activeCarProfile = null;
+        }
+    }
+
+    $themeColor = $activeCarProfile?->theme_color ?: '#76ff9f';
+    $themeColor = preg_match('/^#[0-9A-Fa-f]{6}$/', $themeColor) ? $themeColor : '#76ff9f';
+    [$themeRed, $themeGreen, $themeBlue] = sscanf($themeColor, '#%02x%02x%02x');
+    $profileColorName = $activeCarProfile?->color_name ?: __('ui.common.unknown_color');
+    $profileColorCode = $activeCarProfile?->color_code ?: __('ui.common.no_color_code');
+    $profileChassis = $activeCarProfile?->chassis ?: 'GARAGE';
+@endphp
+<body
+    style="--theme: {{ $themeColor }}; --theme-rgb: {{ $themeRed }}, {{ $themeGreen }}, {{ $themeBlue }};"
+>
 
 <header class="site-header">
     <div class="header-shell">
         <div class="brand-block">
-            <a class="brand-mark" href="/" aria-label="EJ6 Garage dashboard">
-                <span class="brand-code">EJ6</span>
+            <a class="brand-mark" href="/" aria-label="Garage dashboard">
+                <span class="brand-code">{{ strtoupper(substr($profileChassis, 0, 4)) }}</span>
                 <span>
-                    <strong>Garage</strong>
-                    <small>G-82P-5 Civic Build Hub</small>
+                    <strong>{{ __('ui.nav.garage') }}</strong>
+                    <small>{{ $profileColorCode }} {{ $profileColorName }} {{ __('ui.nav.build_hub') }}</small>
                 </span>
             </a>
         </div>
 
         <div class="status-pill">
-            SYSTEM ONLINE
+            {{ __('ui.nav.system_online') }}
         </div>
 
+        @auth
+            <form class="logout-form" action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="logout-button">{{ __('ui.nav.logout') }}</button>
+            </form>
+        @endauth
+
         <nav aria-label="Primary navigation">
-            <a href="/" class="{{ request()->is('/') ? 'active' : '' }}">Dashboard</a>
-            <a href="/maintenance" class="{{ request()->is('maintenance') ? 'active' : '' }}">Maintenance</a>
-            <a href="/mods" class="{{ request()->is('mods') ? 'active' : '' }}">Mods</a>
-            <a href="/parts" class="{{ request()->is('parts') ? 'active' : '' }}">Learn Parts</a>
-            <a href="/gallery" class="{{ request()->is('gallery') ? 'active' : '' }}">Gallery</a>
-            <a href="/calculator" class="{{ request()->is('calculator') ? 'active' : '' }}">Calculator</a>
-            <a href="/inspection" class="{{ request()->is('inspection') ? 'active' : '' }}">Inspection Map</a>
+            <a href="/" class="{{ request()->is('/') ? 'active' : '' }}">{{ __('ui.nav.dashboard') }}</a>
+            <a href="/garage/details" class="{{ request()->is('garage/details') || request()->is('garage/setup') ? 'active' : '' }}">{{ __('ui.nav.garage_details') }}</a>
+            <a href="/maintenance" class="{{ request()->is('maintenance') ? 'active' : '' }}">{{ __('ui.nav.maintenance') }}</a>
+            <a href="/mods" class="{{ request()->is('mods') ? 'active' : '' }}">{{ __('ui.nav.mods') }}</a>
+            <a href="/parts" class="{{ request()->is('parts') ? 'active' : '' }}">{{ __('ui.nav.learn_parts') }}</a>
+            <a href="/gallery" class="{{ request()->is('gallery') ? 'active' : '' }}">{{ __('ui.nav.gallery') }}</a>
+            <a href="/calculator" class="{{ request()->is('calculator') ? 'active' : '' }}">{{ __('ui.nav.calculator') }}</a>
+            <a href="/inspection" class="{{ request()->is('inspection') ? 'active' : '' }}">{{ __('ui.nav.inspection_map') }}</a>
         </nav>
     </div>
 </header>
@@ -45,6 +75,7 @@
 </main>
 
 <script src="{{ asset('js/site.js') }}"></script>
+@include('partials.language-switcher')
 
 </body>
 </html>

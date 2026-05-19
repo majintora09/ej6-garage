@@ -1,1 +1,1 @@
-<h1>EJ6 Garage</h1>
+<h1>Personal Garage</h1>

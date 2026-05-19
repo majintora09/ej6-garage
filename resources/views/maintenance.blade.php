@@ -1,31 +1,36 @@
 @extends('layout')
 
 @section('content')
+    @php
+        $car = $currentCarProfile;
+        $carName = trim(($car->year ? $car->year.' ' : '').$car->make.' '.$car->model);
+        $buildVibe = $car->build_vibe ?: __('ui.common.personal_garage_build_profile');
+    @endphp
 
     <div class="page-head">
         <div>
-            <p class="eyebrow">SERVICE LOG</p>
-            <h1>Maintenance Tracker</h1>
-            <p>Keep the EJ6 reliable first: rust, leaks, exhaust alignment, mileage, reminders and receipts all stay in one place.</p>
+            <p class="eyebrow">{{ __('ui.maintenance.service_log') }}</p>
+            <h1>{{ __('ui.maintenance.title') }}</h1>
+            <p>{{ __('ui.maintenance.intro', ['car' => $carName]) }}</p>
         </div>
 
         <div class="mini-spec-card">
-            <span>Priority</span>
-            <strong>Safety before style</strong>
-            <small>Fuel, rust, brakes, leaks, then clean JDM upgrades.</small>
+            <span>{{ __('ui.maintenance.priority') }}</span>
+            <strong>{{ __('ui.maintenance.priority_copy') }}</strong>
+            <small>{{ $buildVibe }}</small>
         </div>
     </div>
 
     @if (!empty($dbError))
         <div class="card error-card">
-            <h2>Database Error</h2>
+            <h2>{{ __('ui.common.database_error') }}</h2>
             <p>{{ $dbError }}</p>
         </div>
     @endif
 
     @if (session('error'))
         <div class="card error-card">
-            <h2>Save/Delete Error</h2>
+            <h2>{{ __('ui.common.save_delete_error') }}</h2>
             <p>{{ session('error') }}</p>
         </div>
     @endif
@@ -34,56 +39,56 @@
         <section class="panel">
             <div class="panel-title">
                 <div>
-                    <p class="eyebrow">NEW RECORD</p>
-                    <h2>Add Maintenance Entry</h2>
+                    <p class="eyebrow">{{ __('ui.maintenance.new_record') }}</p>
+                    <h2>{{ __('ui.maintenance.add_entry') }}</h2>
                 </div>
             </div>
 
             <form action="/maintenance" method="POST">
                 @csrf
 
-                <label>Title</label>
+                <label>{{ __('ui.maintenance.field_title') }}</label>
                 <input type="text" name="title" required>
 
-                <label>Category</label>
+                <label>{{ __('ui.maintenance.category') }}</label>
                 <select name="category">
-                    <option value="Body">Body</option>
-                    <option value="Rust">Rust</option>
-                    <option value="Under Hood">Under Hood</option>
-                    <option value="Fuel System">Fuel System</option>
-                    <option value="Exhaust">Exhaust</option>
-                    <option value="Suspension">Suspension</option>
-                    <option value="Brakes">Brakes</option>
-                    <option value="Interior">Interior</option>
+                    <option value="Body">{{ __('ui.categories.body') }}</option>
+                    <option value="Rust">{{ __('ui.categories.rust') }}</option>
+                    <option value="Under Hood">{{ __('ui.categories.under_hood') }}</option>
+                    <option value="Fuel System">{{ __('ui.categories.fuel_system') }}</option>
+                    <option value="Exhaust">{{ __('ui.categories.exhaust') }}</option>
+                    <option value="Suspension">{{ __('ui.categories.suspension') }}</option>
+                    <option value="Brakes">{{ __('ui.categories.brakes') }}</option>
+                    <option value="Interior">{{ __('ui.categories.interior') }}</option>
                 </select>
 
-                <label>Mileage</label>
+                <label>{{ __('ui.maintenance.mileage') }}</label>
                 <input type="number" name="mileage">
 
-                <label>Cost (€)</label>
+                <label>{{ __('ui.maintenance.cost') }}</label>
                 <input type="number" step="0.01" name="cost">
 
-                <label>Date</label>
+                <label>{{ __('ui.maintenance.date') }}</label>
                 <input type="date" name="service_date">
 
-                <label>Next Due Date</label>
+                <label>{{ __('ui.maintenance.next_due_date') }}</label>
                 <input type="date" name="next_due_date">
 
-                <label>Next Due Mileage</label>
+                <label>{{ __('ui.maintenance.next_due_mileage') }}</label>
                 <input type="number" name="next_due_mileage">
 
-                <label>Notes</label>
+                <label>{{ __('ui.maintenance.notes') }}</label>
                 <textarea name="notes"></textarea>
 
-                <button type="submit">Save Entry</button>
+                <button type="submit">{{ __('ui.maintenance.save_entry') }}</button>
             </form>
         </section>
 
         <section class="panel">
             <div class="panel-title">
                 <div>
-                    <p class="eyebrow">TIMELINE</p>
-                    <h2>Maintenance History</h2>
+                    <p class="eyebrow">{{ __('ui.maintenance.timeline') }}</p>
+                    <h2>{{ __('ui.maintenance.history') }}</h2>
                 </div>
             </div>
 
@@ -91,15 +96,15 @@
                 <div class="entry">
                     <h3>{{ $maintenance->title }}</h3>
 
-                    <p><strong>Category:</strong> {{ $maintenance->category ?? 'N/A' }}</p>
-                    <p><strong>Mileage:</strong> {{ $maintenance->mileage ?? 'N/A' }} km</p>
-                    <p><strong>Cost:</strong> €{{ $maintenance->cost ?? '0.00' }}</p>
-                    <p><strong>Date:</strong> {{ $maintenance->service_date ?? 'No date' }}</p>
+                    <p><strong>{{ __('ui.maintenance.category') }}:</strong> {{ $maintenance->category ?? __('ui.common.na') }}</p>
+                    <p><strong>{{ __('ui.maintenance.mileage') }}:</strong> {{ $maintenance->mileage ?? __('ui.common.na') }} km</p>
+                    <p><strong>{{ __('ui.maintenance.cost') }}:</strong> €{{ $maintenance->cost ?? '0.00' }}</p>
+                    <p><strong>{{ __('ui.maintenance.date') }}:</strong> {{ $maintenance->service_date ?? __('ui.common.no_date') }}</p>
 
                     @if ($maintenance->next_due_date || $maintenance->next_due_mileage)
                         <p class="reminder-text">
-                            <strong>Reminder:</strong>
-                            {{ $maintenance->next_due_date ?? 'No date set' }}
+                            <strong>{{ __('ui.maintenance.reminder') }}:</strong>
+                            {{ $maintenance->next_due_date ?? __('ui.common.no_date') }}
                             @if ($maintenance->next_due_mileage)
                                 / {{ $maintenance->next_due_mileage }} km
                             @endif
@@ -111,17 +116,17 @@
                     <form
                         action="/maintenance/{{ $maintenance->id }}"
                         method="POST"
-                        onsubmit="return confirm('Delete this maintenance entry?');"
+                        onsubmit="return confirm('{{ __('ui.maintenance.confirm_delete') }}');"
                     >
                         @csrf
                         @method('DELETE')
 
-                        <button type="submit" class="delete-btn">Delete</button>
+                        <button type="submit" class="delete-btn">{{ __('ui.common.delete') }}</button>
                     </form>
                 </div>
             @empty
                 <div class="gallery-empty">
-                    <p>No maintenance entries yet.</p>
+                    <p>{{ __('ui.maintenance.no_entries') }}</p>
                 </div>
             @endforelse
         </section>

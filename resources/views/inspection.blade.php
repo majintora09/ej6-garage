@@ -1,31 +1,38 @@
 @extends('layout')
 
 @section('content')
+    @php
+        $car = $currentCarProfile;
+        $carName = trim(($car->year ? $car->year.' ' : '').$car->make.' '.$car->model);
+        $bodyType = $carProfile->body_type ?? 'coupe';
+        $customModelPath = $carProfile->model_path ?? null;
+    @endphp
 
     <div class="hero-card">
         <div>
-            <h1>EJ6 Inspection Map</h1>
+            <h1>{{ __('ui.inspection.title') }}</h1>
 
             <p class="hero-subtitle">
-                Move around your 3D Civic, create custom inspection points, and connect them to maintenance categories.
+                {{ __('ui.inspection.intro', ['car' => $carName]) }}
             </p>
 
             <div class="badge-row">
-                <span class="badge">Editor Mode</span>
-                <span class="badge">Rust Tracking</span>
-                <span class="badge">Lighting Presets</span>
-                <span class="badge">Maintenance Linked</span>
+                <span class="badge">{{ __('ui.inspection.editor_mode') }}</span>
+                <span class="badge">{{ __('ui.inspection.strategy', ['type' => ucfirst($bodyType)]) }}</span>
+                <span class="badge">{{ __('ui.inspection.glb') }}</span>
+                <span class="badge">{{ __('ui.inspection.lighting') }}</span>
+                <span class="badge">{{ __('ui.inspection.linked') }}</span>
             </div>
         </div>
     </div>
 
     <div class="inspection-toolbar card">
-        <button id="editor-toggle" type="button">Editor Mode: OFF</button>
+        <button id="editor-toggle" type="button">{{ __('ui.inspection.editor_off') }}</button>
 
-        <button type="button" onclick="setLightingMode('garage')">Garage</button>
-        <button type="button" onclick="setLightingMode('night')">Night</button>
-        <button type="button" onclick="setLightingMode('inspection')">Inspection</button>
-        <button type="button" onclick="setLightingMode('majin')">Majin</button>
+        <button type="button" onclick="setLightingMode('garage')">{{ __('ui.inspection.garage') }}</button>
+        <button type="button" onclick="setLightingMode('night')">{{ __('ui.inspection.night') }}</button>
+        <button type="button" onclick="setLightingMode('inspection')">{{ __('ui.inspection.inspection') }}</button>
+        <button type="button" onclick="setLightingMode('majin')">{{ __('ui.inspection.accent') }}</button>
     </div>
 
     <div class="card inspection-card">
@@ -33,47 +40,51 @@
         <div id="car-viewer"></div>
 
         <div class="inspection-info">
-            <h2>Inspection Notes</h2>
+            <h2>{{ __('ui.inspection.notes') }}</h2>
 
             <p>
-                Click glowing points to inspect issues. Turn editor mode ON, then click the car to create your own points.
+                {{ __('ui.inspection.help') }}
+            </p>
+
+            <p id="model-status" class="model-status">
+                {{ __('ui.inspection.loading') }}
             </p>
 
             <div id="inspection-output">
-                No inspection point selected.
+                {{ __('ui.inspection.none_selected') }}
             </div>
 
             <div id="editor-panel" class="editor-panel hidden">
-                <h3>Create Inspection Point</h3>
+                <h3>{{ __('ui.inspection.create_point') }}</h3>
 
-                <input id="point-name" type="text" placeholder="Point name">
+                <input id="point-name" type="text" placeholder="{{ __('ui.inspection.point_name') }}">
 
                 <select id="point-category">
-                    <option value="Body">Body</option>
-                    <option value="Rust">Rust</option>
-                    <option value="Under Hood">Under Hood</option>
-                    <option value="Fuel System">Fuel System</option>
-                    <option value="Exhaust">Exhaust</option>
-                    <option value="Suspension">Suspension</option>
-                    <option value="Brakes">Brakes</option>
-                    <option value="Interior">Interior</option>
+                    <option value="Body">{{ __('ui.categories.body') }}</option>
+                    <option value="Rust">{{ __('ui.categories.rust') }}</option>
+                    <option value="Under Hood">{{ __('ui.categories.under_hood') }}</option>
+                    <option value="Fuel System">{{ __('ui.categories.fuel_system') }}</option>
+                    <option value="Exhaust">{{ __('ui.categories.exhaust') }}</option>
+                    <option value="Suspension">{{ __('ui.categories.suspension') }}</option>
+                    <option value="Brakes">{{ __('ui.categories.brakes') }}</option>
+                    <option value="Interior">{{ __('ui.categories.interior') }}</option>
                 </select>
 
                 <select id="point-priority">
-                    <option value="Low">Low Priority</option>
-                    <option value="Medium">Medium Priority</option>
-                    <option value="High">High Priority</option>
+                    <option value="Low">{{ __('ui.categories.low') }}</option>
+                    <option value="Medium">{{ __('ui.categories.medium') }}</option>
+                    <option value="High">{{ __('ui.categories.high') }}</option>
                 </select>
 
                 <select id="point-status">
-                    <option value="Open">Open</option>
-                    <option value="Watching">Watching</option>
-                    <option value="Fixed">Fixed</option>
+                    <option value="Open">{{ __('ui.categories.open') }}</option>
+                    <option value="Watching">{{ __('ui.categories.watching') }}</option>
+                    <option value="Fixed">{{ __('ui.categories.fixed') }}</option>
                 </select>
 
-                <textarea id="point-description" placeholder="Description"></textarea>
+                <textarea id="point-description" placeholder="{{ __('ui.inspection.description') }}"></textarea>
 
-                <button id="save-point" type="button">Save Point</button>
+                <button id="save-point" type="button">{{ __('ui.inspection.save_point') }}</button>
             </div>
         </div>
 
@@ -83,6 +94,12 @@
         window.savedInspectionPoints = @json($points);
         window.maintenanceByCategory = @json($maintenances);
         window.csrfToken = "{{ csrf_token() }}";
+        window.inspectionModelConfig = @json([
+            'bodyType' => $bodyType,
+            'customModelPath' => $customModelPath,
+            'genericModelPath' => "/models/generic/{$bodyType}.glb",
+            'fallbackStlPath' => "/models/generic/{$bodyType}.stl",
+        ]);
     </script>
 
     <script type="importmap">

@@ -2,6 +2,7 @@
 
 @section('content')
     @php
+        $car = $currentCarProfile;
         $mods = $mods ?? collect();
         $plannedTotal = $mods->sum(fn ($mod) => (float) ($mod->price ?? 0));
         $installedTotal = $mods
@@ -17,50 +18,50 @@
 
     <div class="page-head">
         <div>
-            <p class="eyebrow">BUDGET CONTROL</p>
-            <h1>Price Calculator</h1>
-            <p>Connected to your mods planner so the build spend stays visible beside the maintenance-first route.</p>
+            <p class="eyebrow">{{ __('ui.calculator.budget_control') }}</p>
+            <h1>{{ __('ui.calculator.title') }}</h1>
+            <p>{{ __('ui.calculator.intro', ['car' => $car->make.' '.$car->model]) }}</p>
         </div>
 
         <div class="mini-spec-card">
-            <span>Current planned spend</span>
+            <span>{{ __('ui.calculator.planned_spend') }}</span>
             <strong>€{{ number_format($plannedTotal, 2) }}</strong>
-            <small>Based on saved mods with prices.</small>
+            <small>{{ __('ui.calculator.based_on_mods') }}</small>
         </div>
     </div>
 
     @if (!empty($dbError))
         <div class="alert-card">
-            <strong>Database Error</strong>
+            <strong>{{ __('ui.common.database_error') }}</strong>
             <p>{{ $dbError }}</p>
         </div>
     @endif
 
     <div class="dashboard-grid budget-grid">
         <div class="card metric-card">
-            <span>Installed</span>
+            <span>{{ __('ui.calculator.installed') }}</span>
             <strong>€{{ number_format($installedTotal, 2) }}</strong>
-            <p>Already fitted or marked complete.</p>
+            <p>{{ __('ui.calculator.installed_copy') }}</p>
         </div>
 
         <div class="card metric-card">
-            <span>Still Planned</span>
+            <span>{{ __('ui.calculator.planned') }}</span>
             <strong>€{{ number_format($wantedTotal, 2) }}</strong>
-            <p>Wanted or ordered items still ahead.</p>
+            <p>{{ __('ui.calculator.planned_copy') }}</p>
         </div>
 
         <div class="card metric-card">
-            <span>High Priority</span>
+            <span>{{ __('ui.calculator.high_priority') }}</span>
             <strong>€{{ number_format($highPriorityTotal, 2) }}</strong>
-            <p>Safety, reliability and urgent build items.</p>
+            <p>{{ __('ui.calculator.high_priority_copy') }}</p>
         </div>
     </div>
 
     <section class="panel">
         <div class="panel-title">
             <div>
-                <p class="eyebrow">MOD COST ROLLUP</p>
-                <h2>Build Budget Items</h2>
+                <p class="eyebrow">{{ __('ui.calculator.rollup') }}</p>
+                <h2>{{ __('ui.calculator.items') }}</h2>
             </div>
         </div>
 
@@ -69,7 +70,7 @@
                 <article class="budget-row">
                     <div>
                         <h3>{{ $mod->name }}</h3>
-                        <p>{{ $mod->category ?? 'No category' }} • {{ $mod->priority ?? 'No priority' }} • {{ $mod->status ?? 'Wanted' }}</p>
+                        <p>{{ $mod->category ?? __('ui.common.no_category') }} • {{ $mod->priority ?? __('ui.common.no_priority') }} • {{ $mod->status ?? __('ui.common.wanted') }}</p>
                     </div>
 
                     <strong>€{{ number_format((float) ($mod->price ?? 0), 2) }}</strong>
@@ -77,9 +78,9 @@
             @empty
                 <div class="calculator-empty">
                     <div>
-                        <p class="eyebrow">NO MOD COSTS YET</p>
-                        <h2>Add mods to activate the calculator</h2>
-                        <p>Once the mods database is saving, this page will total your parts automatically.</p>
+                        <p class="eyebrow">{{ __('ui.calculator.no_costs') }}</p>
+                        <h2>{{ __('ui.calculator.activate') }}</h2>
+                        <p>{{ __('ui.calculator.auto_total') }}</p>
                     </div>
                 </div>
             @endforelse

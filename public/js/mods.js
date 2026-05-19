@@ -1,16 +1,25 @@
+const savedCarProfile = window.carProfile || {};
+const ui = window.uiText || {};
+
 const carProfile = {
-    car: "1997 Honda Civic EJ6 Coupe",
-    engine: "D16Y7",
-    color: "G-82P-5 dark green",
-    interior: "TYPE-K, DK.GRAY",
-    vibe: "dark green Majin-inspired clean JDM street build",
+    car: [
+        savedCarProfile.year,
+        savedCarProfile.make,
+        savedCarProfile.model
+    ].filter(Boolean).join(" ") || ui.yourCar || "Your car",
+    engine: savedCarProfile.engine || ui.engineNotSet || "engine not set",
+    color: [
+        savedCarProfile.color_code,
+        savedCarProfile.color_name
+    ].filter(Boolean).join(" ") || ui.colorNotSet || "color not set",
+    interior: savedCarProfile.interior || ui.interiorNotSet || "interior not set",
+    vibe: savedCarProfile.build_vibe || ui.personalBuild || "personal garage build",
     knownIssues: [
-        "fuel tank leak concern",
-        "exhaust alignment and hanger slipping issue",
-        "rear arch rust",
-        "jacking point / rocker rust",
-        "front bumper and headlight alignment",
-        "possible oil leak",
+        "reliability and safety checks",
+        "maintenance history gaps",
+        "fitment and install planning",
+        "body and underside condition",
+        "future build direction",
     ],
 };
 
@@ -28,62 +37,62 @@ function generateBuildAdvice(mode) {
         priority: [
             {
                 title: "1. Fix safety and leak issues first",
-                reason: "Your EJ6 has fuel tank concern, rust areas and exhaust alignment issues. Those should come before visual mods.",
-                parts: ["Fuel tank inspection/replacement", "Rust repair panels", "Exhaust hanger/bracket repair"]
+                reason: "Use the garage profile to prioritize safety, leaks, brakes, tires and structural checks before visual mods.",
+                parts: ["Baseline inspection", "Leak diagnosis", "Brake and tire check"]
             },
             {
                 title: "2. Stabilize the chassis",
-                reason: "Old Civics feel much better after bushings, suspension checks and rust-safe jacking points.",
-                parts: ["Control arm bushings", "Jacking point repair", "Alignment check"]
+                reason: "Older project cars feel better once bushings, suspension wear and alignment are sorted.",
+                parts: ["Bushing inspection", "Suspension refresh", "Alignment check"]
             },
             {
                 title: "3. Then build the look",
-                reason: "Once the base is safe, the dark green Majin/JDM styling will be worth spending on.",
-                parts: ["EK front lip", "Amber corners", "15/16 inch wheels", "Subtle midnight-purple accents"]
+                reason: "Once the base is healthy, choose styling that matches your saved build vibe.",
+                parts: ["Wheel plan", "Exterior details", "Lighting refresh"]
             }
         ],
 
         reliability: [
             {
-                title: "Fuel system first",
-                reason: "A fuel leak risk is higher priority than any mod.",
-                parts: ["OEM-style fuel tank", "Fuel tank straps", "Fuel lines inspection"]
+                title: "Baseline inspection first",
+                reason: "A reliable garage starts with known fluids, wear items and leak checks.",
+                parts: ["Fluid service", "Leak inspection", "Service history audit"]
             },
             {
-                title: "D16Y7 refresh",
-                reason: "The D16Y7 is reliable if leaks, cooling and timing history are sorted.",
-                parts: ["Valve cover gasket", "Oil leak diagnosis", "Coolant flush", "Timing belt history check"]
+                title: `${carProfile.engine} health check`,
+                reason: "Use the engine field from your profile to build a targeted service list.",
+                parts: ["Oil service", "Cooling check", "Ignition and belt history"]
             },
             {
-                title: "Exhaust security",
-                reason: "Your hanger issue should be fixed physically, not just temporarily held.",
-                parts: ["New rubber hangers", "Hanger stopper", "Bracket weld/adjustment"]
+                title: "Secure underside systems",
+                reason: "Loose exhaust, brake, fuel or suspension parts should be solved before cosmetic spend.",
+                parts: ["Exhaust mounts", "Brake lines", "Fastener check"]
             }
         ],
 
         visual: [
             {
-                title: "Dark green clean JDM route",
-                reason: "Your G-82P-5 paint should stay the main character.",
-                parts: ["EK/EJ front lip", "OEM-style side skirts", "Amber corners", "Black housing headlights"]
+                title: `${carProfile.color || "Paint"} visual route`,
+                reason: "Let your saved color and build vibe guide exterior choices.",
+                parts: ["Paint correction", "Lighting details", "Exterior trim refresh"]
             },
             {
-                title: "Majin accent direction",
-                reason: "Keep it subtle so it does not look cheap.",
-                parts: ["Midnight-purple small decals", "Purple valve caps", "Small interior accent stitching"]
+                title: "Accent direction",
+                reason: "Keep accent colors consistent with the profile theme color.",
+                parts: ["Small decals", "Interior detail", "Hardware accents"]
             },
             {
                 title: "Wheel fitment",
-                reason: "15/16 inch wheels fit the EJ coupe vibe without ruining drivability.",
-                parts: ["15x7 wheels", "195/50R15 tires", "Subtle lowering springs or coilovers"]
+                reason: "Wheel and tire specs should match the chassis, ride height and intended use.",
+                parts: ["Wheel specs", "Tire sizing", "Ride height plan"]
             }
         ],
 
         performance: [
             {
                 title: "Handling before power",
-                reason: "For a D16Y7 EJ6, handling mods give more fun per euro than engine power chasing.",
-                parts: ["Coilovers", "Rear sway bar", "Good tires", "Brake refresh"]
+                reason: "Most builds benefit from tires, brakes and suspension before chasing power.",
+                parts: ["Good tires", "Brake refresh", "Suspension setup"]
             },
             {
                 title: "Brake confidence",
@@ -91,9 +100,9 @@ function generateBuildAdvice(mode) {
                 parts: ["Fresh discs/pads", "Brake fluid flush", "Caliper check"]
             },
             {
-                title: "Future swap prep",
-                reason: "B-series later makes more sense than overspending on D16Y7 power.",
-                parts: ["B-series research list", "Mounts budget", "Brake/suspension prep"]
+                title: "Future power prep",
+                reason: "Plan engine work around your current profile instead of impulse buying parts.",
+                parts: ["Engine goal", "Budget plan", "Supporting mods"]
             }
         ],
 
@@ -142,7 +151,7 @@ function generateBuildAdvice(mode) {
                 <ul>
                     ${item.parts.map(part => `<li>${part}</li>`).join("")}
                 </ul>
-                ${item.alreadyPlanned ? `<small>Some of this may already be in your mod list.</small>` : ""}
+                ${item.alreadyPlanned ? `<small>${ui.alreadyPlanned || "Some of this may already be in your mod list."}</small>` : ""}
             </div>
         `).join("")}
     `;

@@ -1,19 +1,25 @@
 @extends('layout')
 
 @section('content')
+    @php
+        $car = $currentCarProfile;
+        $carName = trim(($car->year ? $car->year.' ' : '').$car->make.' '.$car->model);
+        $chassis = $car->chassis ?: 'Your chassis';
+        $engine = $car->engine ?: 'Your engine';
+    @endphp
 
     <div class="hero-card">
         <div>
-            <h1>EJ6 Parts Encyclopedia</h1>
+            <h1>Parts Encyclopedia</h1>
             <p class="hero-subtitle">
-                Learn what each system does, what symptoms to watch for, and what upgrades make sense for your build.
+                Learn what each system does, what symptoms to watch for, and what upgrades make sense for {{ $carName }}.
             </p>
 
             <div class="badge-row">
-                <span class="badge">D16Y7</span>
-                <span class="badge">EJ6 Coupe</span>
+                <span class="badge">{{ $engine }}</span>
+                <span class="badge">{{ $chassis }}</span>
                 <span class="badge">Maintenance First</span>
-                <span class="badge">Clean JDM Build</span>
+                <span class="badge">Personal Build</span>
             </div>
         </div>
     </div>
@@ -36,7 +42,7 @@
                 <li>Rust around tank seams</li>
             </ul>
 
-            <h3>Your EJ6 Notes</h3>
+            <h3>Your Car Notes</h3>
             <p>
                 You already had concern about a possible fuel tank leak, so this should be treated as high priority before mods.
             </p>
@@ -58,7 +64,7 @@
                 <li>Leaks or loud blowing sound</li>
             </ul>
 
-            <h3>Your EJ6 Notes</h3>
+            <h3>Your Car Notes</h3>
             <p>
                 Your Magnaflow/exhaust alignment and hanger issue should be fixed properly before chasing sound upgrades.
             </p>
@@ -69,7 +75,7 @@
             <p class="part-category">Body / Rust</p>
 
             <p>
-                The rear wheel arch area is a common rust point on older Civics.
+                Wheel arch areas are common body condition checkpoints on older project cars.
             </p>
 
             <h3>Symptoms</h3>
@@ -102,7 +108,7 @@
                 <li>Inspection failure risk</li>
             </ul>
 
-            <h3>Your EJ6 Notes</h3>
+            <h3>Your Car Notes</h3>
             <p>
                 This should be checked together with rear arches before spending big money on cosmetics.
             </p>
@@ -131,11 +137,11 @@
         </div>
 
         <div class="part-card">
-            <h2>D16Y7 Engine</h2>
+            <h2>{{ $engine }}</h2>
             <p class="part-category">Engine</p>
 
             <p>
-                The D16Y7 is your stock single-cam non-VTEC engine. Good for reliability, not huge power.
+                Your saved engine profile should guide service checks, reliability work, and power goals.
             </p>
 
             <h3>Good Priorities</h3>
@@ -168,7 +174,7 @@
                 <li>Broken clips or brackets</li>
             </ul>
 
-            <h3>Your EJ6 Notes</h3>
+            <h3>Your Car Notes</h3>
             <p>
                 You mentioned the front low area/bumper feels wobbly and misaligned with the headlights.
             </p>
@@ -182,7 +188,7 @@
                 Wheels change the car’s look massively, but wrong specs can rub or feel bad.
             </p>
 
-            <h3>Clean EJ6 Direction</h3>
+            <h3>Clean Fitment Direction</h3>
             <ul>
                 <li>15 or 16 inch wheels</li>
                 <li>Good tire fitment</li>
@@ -192,7 +198,7 @@
 
             <h3>Vibe</h3>
             <p>
-                Dark green body, subtle midnight-purple accents, clean JDM wheel choice.
+                Match wheels and accents to your saved color, theme color, and build vibe.
             </p>
         </div>
 
