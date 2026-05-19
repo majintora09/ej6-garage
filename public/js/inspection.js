@@ -10,7 +10,7 @@ let editorMode = false;
 let pendingPosition = null;
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x101010);
+scene.background = new THREE.Color(0x080a09);
 
 const camera = new THREE.PerspectiveCamera(
     55,
@@ -19,88 +19,106 @@ const camera = new THREE.PerspectiveCamera(
     10000
 );
 
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new THREE.WebGLRenderer({
+    antialias: true,
+    alpha: true
+});
+
 renderer.setSize(container.clientWidth, container.clientHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
+
 container.appendChild(renderer.domElement);
 
 const carGroup = new THREE.Group();
 scene.add(carGroup);
 
-const lights = {
-    ambient: new THREE.AmbientLight(0xffffff, 1.4),
-    key: new THREE.DirectionalLight(0xffffff, 2),
-    green: new THREE.PointLight(0x76ff9f, 3, 30),
-    purple: new THREE.PointLight(0x34205f, 2, 25),
-};
+const ambient = new THREE.AmbientLight(0xffffff, 1.3);
+scene.add(ambient);
 
-lights.key.position.set(5, 6, 5);
-lights.green.position.set(-5, 3, 4);
-lights.purple.position.set(5, 3, -4);
+const mainLight = new THREE.DirectionalLight(0xffffff, 2);
+mainLight.position.set(5, 5, 5);
+scene.add(mainLight);
 
-scene.add(lights.ambient);
-scene.add(lights.key);
-scene.add(lights.green);
-scene.add(lights.purple);
+const greenLight = new THREE.PointLight(0x76ff9f, 2.2, 30);
+greenLight.position.set(-5, 4, 4);
+scene.add(greenLight);
 
-window.setLightingMode = function (mode) {
+const purpleLight = new THREE.PointLight(0x7d4cff, 2, 30);
+purpleLight.position.set(5, 3, -4);
+scene.add(purpleLight);
+
+window.setLightingMode = function(mode) {
     if (mode === 'garage') {
-        scene.background = new THREE.Color(0x101010);
-        lights.ambient.intensity = 1.4;
-        lights.key.intensity = 2;
-        lights.green.intensity = 3;
-        lights.purple.intensity = 2;
+        scene.background = new THREE.Color(0x080a09);
+
+        ambient.intensity = 1.3;
+        mainLight.intensity = 2;
+
+        greenLight.intensity = 2.2;
+        purpleLight.intensity = 2;
     }
 
     if (mode === 'night') {
-        scene.background = new THREE.Color(0x050507);
-        lights.ambient.intensity = 0.4;
-        lights.key.intensity = 0.6;
-        lights.green.intensity = 1.4;
-        lights.purple.intensity = 2.8;
+        scene.background = new THREE.Color(0x040506);
+
+        ambient.intensity = 0.45;
+        mainLight.intensity = 0.7;
+
+        greenLight.intensity = 1.2;
+        purpleLight.intensity = 3;
     }
 
     if (mode === 'inspection') {
-        scene.background = new THREE.Color(0x171717);
-        lights.ambient.intensity = 2.2;
-        lights.key.intensity = 3.2;
-        lights.green.intensity = 1;
-        lights.purple.intensity = 0.5;
+        scene.background = new THREE.Color(0x141414);
+
+        ambient.intensity = 2;
+        mainLight.intensity = 3;
+
+        greenLight.intensity = 0.7;
+        purpleLight.intensity = 0.5;
     }
 
     if (mode === 'majin') {
-        scene.background = new THREE.Color(0x08040d);
-        lights.ambient.intensity = 0.8;
-        lights.key.intensity = 1.2;
-        lights.green.intensity = 2.5;
-        lights.purple.intensity = 5;
+        scene.background = new THREE.Color(0x09040f);
+
+        ambient.intensity = 0.7;
+        mainLight.intensity = 1.1;
+
+        greenLight.intensity = 1.5;
+        purpleLight.intensity = 5;
     }
 };
+
+const loader = new STLLoader();
 
 const carMaterial = new THREE.MeshStandardMaterial({
     color: 0x0f3b24,
     metalness: 0.45,
-    roughness: 0.35,
+    roughness: 0.35
 });
 
 const markerMaterial = new THREE.MeshStandardMaterial({
     color: 0xff4444,
     emissive: 0xff1111,
-    emissiveIntensity: 2,
+    emissiveIntensity: 2
 });
 
 const markerGeometry = new THREE.SphereGeometry(0.12, 24, 24);
-const loader = new STLLoader();
 
 let carMesh = null;
 const markers = [];
 
-loader.load('/models/ej6/civic_em1_all.stl', function (geometry) {
+loader.load('/models/ej6/civic_em1_all.stl', function(geometry) {
+
     geometry.center();
 
-    carMesh = new THREE.Mesh(geometry, carMaterial);
+    carMesh = new THREE.Mesh(
+        geometry,
+        carMaterial
+    );
 
     carMesh.scale.set(1.5, 1.5, 1.5);
+
     carMesh.rotation.x = -Math.PI / 2;
 
     carGroup.add(carMesh);
@@ -115,18 +133,9 @@ const defaultPoints = [
         x: -2.75,
         y: -0.05,
         z: 0.95,
-        description: 'Check bumper clips, brackets, headlight mounts and front support alignment.',
+        description: 'Check bumper clips, brackets and headlight alignment.'
     },
-    {
-        name: 'Front Jacking Point / Rocker',
-        category: 'Rust',
-        status: 'Open',
-        priority: 'High',
-        x: -1.05,
-        y: -0.55,
-        z: 1.28,
-        description: 'Check the front rocker and jacking area for rust, bending or weak metal.',
-    },
+
     {
         name: 'Rear Arch Rust',
         category: 'Rust',
@@ -135,8 +144,9 @@ const defaultPoints = [
         x: 1.45,
         y: -0.05,
         z: 1.28,
-        description: 'Common EJ/EM rear arch rust area. Check bubbling, inner lip corrosion and soft metal.',
+        description: 'Common EJ rear arch rust area.'
     },
+
     {
         name: 'Fuel Tank Area',
         category: 'Fuel System',
@@ -145,8 +155,9 @@ const defaultPoints = [
         x: 1.55,
         y: -0.65,
         z: 0.65,
-        description: 'Inspect for fuel smell, dripping, wet spots, tank straps and corrosion.',
+        description: 'Inspect for fuel leaks and corrosion.'
     },
+
     {
         name: 'Exhaust Alignment',
         category: 'Exhaust',
@@ -155,17 +166,24 @@ const defaultPoints = [
         x: 0.55,
         y: -0.70,
         z: -1.25,
-        description: 'Check hanger, rubber mount, pipe clearance and why the hanger slips out.',
-    },
+        description: 'Check hanger and exhaust alignment.'
+    }
 ];
 
 const savedPoints = window.savedInspectionPoints || [];
-const pointsToRender = savedPoints.length ? savedPoints : defaultPoints;
+
+const pointsToRender = savedPoints.length
+    ? savedPoints
+    : defaultPoints;
 
 pointsToRender.forEach(createMarker);
 
 function createMarker(point) {
-    const marker = new THREE.Mesh(markerGeometry, markerMaterial);
+
+    const marker = new THREE.Mesh(
+        markerGeometry,
+        markerMaterial
+    );
 
     marker.position.set(
         parseFloat(point.x),
@@ -176,18 +194,35 @@ function createMarker(point) {
     marker.userData = point;
 
     carGroup.add(marker);
+
     markers.push(marker);
 }
 
-camera.position.set(0, 1.4, 5);
+if (window.innerWidth <= 768) {
+    camera.position.set(0, 1.2, 7.5);
+} else {
+    camera.position.set(0, 1.4, 5);
+}
+
 camera.lookAt(0, 0, 0);
 
 let isDragging = false;
-let previousMouse = { x: 0, y: 0 };
+
+let previousMouse = {
+    x: 0,
+    y: 0
+};
+
+/* DESKTOP */
 
 container.addEventListener('mousedown', (event) => {
+
     isDragging = true;
-    previousMouse = { x: event.clientX, y: event.clientY };
+
+    previousMouse = {
+        x: event.clientX,
+        y: event.clientY
+    };
 });
 
 window.addEventListener('mouseup', () => {
@@ -195,172 +230,191 @@ window.addEventListener('mouseup', () => {
 });
 
 container.addEventListener('mousemove', (event) => {
+
     if (!isDragging) return;
 
-    const deltaX = event.clientX - previousMouse.x;
-    const deltaY = event.clientY - previousMouse.y;
+    const deltaX =
+        event.clientX - previousMouse.x;
+
+    const deltaY =
+        event.clientY - previousMouse.y;
 
     carGroup.rotation.y += deltaX * 0.01;
+
     carGroup.rotation.x += deltaY * 0.004;
 
-    previousMouse = { x: event.clientX, y: event.clientY };
+    previousMouse = {
+        x: event.clientX,
+        y: event.clientY
+    };
 });
 
+/* MOBILE TOUCH */
+
+container.addEventListener('touchstart', (event) => {
+
+    if (event.touches.length !== 1) return;
+
+    isDragging = true;
+
+    previousMouse = {
+        x: event.touches[0].clientX,
+        y: event.touches[0].clientY
+    };
+
+}, { passive: false });
+
+container.addEventListener('touchmove', (event) => {
+
+    if (!isDragging || event.touches.length !== 1) return;
+
+    event.preventDefault();
+
+    const touch = event.touches[0];
+
+    const deltaX =
+        touch.clientX - previousMouse.x;
+
+    const deltaY =
+        touch.clientY - previousMouse.y;
+
+    carGroup.rotation.y += deltaX * 0.01;
+
+    carGroup.rotation.x += deltaY * 0.004;
+
+    previousMouse = {
+        x: touch.clientX,
+        y: touch.clientY
+    };
+
+}, { passive: false });
+
+container.addEventListener('touchend', () => {
+    isDragging = false;
+});
+
+/* ZOOM */
+
 container.addEventListener('wheel', (event) => {
+
     event.preventDefault();
 
     camera.position.z += event.deltaY * 0.01;
-    camera.position.z = Math.max(2.5, Math.min(camera.position.z, 10));
+
+    camera.position.z =
+        Math.max(2.5, Math.min(camera.position.z, 10));
 });
 
-editorToggle.addEventListener('click', () => {
+/* EDITOR */
+
+editorToggle?.addEventListener('click', () => {
+
     editorMode = !editorMode;
 
-    editorToggle.textContent = editorMode
-        ? 'Editor Mode: ON'
-        : 'Editor Mode: OFF';
+    editorToggle.textContent =
+        editorMode
+            ? 'Editor Mode: ON'
+            : 'Editor Mode: OFF';
 
-    editorPanel.classList.toggle('hidden', !editorMode);
+    editorPanel.classList.toggle(
+        'hidden',
+        !editorMode
+    );
 });
 
+/* CLICK DETECTION */
+
 const raycaster = new THREE.Raycaster();
+
 const mouse = new THREE.Vector2();
 
 container.addEventListener('click', (event) => {
-    const rect = container.getBoundingClientRect();
 
-    mouse.x = ((event.clientX - rect.left) / container.clientWidth) * 2 - 1;
-    mouse.y = -((event.clientY - rect.top) / container.clientHeight) * 2 + 1;
+    const rect =
+        container.getBoundingClientRect();
+
+    mouse.x =
+        ((event.clientX - rect.left)
+            / container.clientWidth) * 2 - 1;
+
+    mouse.y =
+        -((event.clientY - rect.top)
+            / container.clientHeight) * 2 + 1;
 
     raycaster.setFromCamera(mouse, camera);
 
-    const clickedMarker = raycaster.intersectObjects(markers);
+    const clickedMarker =
+        raycaster.intersectObjects(markers);
 
     if (clickedMarker.length > 0) {
-        showPoint(clickedMarker[0].object.userData);
+
+        showPoint(
+            clickedMarker[0].object.userData
+        );
+
         return;
-    }
-
-    if (!editorMode || !carMesh) return;
-
-    const clickedCar = raycaster.intersectObject(carMesh);
-
-    if (clickedCar.length > 0) {
-        const localPoint = clickedCar[0].point.clone();
-
-        carGroup.worldToLocal(localPoint);
-
-        pendingPosition = {
-            x: localPoint.x.toFixed(3),
-            y: localPoint.y.toFixed(3),
-            z: localPoint.z.toFixed(3),
-        };
-
-        output.innerHTML = `
-            <h3>New point selected</h3>
-            <p>X: ${pendingPosition.x}, Y: ${pendingPosition.y}, Z: ${pendingPosition.z}</p>
-            <p>Fill the editor form and save.</p>
-        `;
     }
 });
 
 function showPoint(point) {
-    const category = point.category || 'N/A';
-    const related = window.maintenanceByCategory?.[category] || [];
-
-    let relatedHtml = '<p>No maintenance linked to this category yet.</p>';
-
-    if (related.length > 0) {
-        const last = related[0];
-
-        relatedHtml = `
-            <p><strong>Last Maintenance:</strong> ${last.title}</p>
-            <p><strong>Date:</strong> ${last.service_date ?? 'No date'}</p>
-            <p><strong>Cost:</strong> €${last.cost ?? '0.00'}</p>
-        `;
-    }
 
     output.innerHTML = `
         <h3>${point.name}</h3>
-        <p><strong>Category:</strong> ${category}</p>
-        <p><strong>Status:</strong> ${point.status ?? 'N/A'}</p>
-        <p><strong>Priority:</strong> ${point.priority ?? 'N/A'}</p>
-        <p>${point.description ?? ''}</p>
+
+        <p>
+            <strong>Category:</strong>
+            ${point.category}
+        </p>
+
+        <p>
+            <strong>Status:</strong>
+            ${point.status}
+        </p>
+
+        <p>
+            <strong>Priority:</strong>
+            ${point.priority}
+        </p>
 
         <hr>
 
-        <h4>Linked Maintenance</h4>
-        ${relatedHtml}
-
-        ${
-        point.id
-            ? `<button class="delete-btn" onclick="deleteInspectionPoint(${point.id})">Delete Point</button>`
-            : ''
-    }
+        <p>${point.description}</p>
     `;
 }
 
-document.getElementById('save-point').addEventListener('click', async () => {
-    if (!pendingPosition) {
-        alert('Click the car first to choose a marker position.');
-        return;
-    }
-
-    const payload = {
-        name: document.getElementById('point-name').value,
-        category: document.getElementById('point-category').value,
-        priority: document.getElementById('point-priority').value,
-        status: document.getElementById('point-status').value,
-        description: document.getElementById('point-description').value,
-        x: pendingPosition.x,
-        y: pendingPosition.y,
-        z: pendingPosition.z,
-    };
-
-    const response = await fetch('/inspection-points', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': window.csrfToken,
-        },
-        body: JSON.stringify(payload),
-    });
-
-    const savedPoint = await response.json();
-
-    createMarker(savedPoint);
-    showPoint(savedPoint);
-
-    pendingPosition = null;
-});
-
-window.deleteInspectionPoint = async function (id) {
-    if (!confirm('Delete this inspection point?')) return;
-
-    await fetch(`/inspection-points/${id}`, {
-        method: 'DELETE',
-        headers: {
-            'X-CSRF-TOKEN': window.csrfToken,
-        },
-    });
-
-    window.location.reload();
-};
+/* RESPONSIVE */
 
 window.addEventListener('resize', () => {
-    camera.aspect = container.clientWidth / container.clientHeight;
+
+    camera.aspect =
+        container.clientWidth /
+        container.clientHeight;
+
     camera.updateProjectionMatrix();
-    renderer.setSize(container.clientWidth, container.clientHeight);
+
+    renderer.setSize(
+        container.clientWidth,
+        container.clientHeight
+    );
 });
 
+/* ANIMATION */
+
 function animate() {
+
     requestAnimationFrame(animate);
 
     markers.forEach(marker => {
-        marker.scale.setScalar(1 + Math.sin(Date.now() * 0.006) * 0.15);
+
+        marker.scale.setScalar(
+            1 + Math.sin(Date.now() * 0.006) * 0.15
+        );
     });
 
-    carGroup.rotation.y += 0.0008;
+    if (!isDragging && window.innerWidth > 768) {
+        carGroup.rotation.y += 0.0008;
+    }
+
     renderer.render(scene, camera);
 }
 
