@@ -4,7 +4,7 @@ use Illuminate\Support\Str;
 
 return [
 
-    'default' => 'mysql',
+    'default' => env('DB_CONNECTION', 'mysql'),
 
     'connections' => [
 
@@ -19,11 +19,11 @@ return [
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DB_URL'),
-            'host' => 'tramway.proxy.rlwy.net',
-            'port' => '32352',
-            'database' => 'railway',
-            'username' => 'root',
-            'password' => 'sEsOoChkmerzUjKkdlXujGaEyHbDblOJ',
+            'host' => env('DB_HOST', 'tramway.proxy.rlwy.net'),
+            'port' => env('DB_PORT', '32352'),
+            'database' => env('DB_DATABASE', 'railway'),
+            'username' => env('DB_USERNAME', 'root'),
+            'password' => env('DB_PASSWORD', 'sEsOoChkmerzUjKkdlXujGaEyHbDblOJ'),
             'charset' => env('DB_CHARSET', 'utf8mb4'),
             'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
             'prefix' => '',

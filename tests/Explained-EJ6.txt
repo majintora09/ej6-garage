@@ -26,3 +26,39 @@ Railway
 Route = traffic sign
 Controller = worker doing the job
 View = what user sees
+
+Codex = your coding teammate
+GitHub = shared project storage
+Railway = live website host
+
+        Codex changes files locally
+    ↓
+        test locally
+    ↓
+        git push
+    ↓
+        Railway updates site
+
+
+    local testing loop is still:
+php artisan serve
+
+    for frontend/Tailwind/Vite stuff:
+npm run dev
+
+    production build:
+npm run build
+
+So the REAL workflow now is:
+
+        Ask Codex
+    ↓
+        Codex edits files
+    ↓
+        You test localhost
+    ↓
+        git push
+    ↓
+        Railway deploys
+    ↓
+        Friends test live site

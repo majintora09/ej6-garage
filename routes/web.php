@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\ModController;
 use App\Http\Controllers\InspectionController;
+use App\Models\Mod;
 
 Route::get('/', function () {
     return view('garage');
@@ -34,7 +35,16 @@ Route::get('/gallery', function () {
 });
 
 Route::get('/calculator', function () {
-    return view('calculator');
+    $mods = collect();
+    $dbError = null;
+
+    try {
+        $mods = Mod::latest()->get();
+    } catch (\Throwable $e) {
+        $dbError = $e->getMessage();
+    }
+
+    return view('calculator', compact('mods', 'dbError'));
 });
 
 require __DIR__.'/auth.php';
