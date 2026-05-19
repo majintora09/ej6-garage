@@ -2,66 +2,78 @@
 
 @section('content')
 
-    <div class="hero-card mods-hero">
+    <div class="page-head">
         <div>
-            <h1>EJ6 Build Planner</h1>
+            <p class="eyebrow">EJ6 BUILD SYSTEM</p>
+            <h1>Mods Planner</h1>
+            <p>Recommendations based on your 1997 EJ6, G-82P-5 dark green build, current issues and build direction.</p>
+        </div>
 
-            <p class="hero-subtitle">
-                Smart suggestions based on your EJ6 build style.
-            </p>
-
-            <div class="badge-row">
-                <span class="badge">Dark Green</span>
-                <span class="badge">Majin Style</span>
-                <span class="badge">Street JDM</span>
-                <span class="badge">Budget Conscious</span>
-            </div>
+        <div class="mini-spec-card">
+            <span>Car</span>
+            <strong>1997 Civic EJ6</strong>
+            <small>D16Y7 • Dark Green • Clean JDM / Majin</small>
         </div>
     </div>
 
-    <div class="dashboard-grid">
+    @if (!empty($dbError))
+        <div class="alert-card">
+            <strong>Database Error</strong>
+            <p>{{ $dbError }}</p>
+        </div>
+    @endif
 
-        <div class="card ai-card">
-            <h2>AI Build Assistant</h2>
+    @if (session('error'))
+        <div class="alert-card">
+            <strong>Save/Delete Error</strong>
+            <p>{{ session('error') }}</p>
+        </div>
+    @endif
 
-            <p>
-                Suggestions tailored for your EJ6 build and current issues.
+    <div class="mods-layout">
+
+        <section class="panel ai-panel">
+            <div class="panel-title">
+                <div>
+                    <p class="eyebrow">SMART ASSISTANT</p>
+                    <h2>EJ6 AI Build Advisor</h2>
+                </div>
+            </div>
+
+            <p class="muted">
+                Picks recommendations from your known issues: rust, exhaust alignment, fuel tank concern,
+                bumper alignment, D16Y7 reliability and clean dark-green JDM style.
             </p>
 
-            <div class="ai-buttons">
-                <button onclick="showSuggestions('reliability')">
-                    Reliability
-                </button>
-
-                <button onclick="showSuggestions('visual')">
-                    Visual
-                </button>
-
-                <button onclick="showSuggestions('performance')">
-                    Performance
-                </button>
-
-                <button onclick="showSuggestions('budget')">
-                    Budget Priority
-                </button>
+            <div class="ai-controls">
+                <button type="button" onclick="generateBuildAdvice('priority')">Priority Plan</button>
+                <button type="button" onclick="generateBuildAdvice('reliability')">Reliability</button>
+                <button type="button" onclick="generateBuildAdvice('visual')">Visual Style</button>
+                <button type="button" onclick="generateBuildAdvice('performance')">Performance</button>
+                <button type="button" onclick="generateBuildAdvice('budget')">Budget Route</button>
             </div>
 
-            <div id="suggestion-box" class="suggestion-box">
-                Select a category to get EJ6-specific suggestions.
+            <div id="ai-output" class="ai-output">
+                Select a recommendation mode.
             </div>
-        </div>
+        </section>
 
-        <div class="card">
-            <h2>Add Mod</h2>
+        <section class="panel">
+            <div class="panel-title">
+                <div>
+                    <p class="eyebrow">ADD PART</p>
+                    <h2>New Mod</h2>
+                </div>
+            </div>
 
             <form action="/mods" method="POST">
                 @csrf
 
                 <label>Mod Name</label>
-                <input type="text" name="name" required>
+                <input type="text" name="name" placeholder="Example: EK front lip" required>
 
                 <label>Category</label>
-                <input type="text" name="category">
+                <input type="text" name="category" placeholder="Rust, Exhaust, Suspension, Wheels...">
 
                 <label>Price (€)</label>
                 <input type="number" step="0.01" name="price">
@@ -81,102 +93,74 @@
                 </select>
 
                 <label>Link</label>
-                <input type="text" name="link">
+                <input type="text" name="link" placeholder="Part link">
 
                 <label>Notes</label>
-                <textarea name="notes"></textarea>
+                <textarea name="notes" placeholder="Why this part? Fitment? Install notes?"></textarea>
 
-                <button type="submit">
-                    Save Mod
-                </button>
+                <button type="submit">Save Mod</button>
             </form>
-        </div>
+        </section>
 
     </div>
 
-    <div class="card">
-        <h2>Current Mods Wishlist</h2>
-
-        @php
-            $totalCost = 0;
-        @endphp
-
-        @forelse ($mods as $mod)
-
-            @php
-                $totalCost += $mod->price ?? 0;
-            @endphp
-
-            <div class="mod-card">
-
-                <div class="mod-top">
-                    <h3>{{ $mod->name }}</h3>
-
-                    <span class="status-badge">
-                    {{ $mod->status }}
-                </span>
-                </div>
-
-                <div class="mod-grid">
-                    <div>
-                        <strong>Category:</strong>
-                        {{ $mod->category ?? 'N/A' }}
-                    </div>
-
-                    <div>
-                        <strong>Price:</strong>
-                        €{{ $mod->price ?? '0.00' }}
-                    </div>
-
-                    <div>
-                        <strong>Priority:</strong>
-                        {{ $mod->priority ?? 'N/A' }}
-                    </div>
-                </div>
-
-                @if ($mod->link)
-                    <a
-                        href="{{ $mod->link }}"
-                        target="_blank"
-                        class="mod-link"
-                    >
-                        View Part
-                    </a>
-                @endif
-
-                <p class="mod-notes">
-                    {{ $mod->notes }}
-                </p>
-
-                <form
-                    action="/mods/{{ $mod->id }}"
-                    method="POST"
-                    onsubmit="return confirm('Delete this mod?');"
-                >
-                    @csrf
-                    @method('DELETE')
-
-                    <button
-                        type="submit"
-                        class="delete-btn"
-                    >
-                        Delete
-                    </button>
-                </form>
-
+    <section class="panel">
+        <div class="panel-title">
+            <div>
+                <p class="eyebrow">WISHLIST</p>
+                <h2>Current Build List</h2>
             </div>
 
-        @empty
+            @php $totalCost = 0; @endphp
 
-            <p>No mods added yet.</p>
+            @foreach ($mods as $mod)
+                @php $totalCost += $mod->price ?? 0; @endphp
+            @endforeach
 
-        @endforelse
-
-        <div class="total-cost">
-            Total Wishlist Cost:
-            €{{ number_format($totalCost, 2) }}
+            <div class="price-pill">
+                €{{ number_format($totalCost, 2) }}
+            </div>
         </div>
-    </div>
+
+        <div class="mod-list">
+            @forelse ($mods as $mod)
+                <article class="mod-item">
+                    <div class="mod-main">
+                        <div>
+                            <h3>{{ $mod->name }}</h3>
+                            <p>{{ $mod->notes ?: 'No notes yet.' }}</p>
+                        </div>
+
+                        <span class="status-badge">{{ $mod->status ?? 'Wanted' }}</span>
+                    </div>
+
+                    <div class="mod-meta">
+                        <span>{{ $mod->category ?? 'No category' }}</span>
+                        <span>€{{ $mod->price ?? '0.00' }}</span>
+                        <span>{{ $mod->priority ?? 'No priority' }}</span>
+                    </div>
+
+                    <div class="mod-actions">
+                        @if ($mod->link)
+                            <a href="{{ $mod->link }}" target="_blank">Open part</a>
+                        @endif
+
+                        <form action="/mods/{{ $mod->id }}" method="POST" onsubmit="return confirm('Delete this mod?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="danger-btn">Delete</button>
+                        </form>
+                    </div>
+                </article>
+            @empty
+                <p class="muted">No mods added yet.</p>
+            @endforelse
+        </div>
+    </section>
+
+    <script>
+        window.currentMods = @json($mods);
+    </script>
 
     <script src="{{ asset('js/mods.js') }}"></script>
 
