@@ -22,12 +22,16 @@ class CarProfile extends Model
         'body_type',
         'model_path',
         'build_vibe',
+        'known_issues',
+        'future_plans',
+        'restoration_progress',
     ];
 
     protected function casts(): array
     {
         return [
             'year' => 'integer',
+            'restoration_progress' => 'integer',
         ];
     }
 

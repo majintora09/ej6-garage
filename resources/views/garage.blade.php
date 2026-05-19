@@ -11,7 +11,14 @@
         $colorName = $carProfile->color_name ?? __('ui.common.unknown_color');
         $colorCode = $carProfile->color_code ?? __('ui.common.no_color_code');
         $interior = $carProfile->interior ?? __('ui.common.not_set');
-        $buildVibe = $carProfile->build_vibe ?? __('ui.common.personal_garage_build_profile');
+        $buildVibe = $carProfile->build_vibe;
+        $knownIssues = collect(preg_split('/\r\n|\r|\n/', (string) ($carProfile->known_issues ?? '')))
+            ->map(fn ($issue) => trim($issue))
+            ->filter();
+        $futurePlans = collect(preg_split('/\r\n|\r|\n/', (string) ($carProfile->future_plans ?? '')))
+            ->map(fn ($plan) => trim($plan))
+            ->filter();
+        $progress = $carProfile->restoration_progress;
     @endphp
 
     @if (session('status'))
@@ -55,46 +62,49 @@
         <div class="card">
             <h2>{{ __('ui.dashboard.known_issues') }}</h2>
 
-            <ul class="issues-list">
-                <li>{{ __('ui.dashboard.issue_exhaust') }}</li>
-                <li>{{ __('ui.dashboard.issue_oil') }}</li>
-                <li>{{ __('ui.dashboard.issue_fuel') }}</li>
-                <li>{{ __('ui.dashboard.issue_body') }}</li>
-                <li>{{ __('ui.dashboard.issue_front') }}</li>
-            </ul>
+            @if ($knownIssues->isNotEmpty())
+                <ul class="issues-list">
+                    @foreach ($knownIssues as $issue)
+                        <li>{{ $issue }}</li>
+                    @endforeach
+                </ul>
+            @else
+                <p class="muted">{{ __('ui.dashboard.add_content') }}</p>
+            @endif
         </div>
 
         <div class="card">
             <h2>{{ __('ui.dashboard.build_direction') }}</h2>
 
-            <p>
-                {{ $buildVibe }}
-            </p>
+            <p>{{ $buildVibe ?: __('ui.common.empty_profile_text') }}</p>
 
-            <div class="progress-section">
-                <div class="progress-label">
-                    {{ __('ui.dashboard.restoration_progress') }}
+            @if (! is_null($progress))
+                <div class="progress-section">
+                    <div class="progress-label">
+                        {{ __('ui.dashboard.restoration_progress') }}
+                    </div>
+
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: {{ max(0, min(100, $progress)) }}%;"></div>
+                    </div>
+
+                    <p class="progress-text">{{ $progress }}%</p>
                 </div>
-
-                <div class="progress-bar">
-                    <div class="progress-fill"></div>
-                </div>
-
-                <p class="progress-text">{{ __('ui.dashboard.complete') }}</p>
-            </div>
+            @endif
         </div>
 
         <div class="card">
             <h2>{{ __('ui.dashboard.future_plans') }}</h2>
 
-            <ul class="issues-list">
-                <li>{{ __('ui.dashboard.plan_body') }}</li>
-                <li>{{ __('ui.dashboard.plan_exhaust') }}</li>
-                <li>{{ __('ui.dashboard.plan_suspension') }}</li>
-                <li>{{ __('ui.dashboard.plan_wheels') }}</li>
-                <li>{{ __('ui.dashboard.plan_engine') }}</li>
-                <li>{{ __('ui.dashboard.plan_inspection') }}</li>
-            </ul>
+            @if ($futurePlans->isNotEmpty())
+                <ul class="issues-list">
+                    @foreach ($futurePlans as $plan)
+                        <li>{{ $plan }}</li>
+                    @endforeach
+                </ul>
+            @else
+                <p class="muted">{{ __('ui.dashboard.add_content') }}</p>
+            @endif
         </div>
 
     </div>

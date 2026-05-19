@@ -106,6 +106,26 @@
                 <label>{{ __('ui.setup.build_vibe') }}</label>
                 <textarea name="build_vibe" placeholder="Clean street build, track prep, OEM+ restoration...">{{ old('build_vibe', $carProfile->build_vibe ?? '') }}</textarea>
 
+                <div class="form-grid">
+                    <div>
+                        <label>{{ __('ui.dashboard.known_issues') }}</label>
+                        <textarea name="known_issues" placeholder="One issue per line: brakes, leaks, bodywork, electrical...">{{ old('known_issues', $carProfile->known_issues ?? '') }}</textarea>
+                        <p class="field-hint">{{ __('ui.setup.known_issues_hint') }}</p>
+                    </div>
+
+                    <div>
+                        <label>{{ __('ui.dashboard.future_plans') }}</label>
+                        <textarea name="future_plans" placeholder="One plan per line: wheels, service, interior refresh...">{{ old('future_plans', $carProfile->future_plans ?? '') }}</textarea>
+                        <p class="field-hint">{{ __('ui.setup.future_plans_hint') }}</p>
+                    </div>
+
+                    <div>
+                        <label>{{ __('ui.dashboard.restoration_progress') }}</label>
+                        <input type="number" name="restoration_progress" min="0" max="100" value="{{ old('restoration_progress', $carProfile->restoration_progress ?? '') }}" placeholder="0-100">
+                        <p class="field-hint">{{ __('ui.setup.progress_hint') }}</p>
+                    </div>
+                </div>
+
                 <div class="photo-upload-panel">
                     <div class="photo-upload-head">
                         <div>

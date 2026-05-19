@@ -12,6 +12,10 @@ class InspectionController extends Controller
     {
         $carProfile = auth()->user()->carProfile;
 
+        if (! $carProfile) {
+            return redirect()->route('garage.setup');
+        }
+
         $points = InspectionPoint::where('car_profile_id', $carProfile->id)
             ->latest()
             ->get();

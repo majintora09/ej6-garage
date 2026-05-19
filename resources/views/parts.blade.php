@@ -3,9 +3,10 @@
 @section('content')
     @php
         $car = $currentCarProfile;
-        $carName = trim(($car->year ? $car->year.' ' : '').$car->make.' '.$car->model);
-        $chassis = $car->chassis ?: 'Your chassis';
-        $engine = $car->engine ?: 'Your engine';
+        $carName = trim(($car?->year ? $car->year.' ' : '').($car?->make ?? __('ui.mods.your_car')).' '.($car?->model ?? ''));
+        $chassis = $car?->chassis ?: __('ui.common.unknown_chassis');
+        $engine = $car?->engine ?: __('ui.common.unknown_engine');
+        $buildVibe = $car?->build_vibe ?: __('ui.common.empty_profile_text');
     @endphp
 
     <div class="hero-card">
@@ -19,7 +20,7 @@
                 <span class="badge">{{ $engine }}</span>
                 <span class="badge">{{ $chassis }}</span>
                 <span class="badge">Maintenance First</span>
-                <span class="badge">Personal Build</span>
+                <span class="badge">{{ __('ui.dashboard.personal_garage') }}</span>
             </div>
         </div>
     </div>
@@ -44,7 +45,7 @@
 
             <h3>Your Car Notes</h3>
             <p>
-                You already had concern about a possible fuel tank leak, so this should be treated as high priority before mods.
+                Use this card as a general fuel-system reference for {{ $carName }}. Add actual fuel-system issues in Garage Details or the maintenance tracker.
             </p>
         </div>
 
@@ -66,7 +67,7 @@
 
             <h3>Your Car Notes</h3>
             <p>
-                Your Magnaflow/exhaust alignment and hanger issue should be fixed properly before chasing sound upgrades.
+                Use this as a general exhaust reference. Add the exact exhaust brand, alignment issue, or hanger problem in your own maintenance or mods entries.
             </p>
         </div>
 
@@ -110,7 +111,7 @@
 
             <h3>Your Car Notes</h3>
             <p>
-                This should be checked together with rear arches before spending big money on cosmetics.
+                Check these areas based on the real condition of {{ $carName }} before spending big money on cosmetics.
             </p>
         </div>
 
@@ -132,7 +133,7 @@
 
             <h3>Build Advice</h3>
             <p>
-                For your clean JDM vibe, suspension should come after rust and safety fixes.
+                Match suspension choices to the real use case, body type, wheel fitment and build vibe for {{ $carName }}.
             </p>
         </div>
 
@@ -154,7 +155,7 @@
 
             <h3>Upgrade Direction</h3>
             <p>
-                Keep it healthy for now. Bigger power would make more sense later with a B-series or K-series plan.
+                Keep the saved engine profile accurate. Future power plans should match {{ $engine }}, budget, local inspection rules and the actual chassis.
             </p>
         </div>
 
@@ -176,7 +177,7 @@
 
             <h3>Your Car Notes</h3>
             <p>
-                You mentioned the front low area/bumper feels wobbly and misaligned with the headlights.
+                Use this as a general body-alignment reference. Add exact bumper, bracket or headlight notes in your own garage content.
             </p>
         </div>
 
@@ -190,15 +191,15 @@
 
             <h3>Clean Fitment Direction</h3>
             <ul>
-                <li>15 or 16 inch wheels</li>
-                <li>Good tire fitment</li>
-                <li>No extreme stance first</li>
-                <li>Match dark green body color</li>
+                <li>Choose size based on chassis clearance</li>
+                <li>Keep tire fitment realistic</li>
+                <li>Avoid rubbing before chasing stance</li>
+                <li>Match wheel style to saved color and build vibe</li>
             </ul>
 
             <h3>Vibe</h3>
             <p>
-                Match wheels and accents to your saved color, theme color, and build vibe.
+                Current build vibe: {{ $buildVibe }}
             </p>
         </div>
 

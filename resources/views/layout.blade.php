@@ -21,12 +21,12 @@
         }
     }
 
-    $themeColor = $activeCarProfile?->theme_color ?: '#76ff9f';
+    $themeColor = data_get($activeCarProfile, 'theme_color') ?: '#76ff9f';
     $themeColor = preg_match('/^#[0-9A-Fa-f]{6}$/', $themeColor) ? $themeColor : '#76ff9f';
     [$themeRed, $themeGreen, $themeBlue] = sscanf($themeColor, '#%02x%02x%02x');
-    $profileColorName = $activeCarProfile?->color_name ?: __('ui.common.unknown_color');
-    $profileColorCode = $activeCarProfile?->color_code ?: __('ui.common.no_color_code');
-    $profileChassis = $activeCarProfile?->chassis ?: 'GARAGE';
+    $profileColorName = data_get($activeCarProfile, 'color_name') ?: __('ui.common.unknown_color');
+    $profileColorCode = data_get($activeCarProfile, 'color_code') ?: __('ui.common.no_color_code');
+    $profileChassis = data_get($activeCarProfile, 'chassis') ?: 'GARAGE';
 @endphp
 <body
     style="--theme: {{ $themeColor }}; --theme-rgb: {{ $themeRed }}, {{ $themeGreen }}, {{ $themeBlue }};"

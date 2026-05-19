@@ -3,6 +3,7 @@
 @section('content')
     @php
         $car = $currentCarProfile;
+        $carName = trim(($car?->make ?? __('ui.mods.your_car')).' '.($car?->model ?? ''));
         $mods = $mods ?? collect();
         $plannedTotal = $mods->sum(fn ($mod) => (float) ($mod->price ?? 0));
         $installedTotal = $mods
@@ -20,7 +21,7 @@
         <div>
             <p class="eyebrow">{{ __('ui.calculator.budget_control') }}</p>
             <h1>{{ __('ui.calculator.title') }}</h1>
-            <p>{{ __('ui.calculator.intro', ['car' => $car->make.' '.$car->model]) }}</p>
+            <p>{{ __('ui.calculator.intro', ['car' => $carName]) }}</p>
         </div>
 
         <div class="mini-spec-card">

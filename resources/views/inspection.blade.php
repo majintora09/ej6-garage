@@ -2,10 +2,16 @@
 
 @section('content')
     @php
-        $car = $currentCarProfile;
-        $carName = trim(($car->year ? $car->year.' ' : '').$car->make.' '.$car->model);
+        $car = $carProfile ?? $currentCarProfile;
+        $carName = trim((($car?->year) ? $car->year.' ' : '').($car?->make ?? __('ui.mods.your_car')).' '.($car?->model ?? ''));
         $bodyType = $carProfile->body_type ?? 'coupe';
         $customModelPath = $carProfile->model_path ?? null;
+        $inspectionModelConfig = [
+            'bodyType' => $bodyType,
+            'customModelPath' => $customModelPath,
+            'genericModelPath' => "/models/generic/{$bodyType}.glb",
+            'fallbackStlPath' => "/models/generic/{$bodyType}.stl",
+        ];
     @endphp
 
     <div class="hero-card">
@@ -94,12 +100,7 @@
         window.savedInspectionPoints = @json($points);
         window.maintenanceByCategory = @json($maintenances);
         window.csrfToken = "{{ csrf_token() }}";
-        window.inspectionModelConfig = @json([
-            'bodyType' => $bodyType,
-            'customModelPath' => $customModelPath,
-            'genericModelPath' => "/models/generic/{$bodyType}.glb",
-            'fallbackStlPath' => "/models/generic/{$bodyType}.stl",
-        ]);
+        window.inspectionModelConfig = @json($inspectionModelConfig);
     </script>
 
     <script type="importmap">

@@ -10,6 +10,12 @@ class ModController extends Controller
 {
     public function index()
     {
+        $carProfile = auth()->user()->carProfile;
+
+        if (! $carProfile) {
+            return redirect()->route('garage.setup');
+        }
+
         $mods = collect();
         $dbError = null;
 
@@ -19,7 +25,7 @@ class ModController extends Controller
             $dbError = $e->getMessage();
         }
 
-        return view('mods', compact('mods', 'dbError'));
+        return view('mods', compact('mods', 'dbError', 'carProfile'));
     }
 
     public function store(Request $request)

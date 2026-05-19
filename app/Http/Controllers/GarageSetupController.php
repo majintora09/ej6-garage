@@ -36,6 +36,9 @@ class GarageSetupController extends Controller
             'body_type' => ['required', 'in:coupe,hatchback,sedan,suv,pickup'],
             'model_path' => ['nullable', 'string', 'max:255', 'regex:/^\/(models|storage)\/.+\.(glb|gltf|stl)$/i'],
             'build_vibe' => ['nullable', 'string', 'max:1000'],
+            'known_issues' => ['nullable', 'string', 'max:4000'],
+            'future_plans' => ['nullable', 'string', 'max:4000'],
+            'restoration_progress' => ['nullable', 'integer', 'min:0', 'max:100'],
             'car_photos' => ['nullable', 'array', 'max:6'],
             'car_photos.*' => ['image', 'max:8192'],
         ]);
@@ -75,6 +78,9 @@ class GarageSetupController extends Controller
             'body_type' => ['required', 'in:coupe,hatchback,sedan,suv,pickup'],
             'model_path' => ['nullable', 'string', 'max:255', 'regex:/^\/(models|storage)\/.+\.(glb|gltf|stl)$/i'],
             'build_vibe' => ['nullable', 'string', 'max:1000'],
+            'known_issues' => ['nullable', 'string', 'max:4000'],
+            'future_plans' => ['nullable', 'string', 'max:4000'],
+            'restoration_progress' => ['nullable', 'integer', 'min:0', 'max:100'],
             'car_photos' => ['nullable', 'array', 'max:6'],
             'car_photos.*' => ['image', 'max:8192'],
         ]);

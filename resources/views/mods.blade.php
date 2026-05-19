@@ -2,9 +2,18 @@
 
 @section('content')
     @php
-        $car = $currentCarProfile;
-        $carName = trim(($car->year ? $car->year.' ' : '').$car->make.' '.$car->model);
-        $carDetails = collect([$car->engine, $car->color_name, $car->build_vibe])->filter()->join(' • ');
+        $car = $carProfile ?? $currentCarProfile;
+        $carName = trim((($car?->year) ? $car->year.' ' : '').($car?->make ?? __('ui.mods.your_car')).' '.($car?->model ?? ''));
+        $carDetails = collect([$car?->engine, $car?->color_name, $car?->build_vibe])->filter()->join(' • ');
+        $uiText = [
+            'yourCar' => __('ui.mods.your_car'),
+            'engineNotSet' => __('ui.mods.engine_not_set'),
+            'colorNotSet' => __('ui.mods.color_not_set'),
+            'interiorNotSet' => __('ui.mods.interior_not_set'),
+            'personalBuild' => __('ui.mods.personal_build'),
+            'selectMode' => __('ui.mods.select_mode'),
+            'alreadyPlanned' => __('ui.mods.already_planned'),
+        ];
     @endphp
 
     <div class="page-head">
@@ -164,16 +173,8 @@
 
     <script>
         window.currentMods = @json($mods);
-        window.carProfile = @json($car);
-        window.uiText = @json([
-            'yourCar' => __('ui.mods.your_car'),
-            'engineNotSet' => __('ui.mods.engine_not_set'),
-            'colorNotSet' => __('ui.mods.color_not_set'),
-            'interiorNotSet' => __('ui.mods.interior_not_set'),
-            'personalBuild' => __('ui.mods.personal_build'),
-            'selectMode' => __('ui.mods.select_mode'),
-            'alreadyPlanned' => __('ui.mods.already_planned'),
-        ]);
+        window.carProfile = @json($car ?? null);
+        window.uiText = @json($uiText);
     </script>
 
     <script src="{{ asset('js/mods.js') }}"></script>
