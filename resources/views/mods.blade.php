@@ -13,6 +13,33 @@
             'personalBuild' => __('ui.mods.personal_build'),
             'selectMode' => __('ui.mods.select_mode'),
             'alreadyPlanned' => __('ui.mods.already_planned'),
+            'recommendations' => [
+                'priority' => [
+                    ['title' => __('ui.mods.priority_1_title'), 'reason' => __('ui.mods.priority_1_reason'), 'parts' => __('ui.mods.priority_1_parts')],
+                    ['title' => __('ui.mods.priority_2_title'), 'reason' => __('ui.mods.priority_2_reason'), 'parts' => __('ui.mods.priority_2_parts')],
+                    ['title' => __('ui.mods.priority_3_title'), 'reason' => __('ui.mods.priority_3_reason'), 'parts' => __('ui.mods.priority_3_parts')],
+                ],
+                'reliability' => [
+                    ['title' => __('ui.mods.reliability_1_title'), 'reason' => __('ui.mods.reliability_1_reason'), 'parts' => __('ui.mods.reliability_1_parts')],
+                    ['title' => __('ui.mods.reliability_2_title', ['engine' => ':engine']), 'reason' => __('ui.mods.reliability_2_reason'), 'parts' => __('ui.mods.reliability_2_parts')],
+                    ['title' => __('ui.mods.reliability_3_title'), 'reason' => __('ui.mods.reliability_3_reason'), 'parts' => __('ui.mods.reliability_3_parts')],
+                ],
+                'visual' => [
+                    ['title' => __('ui.mods.visual_1_title', ['color' => ':color']), 'reason' => __('ui.mods.visual_1_reason'), 'parts' => __('ui.mods.visual_1_parts')],
+                    ['title' => __('ui.mods.visual_2_title'), 'reason' => __('ui.mods.visual_2_reason'), 'parts' => __('ui.mods.visual_2_parts')],
+                    ['title' => __('ui.mods.visual_3_title'), 'reason' => __('ui.mods.visual_3_reason'), 'parts' => __('ui.mods.visual_3_parts')],
+                ],
+                'performance' => [
+                    ['title' => __('ui.mods.performance_1_title'), 'reason' => __('ui.mods.performance_1_reason'), 'parts' => __('ui.mods.performance_1_parts')],
+                    ['title' => __('ui.mods.performance_2_title'), 'reason' => __('ui.mods.performance_2_reason'), 'parts' => __('ui.mods.performance_2_parts')],
+                    ['title' => __('ui.mods.performance_3_title'), 'reason' => __('ui.mods.performance_3_reason'), 'parts' => __('ui.mods.performance_3_parts')],
+                ],
+                'budget' => [
+                    ['title' => __('ui.mods.budget_1_title'), 'reason' => __('ui.mods.budget_1_reason'), 'parts' => __('ui.mods.budget_1_parts')],
+                    ['title' => __('ui.mods.budget_2_title'), 'reason' => __('ui.mods.budget_2_reason'), 'parts' => __('ui.mods.budget_2_parts')],
+                    ['title' => __('ui.mods.budget_3_title'), 'reason' => __('ui.mods.budget_3_reason'), 'parts' => __('ui.mods.budget_3_parts')],
+                ],
+            ],
         ];
     @endphp
 
@@ -83,10 +110,10 @@
                 @csrf
 
                 <label>{{ __('ui.mods.mod_name') }}</label>
-                <input type="text" name="name" placeholder="Example: EK front lip" required>
+                <input type="text" name="name" placeholder="{{ __('ui.mods.placeholder_name') }}" required>
 
                 <label>{{ __('ui.mods.category') }}</label>
-                <input type="text" name="category" placeholder="Rust, Exhaust, Suspension, Wheels...">
+                <input type="text" name="category" placeholder="{{ __('ui.mods.placeholder_category') }}">
 
                 <label>{{ __('ui.mods.price') }}</label>
                 <input type="number" step="0.01" name="price">
@@ -106,10 +133,10 @@
                 </select>
 
                 <label>{{ __('ui.mods.link') }}</label>
-                <input type="text" name="link" placeholder="Part link">
+                <input type="text" name="link" placeholder="{{ __('ui.mods.placeholder_link') }}">
 
                 <label>{{ __('ui.mods.notes') }}</label>
-                <textarea name="notes" placeholder="Why this part? Fitment? Install notes?"></textarea>
+                <textarea name="notes" placeholder="{{ __('ui.mods.placeholder_notes') }}"></textarea>
 
                 <button type="submit">{{ __('ui.mods.save_mod') }}</button>
             </form>

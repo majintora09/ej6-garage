@@ -6,6 +6,9 @@ use App\Http\Controllers\ModController;
 use App\Http\Controllers\InspectionController;
 use App\Http\Controllers\GarageSetupController;
 use App\Http\Controllers\CarPhotoController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\BuildTimelineController;
 use App\Models\Mod;
 
 Route::get('/language/{locale}', function (string $locale) {
@@ -16,17 +19,7 @@ Route::get('/language/{locale}', function (string $locale) {
     return back();
 })->name('language.switch');
 
-Route::get('/', function () {
-    if (! auth()->check()) {
-        return redirect()->route('login');
-    }
-
-    if (! auth()->user()->carProfile()->exists()) {
-        return redirect()->route('garage.setup');
-    }
-
-    return view('garage');
-})->middleware('auth');
+Route::get('/', DashboardController::class)->middleware('auth');
 
 Route::get('/dashboard', function () {
     return redirect('/');
@@ -35,6 +28,9 @@ Route::get('/dashboard', function () {
 Route::middleware('auth')->group(function () {
     Route::get('/garage/setup', [GarageSetupController::class, 'create'])->name('garage.setup');
     Route::post('/garage/setup', [GarageSetupController::class, 'store'])->name('garage.setup.store');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 Route::middleware(['auth', 'garage.profile'])->group(function () {
@@ -54,6 +50,10 @@ Route::middleware(['auth', 'garage.profile'])->group(function () {
     Route::get('/inspection', [InspectionController::class, 'index']);
     Route::post('/inspection-points', [InspectionController::class, 'store']);
     Route::delete('/inspection-points/{inspectionPoint}', [InspectionController::class, 'destroy']);
+
+    Route::get('/timeline', [BuildTimelineController::class, 'index'])->name('timeline.index');
+    Route::post('/timeline', [BuildTimelineController::class, 'store'])->name('timeline.store');
+    Route::delete('/timeline/{timelineEntry}', [BuildTimelineController::class, 'destroy'])->name('timeline.destroy');
 
     Route::get('/parts', function () {
         return view('parts');

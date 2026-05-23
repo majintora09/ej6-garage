@@ -24,6 +24,6 @@ class CarPhotoController extends Controller
         Storage::disk('public')->delete($carPhoto->path);
         $carPhoto->delete();
 
-        return back()->with('status', 'Car photo removed.');
+        return back()->with('status', __('ui.setup.photo_removed'));
     }
 }

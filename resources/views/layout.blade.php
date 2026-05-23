@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#050807">
-    <title>Personal Garage</title>
+    <title>{{ __('ui.dashboard.personal_garage') }}</title>
 
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>
@@ -35,7 +35,7 @@
 <header class="site-header">
     <div class="header-shell">
         <div class="brand-block">
-            <a class="brand-mark" href="/" aria-label="Garage dashboard">
+            <a class="brand-mark" href="/" aria-label="{{ __('ui.nav.dashboard') }}">
                 <span class="brand-code">{{ strtoupper(substr($profileChassis, 0, 4)) }}</span>
                 <span>
                     <strong>{{ __('ui.nav.garage') }}</strong>
@@ -55,13 +55,14 @@
             </form>
         @endauth
 
-        <nav aria-label="Primary navigation">
+        <nav aria-label="{{ __('ui.nav.primary') }}">
             <a href="/" class="{{ request()->is('/') ? 'active' : '' }}">{{ __('ui.nav.dashboard') }}</a>
             <a href="/garage/details" class="{{ request()->is('garage/details') || request()->is('garage/setup') ? 'active' : '' }}">{{ __('ui.nav.garage_details') }}</a>
             <a href="/maintenance" class="{{ request()->is('maintenance') ? 'active' : '' }}">{{ __('ui.nav.maintenance') }}</a>
             <a href="/mods" class="{{ request()->is('mods') ? 'active' : '' }}">{{ __('ui.nav.mods') }}</a>
             <a href="/parts" class="{{ request()->is('parts') ? 'active' : '' }}">{{ __('ui.nav.learn_parts') }}</a>
             <a href="/gallery" class="{{ request()->is('gallery') ? 'active' : '' }}">{{ __('ui.nav.gallery') }}</a>
+            <a href="/timeline" class="{{ request()->is('timeline') ? 'active' : '' }}">{{ __('ui.nav.timeline') }}</a>
             <a href="/calculator" class="{{ request()->is('calculator') ? 'active' : '' }}">{{ __('ui.nav.calculator') }}</a>
             <a href="/inspection" class="{{ request()->is('inspection') ? 'active' : '' }}">{{ __('ui.nav.inspection_map') }}</a>
         </nav>

@@ -11,15 +11,15 @@
 
     <div class="hero-card">
         <div>
-            <h1>Parts Encyclopedia</h1>
+            <h1>{{ __('ui.parts.title') }}</h1>
             <p class="hero-subtitle">
-                Learn what each system does, what symptoms to watch for, and what upgrades make sense for {{ $carName }}.
+                {{ __('ui.parts.intro', ['car' => $carName]) }}
             </p>
 
             <div class="badge-row">
                 <span class="badge">{{ $engine }}</span>
                 <span class="badge">{{ $chassis }}</span>
-                <span class="badge">Maintenance First</span>
+                <span class="badge">{{ __('ui.parts.maintenance_first') }}</span>
                 <span class="badge">{{ __('ui.dashboard.personal_garage') }}</span>
             </div>
         </div>
@@ -28,179 +28,139 @@
     <div class="parts-grid">
 
         <div class="part-card">
-            <h2>Fuel Tank</h2>
-            <p class="part-category">Fuel System</p>
+            <h2>{{ __('ui.parts.fuel_tank') }}</h2>
+            <p class="part-category">{{ __('ui.parts.fuel_system') }}</p>
 
-            <p>
-                Stores fuel and sends it toward the engine through the fuel pump and lines.
-            </p>
+            <p>{{ __('ui.parts.fuel_tank_copy') }}</p>
 
-            <h3>Symptoms</h3>
+            <h3>{{ __('ui.parts.symptoms') }}</h3>
             <ul>
-                <li>Fuel smell around the car</li>
-                <li>Visible leak under rear area</li>
-                <li>Bad fuel economy</li>
-                <li>Rust around tank seams</li>
+                @foreach (__('ui.parts.fuel_symptoms') as $symptom)
+                    <li>{{ $symptom }}</li>
+                @endforeach
             </ul>
 
-            <h3>Your Car Notes</h3>
-            <p>
-                Use this card as a general fuel-system reference for {{ $carName }}. Add actual fuel-system issues in Garage Details or the maintenance tracker.
-            </p>
+            <h3>{{ __('ui.parts.your_car_notes') }}</h3>
+            <p>{{ __('ui.parts.fuel_notes', ['car' => $carName]) }}</p>
         </div>
 
         <div class="part-card">
-            <h2>Exhaust System</h2>
-            <p class="part-category">Engine / Sound</p>
+            <h2>{{ __('ui.parts.exhaust_system') }}</h2>
+            <p class="part-category">{{ __('ui.parts.engine_sound') }}</p>
 
-            <p>
-                Moves exhaust gases away from the engine and controls sound, emissions, and flow.
-            </p>
+            <p>{{ __('ui.parts.exhaust_copy') }}</p>
 
-            <h3>Symptoms</h3>
+            <h3>{{ __('ui.parts.symptoms') }}</h3>
             <ul>
-                <li>Rattling under the car</li>
-                <li>Exhaust hanger slipping out</li>
-                <li>Bad alignment</li>
-                <li>Leaks or loud blowing sound</li>
+                @foreach (__('ui.parts.exhaust_symptoms') as $symptom)
+                    <li>{{ $symptom }}</li>
+                @endforeach
             </ul>
 
-            <h3>Your Car Notes</h3>
-            <p>
-                Use this as a general exhaust reference. Add the exact exhaust brand, alignment issue, or hanger problem in your own maintenance or mods entries.
-            </p>
+            <h3>{{ __('ui.parts.your_car_notes') }}</h3>
+            <p>{{ __('ui.parts.exhaust_notes') }}</p>
         </div>
 
         <div class="part-card">
-            <h2>Rear Arches</h2>
-            <p class="part-category">Body / Rust</p>
+            <h2>{{ __('ui.parts.rear_arches') }}</h2>
+            <p class="part-category">{{ __('ui.parts.body_rust') }}</p>
 
-            <p>
-                Wheel arch areas are common body condition checkpoints on older project cars.
-            </p>
+            <p>{{ __('ui.parts.rear_arches_copy') }}</p>
 
-            <h3>Symptoms</h3>
+            <h3>{{ __('ui.parts.symptoms') }}</h3>
             <ul>
-                <li>Bubbles under paint</li>
-                <li>Soft/crunchy metal</li>
-                <li>Rust spreading near quarter panel</li>
-                <li>Failed inspection risk</li>
+                @foreach (__('ui.parts.rear_arches_symptoms') as $symptom)
+                    <li>{{ $symptom }}</li>
+                @endforeach
             </ul>
 
-            <h3>Repair Direction</h3>
-            <p>
-                Proper repair usually means cutting bad metal, welding fresh metal, sealing, primer, paint, and cavity protection.
-            </p>
+            <h3>{{ __('ui.parts.repair_direction') }}</h3>
+            <p>{{ __('ui.parts.rear_arches_repair') }}</p>
         </div>
 
         <div class="part-card">
-            <h2>Jacking Points / Rockers</h2>
-            <p class="part-category">Chassis / Safety</p>
+            <h2>{{ __('ui.parts.jacking_points') }}</h2>
+            <p class="part-category">{{ __('ui.parts.chassis_safety') }}</p>
 
-            <p>
-                These areas support the car when lifted and are important for structural safety.
-            </p>
+            <p>{{ __('ui.parts.jacking_points_copy') }}</p>
 
-            <h3>Symptoms</h3>
+            <h3>{{ __('ui.parts.symptoms') }}</h3>
             <ul>
-                <li>Crunching when jacking the car</li>
-                <li>Visible rust underneath</li>
-                <li>Weak or bent pinch welds</li>
-                <li>Inspection failure risk</li>
+                @foreach (__('ui.parts.jacking_points_symptoms') as $symptom)
+                    <li>{{ $symptom }}</li>
+                @endforeach
             </ul>
 
-            <h3>Your Car Notes</h3>
-            <p>
-                Check these areas based on the real condition of {{ $carName }} before spending big money on cosmetics.
-            </p>
+            <h3>{{ __('ui.parts.your_car_notes') }}</h3>
+            <p>{{ __('ui.parts.jacking_points_notes', ['car' => $carName]) }}</p>
         </div>
 
         <div class="part-card">
-            <h2>Suspension</h2>
-            <p class="part-category">Handling / Fitment</p>
+            <h2>{{ __('ui.categories.suspension') }}</h2>
+            <p class="part-category">{{ __('ui.parts.handling_fitment') }}</p>
 
-            <p>
-                Controls ride height, comfort, grip, and how the car feels in corners.
-            </p>
+            <p>{{ __('ui.parts.suspension_copy') }}</p>
 
-            <h3>Common Mods</h3>
+            <h3>{{ __('ui.parts.common_mods') }}</h3>
             <ul>
-                <li>Coilovers</li>
-                <li>Lowering springs</li>
-                <li>Bushings</li>
-                <li>Rear sway bar</li>
+                @foreach (__('ui.parts.suspension_mods') as $mod)
+                    <li>{{ $mod }}</li>
+                @endforeach
             </ul>
 
-            <h3>Build Advice</h3>
-            <p>
-                Match suspension choices to the real use case, body type, wheel fitment and build vibe for {{ $carName }}.
-            </p>
+            <h3>{{ __('ui.parts.build_advice') }}</h3>
+            <p>{{ __('ui.parts.suspension_advice', ['car' => $carName]) }}</p>
         </div>
 
         <div class="part-card">
             <h2>{{ $engine }}</h2>
-            <p class="part-category">Engine</p>
+            <p class="part-category">{{ __('ui.dashboard.engine') }}</p>
 
-            <p>
-                Your saved engine profile should guide service checks, reliability work, and power goals.
-            </p>
+            <p>{{ __('ui.parts.engine_copy') }}</p>
 
-            <h3>Good Priorities</h3>
+            <h3>{{ __('ui.parts.good_priorities') }}</h3>
             <ul>
-                <li>Oil leak check</li>
-                <li>Valve cover gasket</li>
-                <li>Cooling system health</li>
-                <li>Timing belt history</li>
+                @foreach (__('ui.parts.engine_priorities') as $priority)
+                    <li>{{ $priority }}</li>
+                @endforeach
             </ul>
 
-            <h3>Upgrade Direction</h3>
-            <p>
-                Keep the saved engine profile accurate. Future power plans should match {{ $engine }}, budget, local inspection rules and the actual chassis.
-            </p>
+            <h3>{{ __('ui.parts.upgrade_direction') }}</h3>
+            <p>{{ __('ui.parts.engine_upgrade', ['engine' => $engine]) }}</p>
         </div>
 
         <div class="part-card">
-            <h2>Front Bumper / Headlights</h2>
-            <p class="part-category">Body Alignment</p>
+            <h2>{{ __('ui.parts.front_bumper') }}</h2>
+            <p class="part-category">{{ __('ui.parts.body_alignment') }}</p>
 
-            <p>
-                The bumper, brackets, headlights, and clips all affect how clean the front end looks.
-            </p>
+            <p>{{ __('ui.parts.front_bumper_copy') }}</p>
 
-            <h3>Symptoms</h3>
+            <h3>{{ __('ui.parts.symptoms') }}</h3>
             <ul>
-                <li>Wobbly bumper</li>
-                <li>Panel gaps</li>
-                <li>Headlights not sitting right</li>
-                <li>Broken clips or brackets</li>
+                @foreach (__('ui.parts.front_bumper_symptoms') as $symptom)
+                    <li>{{ $symptom }}</li>
+                @endforeach
             </ul>
 
-            <h3>Your Car Notes</h3>
-            <p>
-                Use this as a general body-alignment reference. Add exact bumper, bracket or headlight notes in your own garage content.
-            </p>
+            <h3>{{ __('ui.parts.your_car_notes') }}</h3>
+            <p>{{ __('ui.parts.front_bumper_notes') }}</p>
         </div>
 
         <div class="part-card">
-            <h2>Wheels / Tires</h2>
-            <p class="part-category">Fitment / Style</p>
+            <h2>{{ __('ui.parts.wheels_tires') }}</h2>
+            <p class="part-category">{{ __('ui.parts.fitment_style') }}</p>
 
-            <p>
-                Wheels change the car’s look massively, but wrong specs can rub or feel bad.
-            </p>
+            <p>{{ __('ui.parts.wheels_copy') }}</p>
 
-            <h3>Clean Fitment Direction</h3>
+            <h3>{{ __('ui.parts.clean_fitment_direction') }}</h3>
             <ul>
-                <li>Choose size based on chassis clearance</li>
-                <li>Keep tire fitment realistic</li>
-                <li>Avoid rubbing before chasing stance</li>
-                <li>Match wheel style to saved color and build vibe</li>
+                @foreach (__('ui.parts.wheels_direction') as $direction)
+                    <li>{{ $direction }}</li>
+                @endforeach
             </ul>
 
-            <h3>Vibe</h3>
-            <p>
-                Current build vibe: {{ $buildVibe }}
-            </p>
+            <h3>{{ __('ui.parts.vibe') }}</h3>
+            <p>{{ __('ui.parts.current_build_vibe', ['vibe' => $buildVibe]) }}</p>
         </div>
 
     </div>

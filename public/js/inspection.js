@@ -9,6 +9,7 @@ const editorPanel = document.getElementById('editor-panel');
 const modelStatus = document.getElementById('model-status');
 
 const modelConfig = window.inspectionModelConfig || {};
+const ui = window.inspectionUiText || {};
 const themeColor = getComputedStyle(document.body).getPropertyValue('--theme').trim() || '#76ff9f';
 
 let editorMode = false;
@@ -166,8 +167,8 @@ function loadCandidateModel(candidates, index) {
     loadModelByPath(candidates[index])
         .then((model) => {
             setModelStatus(candidates[index].includes('/generic/')
-                ? `Generic ${modelConfig.bodyType || 'car'} model loaded.`
-                : 'Custom garage model loaded.');
+                ? (ui.genericModelLoaded || 'Generic :type model loaded.').replace(':type', modelConfig.bodyType || 'car')
+                : (ui.customModelLoaded || 'Custom garage model loaded.'));
             installModel(model);
         })
         .catch(() => loadCandidateModel(candidates, index + 1));
@@ -203,7 +204,7 @@ function installModel(model) {
 }
 
 function usePlaceholderModel() {
-    setModelStatus('No custom or generic 3D model found. Showing a clean placeholder body until a .glb model is added.');
+    setModelStatus(ui.placeholderLoaded || 'No custom or generic 3D model found. Showing a clean placeholder body until a .glb model is added.');
 
     const body = new THREE.Mesh(new THREE.BoxGeometry(3.8, 0.62, 1.55), carMaterial);
     body.position.y = 0.62;
@@ -392,7 +393,7 @@ container.addEventListener('wheel', (event) => {
 
 editorToggle?.addEventListener('click', () => {
     editorMode = !editorMode;
-    editorToggle.textContent = editorMode ? 'Editor Mode: ON' : 'Editor Mode: OFF';
+    editorToggle.textContent = editorMode ? (ui.editorOn || 'Editor Mode: ON') : (ui.editorOff || 'Editor Mode: OFF');
     editorPanel.classList.toggle('hidden', !editorMode);
 });
 
@@ -422,12 +423,12 @@ container.addEventListener('click', (event) => {
 
     pendingPosition = carGroup.worldToLocal(clickedModel[0].point.clone());
     pendingNormalizedPosition = positionToNormalized(pendingPosition);
-    output.innerHTML = '<h3>Point ready</h3><p>Fill out the editor form, then save this normalized inspection point.</p>';
+    output.innerHTML = `<h3>${escapeHtml(ui.pointReadyTitle || 'Point ready')}</h3><p>${escapeHtml(ui.pointReadyCopy || 'Fill out the editor form, then save this normalized inspection point.')}</p>`;
 });
 
 document.getElementById('save-point')?.addEventListener('click', async () => {
     if (!pendingPosition || !pendingNormalizedPosition) {
-        output.innerHTML = '<h3>No position selected</h3><p>Turn editor mode on and click the model before saving.</p>';
+        output.innerHTML = `<h3>${escapeHtml(ui.noPositionTitle || 'No position selected')}</h3><p>${escapeHtml(ui.noPositionCopy || 'Turn editor mode on and click the model before saving.')}</p>`;
         return;
     }
 
@@ -455,7 +456,7 @@ document.getElementById('save-point')?.addEventListener('click', async () => {
     });
 
     if (!response.ok) {
-        output.innerHTML = '<h3>Save failed</h3><p>Check the point name and try again.</p>';
+        output.innerHTML = `<h3>${escapeHtml(ui.saveFailedTitle || 'Save failed')}</h3><p>${escapeHtml(ui.saveFailedCopy || 'Check the point name and try again.')}</p>`;
         return;
     }
 
@@ -469,11 +470,11 @@ document.getElementById('save-point')?.addEventListener('click', async () => {
 function showPoint(point) {
     output.innerHTML = `
         <h3>${escapeHtml(point.name)}</h3>
-        <p><strong>Category:</strong> ${escapeHtml(point.category || 'Unsorted')}</p>
-        <p><strong>Status:</strong> ${escapeHtml(point.status || 'Open')}</p>
-        <p><strong>Priority:</strong> ${escapeHtml(point.priority || 'Medium')}</p>
+        <p><strong>${escapeHtml(ui.categoryLabel || 'Category')}:</strong> ${escapeHtml(point.category || ui.unsorted || 'Unsorted')}</p>
+        <p><strong>${escapeHtml(ui.statusLabel || 'Status')}:</strong> ${escapeHtml(point.status || ui.open || 'Open')}</p>
+        <p><strong>${escapeHtml(ui.priorityLabel || 'Priority')}:</strong> ${escapeHtml(point.priority || ui.medium || 'Medium')}</p>
         <hr>
-        <p>${escapeHtml(point.description || 'No notes yet.')}</p>
+        <p>${escapeHtml(point.description || ui.noNotes || 'No notes yet.')}</p>
     `;
 }
 

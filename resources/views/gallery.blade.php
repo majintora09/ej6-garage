@@ -37,8 +37,8 @@
 
         <div class="card metric-card">
             <span>{{ __('ui.gallery.build_tone') }}</span>
-            <strong>{{ $car->color_code ?: 'Custom' }}</strong>
-            <p>{{ $car->color_name ?: 'Themeable' }} {{ __('ui.gallery.reference_board') }}</p>
+            <strong>{{ $car->color_code ?: __('ui.common.custom') }}</strong>
+            <p>{{ $car->color_name ?: __('ui.common.theme') }} {{ __('ui.gallery.reference_board') }}</p>
         </div>
     </div>
 
@@ -51,7 +51,7 @@
 
             <div class="color-chip" style="--chip-color: {{ $car->theme_color ?: '#76ff9f' }}">
                 <span></span>
-                <strong>{{ $car->color_code ?: 'Theme' }}</strong>
+                <strong>{{ $car->color_code ?: __('ui.common.theme') }}</strong>
             </div>
         </div>
 
@@ -67,10 +67,10 @@
             <div class="car-photo-grid">
                 @foreach ($photos as $photo)
                     <figure class="car-photo-card">
-                        <img src="{{ route('car-photos.show', $photo) }}" alt="{{ $carName }} color reference photo">
+                        <img src="{{ route('car-photos.show', $photo) }}" alt="{{ $carName }} {{ __('ui.gallery.color_reference') }}">
                         <figcaption>
                             <span>{{ __('ui.gallery.paint_ref') }} {{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
-                            <strong>{{ $photo->original_name ?: 'Color reference' }}</strong>
+                            <strong>{{ $photo->original_name ?: __('ui.setup.color_reference_fallback') }}</strong>
                         </figcaption>
                     </figure>
                 @endforeach
@@ -119,14 +119,14 @@
             <article class="gallery-bay">
                 <span>04</span>
                 <h3>{{ __('ui.gallery.paint_styling') }}</h3>
-                <p>{{ $car->color_code ?: 'Color' }} {{ $car->color_name ?: 'style' }} references, lighting, wheels and exterior details.</p>
+                <p>{{ __('ui.gallery.paint_styling_copy', ['code' => $car->color_code ?: __('ui.common.color'), 'color' => $car->color_name ?: __('ui.common.style')]) }}</p>
                 <small>{{ __('ui.gallery.visual_direction') }}</small>
             </article>
 
             <article class="gallery-bay">
                 <span>05</span>
                 <h3>{{ __('ui.gallery.interior') }}</h3>
-                <p>{{ $car->interior ?: 'Cabin' }} photos, trim condition, seats, plastics and subtle accent plans.</p>
+                <p>{{ __('ui.gallery.interior_copy', ['interior' => $car->interior ?: __('ui.common.cabin')]) }}</p>
                 <small>{{ __('ui.gallery.cabin_archive') }}</small>
             </article>
 
@@ -149,23 +149,23 @@
 
         <div class="shot-list">
             <div class="shot-row">
-                <strong>Rear arches</strong>
-                <span>Wide shot, close-up, underside angle</span>
+                <strong>{{ __('ui.gallery.shot_rear_arches_title') }}</strong>
+                <span>{{ __('ui.gallery.shot_rear_arches_copy') }}</span>
             </div>
 
             <div class="shot-row">
-                <strong>Jacking points</strong>
-                <span>Both sides, pinch welds, rocker condition</span>
+                <strong>{{ __('ui.gallery.shot_jacking_points_title') }}</strong>
+                <span>{{ __('ui.gallery.shot_jacking_points_copy') }}</span>
             </div>
 
             <div class="shot-row">
-                <strong>Fuel tank area</strong>
-                <span>Leak evidence, straps, corrosion, line condition</span>
+                <strong>{{ __('ui.gallery.shot_fuel_tank_title') }}</strong>
+                <span>{{ __('ui.gallery.shot_fuel_tank_copy') }}</span>
             </div>
 
             <div class="shot-row">
-                <strong>Exhaust alignment</strong>
-                <span>Hanger position, rear fitment, underside route</span>
+                <strong>{{ __('ui.gallery.shot_exhaust_title') }}</strong>
+                <span>{{ __('ui.gallery.shot_exhaust_copy') }}</span>
             </div>
         </div>
     </section>

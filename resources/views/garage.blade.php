@@ -11,14 +11,10 @@
         $colorName = $carProfile->color_name ?? __('ui.common.unknown_color');
         $colorCode = $carProfile->color_code ?? __('ui.common.no_color_code');
         $interior = $carProfile->interior ?? __('ui.common.not_set');
-        $buildVibe = $carProfile->build_vibe;
-        $knownIssues = collect(preg_split('/\r\n|\r|\n/', (string) ($carProfile->known_issues ?? '')))
-            ->map(fn ($issue) => trim($issue))
-            ->filter();
-        $futurePlans = collect(preg_split('/\r\n|\r|\n/', (string) ($carProfile->future_plans ?? '')))
-            ->map(fn ($plan) => trim($plan))
-            ->filter();
-        $progress = $carProfile->restoration_progress;
+        $bodyType = $carProfile->body_type ? __("ui.body_types.{$carProfile->body_type}") : __('ui.common.not_set');
+        $buildVibe = $carProfile->build_vibe ?: __('ui.common.empty_profile_text');
+        $progress = $carProfile->restoration_progress ?? $garageHealth['score'];
+        $formatMoney = fn ($value) => '€'.number_format((float) $value, 2);
     @endphp
 
     @if (session('status'))
@@ -27,86 +23,282 @@
         </div>
     @endif
 
-    <div class="hero-card">
-        <div>
+    <section class="garage-os-hero">
+        <div class="garage-os-copy">
+            <p class="eyebrow">{{ __('ui.dashboard.garage_os') }}</p>
             <h1>{{ $year }} {{ $make }} {{ $model }}</h1>
-            <p class="hero-subtitle">
-                {{ $colorCode }} {{ $colorName }} • {{ $interior }} • {{ $engine }}
+            <p>
+                {{ __('ui.dashboard.workspace_intro', ['car' => trim($make.' '.$model)]) }}
             </p>
 
             <div class="badge-row">
-                <span class="badge">{{ $colorName }} {{ __('ui.nav.build_hub') }}</span>
-                <span class="badge">{{ $chassis }}</span>
+                <span class="badge">{{ $colorCode }} {{ $colorName }}</span>
+                <span class="badge">{{ $bodyType }}</span>
                 <span class="badge">{{ $engine }}</span>
-                <span class="badge">{{ __('ui.dashboard.personal_garage') }}</span>
+                <span class="badge">{{ $chassis }}</span>
             </div>
         </div>
-    </div>
 
-    <div class="dashboard-grid">
+        <div class="garage-health-card">
+            <span>{{ __('ui.dashboard.garage_health') }}</span>
+            <strong>{{ $garageHealth['score'] }}%</strong>
+            <p>{{ $garageHealth['label'] }}</p>
 
-        <div class="card">
-            <h2>{{ __('ui.dashboard.car_identity') }}</h2>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: {{ $garageHealth['score'] }}%;"></div>
+            </div>
+        </div>
+    </section>
 
-            <div class="spec-list">
+    <section class="dashboard-grid product-metrics">
+        <article class="card metric-card">
+            <span>{{ __('ui.dashboard.total_spent') }}</span>
+            <strong>{{ $formatMoney($costSummary['total_spent']) }}</strong>
+            <p>{{ __('ui.dashboard.total_spent_copy') }}</p>
+        </article>
+
+        <article class="card metric-card">
+            <span>{{ __('ui.dashboard.planned_spend') }}</span>
+            <strong>{{ $formatMoney($costSummary['mods_planned']) }}</strong>
+            <p>{{ __('ui.dashboard.planned_spend_copy') }}</p>
+        </article>
+
+        <article class="card metric-card">
+            <span>{{ __('ui.dashboard.profile_completion') }}</span>
+            <strong>{{ $progress }}%</strong>
+            <p>{{ __('ui.dashboard.profile_completion_copy') }}</p>
+        </article>
+    </section>
+
+    <div class="dashboard-command-grid">
+        <section class="panel car-summary-panel">
+            <div class="panel-title">
+                <div>
+                    <p class="eyebrow">{{ __('ui.dashboard.active_car') }}</p>
+                    <h2>{{ __('ui.dashboard.car_identity') }}</h2>
+                </div>
+                <a class="text-link" href="{{ route('garage.profile.edit') }}">{{ __('ui.dashboard.edit_profile') }}</a>
+            </div>
+
+            <div class="spec-list compact-spec-list">
                 <div><strong>{{ __('ui.dashboard.make') }}:</strong> {{ $make }}</div>
                 <div><strong>{{ __('ui.dashboard.model') }}:</strong> {{ $model }}</div>
-                <div><strong>{{ __('ui.dashboard.chassis') }}:</strong> {{ $chassis }}</div>
                 <div><strong>{{ __('ui.dashboard.year') }}:</strong> {{ $year }}</div>
                 <div><strong>{{ __('ui.dashboard.engine') }}:</strong> {{ $engine }}</div>
-                <div><strong>{{ __('ui.dashboard.color_code') }}:</strong> {{ $colorCode }}</div>
+                <div><strong>{{ __('ui.setup.body_type') }}:</strong> {{ $bodyType }}</div>
                 <div><strong>{{ __('ui.dashboard.interior') }}:</strong> {{ $interior }}</div>
             </div>
-        </div>
 
-        <div class="card">
-            <h2>{{ __('ui.dashboard.known_issues') }}</h2>
+            <div class="dashboard-note">
+                <strong>{{ __('ui.dashboard.build_direction') }}</strong>
+                <p>{{ $buildVibe }}</p>
+            </div>
+        </section>
 
-            @if ($knownIssues->isNotEmpty())
-                <ul class="issues-list">
-                    @foreach ($knownIssues as $issue)
-                        <li>{{ $issue }}</li>
-                    @endforeach
-                </ul>
-            @else
-                <p class="muted">{{ __('ui.dashboard.add_content') }}</p>
-            @endif
-        </div>
-
-        <div class="card">
-            <h2>{{ __('ui.dashboard.build_direction') }}</h2>
-
-            <p>{{ $buildVibe ?: __('ui.common.empty_profile_text') }}</p>
-
-            @if (! is_null($progress))
-                <div class="progress-section">
-                    <div class="progress-label">
-                        {{ __('ui.dashboard.restoration_progress') }}
-                    </div>
-
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: {{ max(0, min(100, $progress)) }}%;"></div>
-                    </div>
-
-                    <p class="progress-text">{{ $progress }}%</p>
+        <section class="panel">
+            <div class="panel-title">
+                <div>
+                    <p class="eyebrow">{{ __('ui.dashboard.next_reminders') }}</p>
+                    <h2>{{ __('ui.dashboard.maintenance_radar') }}</h2>
                 </div>
-            @endif
-        </div>
+                <a class="text-link" href="/maintenance">{{ __('ui.nav.maintenance') }}</a>
+            </div>
 
-        <div class="card">
-            <h2>{{ __('ui.dashboard.future_plans') }}</h2>
-
-            @if ($futurePlans->isNotEmpty())
-                <ul class="issues-list">
-                    @foreach ($futurePlans as $plan)
-                        <li>{{ $plan }}</li>
-                    @endforeach
-                </ul>
-            @else
-                <p class="muted">{{ __('ui.dashboard.add_content') }}</p>
-            @endif
-        </div>
-
+            <div class="stack-list">
+                @forelse ($nextReminders as $reminder)
+                    <article class="signal-row {{ $reminder['status'] }}">
+                        <div>
+                            <strong>{{ $reminder['title'] }}</strong>
+                            <span>
+                                {{ $reminder['date'] ?: __('ui.common.no_date') }}
+                                @if ($reminder['mileage'])
+                                    / {{ $reminder['mileage'] }} km
+                                @endif
+                            </span>
+                        </div>
+                        <em>{{ __("ui.dashboard.reminder_{$reminder['status']}") }}</em>
+                    </article>
+                @empty
+                    <div class="empty-state">
+                        <strong>{{ __('ui.dashboard.no_reminders') }}</strong>
+                        <p>{{ __('ui.dashboard.no_reminders_copy') }}</p>
+                    </div>
+                @endforelse
+            </div>
+        </section>
     </div>
 
+    <div class="dashboard-command-grid">
+        <section class="panel">
+            <div class="panel-title">
+                <div>
+                    <p class="eyebrow">{{ __('ui.dashboard.current_projects') }}</p>
+                    <h2>{{ __('ui.dashboard.work_queue') }}</h2>
+                </div>
+            </div>
+
+            <div class="stack-list">
+                @forelse ($currentProjects as $project)
+                    <article class="timeline-row">
+                        <div>
+                            <strong>{{ $project['title'] }}</strong>
+                            <span>{{ $project['meta'] }}</span>
+                        </div>
+                    </article>
+                @empty
+                    <div class="empty-state">
+                        <strong>{{ __('ui.dashboard.no_projects') }}</strong>
+                        <p>{{ __('ui.dashboard.no_projects_copy') }}</p>
+                    </div>
+                @endforelse
+            </div>
+        </section>
+
+        <section class="panel ai-panel">
+            <div class="panel-title">
+                <div>
+                    <p class="eyebrow">{{ __('ui.dashboard.ai_preview') }}</p>
+                    <h2>{{ $recommendationPreview['title'] }}</h2>
+                </div>
+                <span class="status-badge">{{ $recommendationPreview['mode'] }}</span>
+            </div>
+
+            <p>{{ $recommendationPreview['copy'] }}</p>
+            <a class="text-link" href="/mods">{{ __('ui.dashboard.open_recommendations') }}</a>
+        </section>
+    </div>
+
+    <section class="dashboard-grid dashboard-preview-grid">
+        <article class="panel">
+            <div class="panel-title">
+                <div>
+                    <p class="eyebrow">{{ __('ui.dashboard.recent_maintenance') }}</p>
+                    <h2>{{ __('ui.maintenance.history') }}</h2>
+                </div>
+            </div>
+
+            <div class="stack-list">
+                @forelse ($recentMaintenance as $maintenance)
+                    <div class="timeline-row">
+                        <div>
+                            <strong>{{ $maintenance->title }}</strong>
+                            <span>{{ $maintenance->service_date ?: __('ui.common.no_date') }} • {{ $maintenance->category ?: __('ui.common.no_category') }}</span>
+                        </div>
+                        <em>{{ $formatMoney($maintenance->cost ?? 0) }}</em>
+                    </div>
+                @empty
+                    <div class="empty-state">
+                        <strong>{{ __('ui.dashboard.no_maintenance') }}</strong>
+                        <p>{{ __('ui.dashboard.no_maintenance_copy') }}</p>
+                    </div>
+                @endforelse
+            </div>
+        </article>
+
+        <article class="panel">
+            <div class="panel-title">
+                <div>
+                    <p class="eyebrow">{{ __('ui.dashboard.recent_mods') }}</p>
+                    <h2>{{ __('ui.mods.current_build_list') }}</h2>
+                </div>
+            </div>
+
+            <div class="stack-list">
+                @forelse ($recentMods as $mod)
+                    <div class="timeline-row">
+                        <div>
+                            <strong>{{ $mod->name }}</strong>
+                            <span>{{ $mod->category ?: __('ui.common.no_category') }} • {{ $mod->status ?: __('ui.common.wanted') }}</span>
+                        </div>
+                        <em>{{ $formatMoney($mod->price ?? 0) }}</em>
+                    </div>
+                @empty
+                    <div class="empty-state">
+                        <strong>{{ __('ui.dashboard.no_mods') }}</strong>
+                        <p>{{ __('ui.dashboard.no_mods_copy') }}</p>
+                    </div>
+                @endforelse
+            </div>
+        </article>
+
+        <article class="panel">
+            <div class="panel-title">
+                <div>
+                    <p class="eyebrow">{{ __('ui.dashboard.inspection_issues') }}</p>
+                    <h2>{{ __('ui.inspection.notes') }}</h2>
+                </div>
+            </div>
+
+            <div class="stack-list">
+                @forelse ($latestInspectionPoints as $point)
+                    <div class="timeline-row">
+                        <div>
+                            <strong>{{ $point->name }}</strong>
+                            <span>{{ $point->category ?: __('ui.common.unsorted') }} • {{ $point->status ?: __('ui.categories.open') }}</span>
+                        </div>
+                        <em>{{ $point->priority ?: __('ui.common.no_priority') }}</em>
+                    </div>
+                @empty
+                    <div class="empty-state">
+                        <strong>{{ __('ui.dashboard.no_inspection') }}</strong>
+                        <p>{{ __('ui.dashboard.no_inspection_copy') }}</p>
+                    </div>
+                @endforelse
+            </div>
+        </article>
+    </section>
+
+    <div class="dashboard-command-grid">
+        <section class="panel">
+            <div class="panel-title">
+                <div>
+                    <p class="eyebrow">{{ __('ui.dashboard.timeline_preview') }}</p>
+                    <h2>{{ __('ui.timeline.title') }}</h2>
+                </div>
+                <a class="text-link" href="{{ route('timeline.index') }}">{{ __('ui.dashboard.open_timeline') }}</a>
+            </div>
+
+            <div class="stack-list">
+                @forelse ($timelineEntries as $entry)
+                    <article class="timeline-row">
+                        <div>
+                            <strong>{{ $entry->title }}</strong>
+                            <span>{{ $entry->event_date?->format('Y-m-d') ?: __('ui.common.no_date') }} • {{ $entry->category ?: __('ui.common.no_category') }}</span>
+                        </div>
+                        @if ($entry->cost)
+                            <em>{{ $formatMoney($entry->cost) }}</em>
+                        @endif
+                    </article>
+                @empty
+                    <div class="empty-state">
+                        <strong>{{ __('ui.dashboard.no_timeline') }}</strong>
+                        <p>{{ __('ui.dashboard.no_timeline_copy') }}</p>
+                    </div>
+                @endforelse
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-title">
+                <div>
+                    <p class="eyebrow">{{ __('ui.dashboard.recent_gallery') }}</p>
+                    <h2>{{ __('ui.gallery.title') }}</h2>
+                </div>
+                <a class="text-link" href="/gallery">{{ __('ui.nav.gallery') }}</a>
+            </div>
+
+            @if ($recentPhotos->isNotEmpty())
+                <div class="dashboard-photo-strip">
+                    @foreach ($recentPhotos as $photo)
+                        <img src="{{ route('car-photos.show', $photo) }}" alt="{{ $make }} {{ $model }} {{ __('ui.gallery.color_reference') }}">
+                    @endforeach
+                </div>
+            @else
+                <div class="empty-state">
+                    <strong>{{ __('ui.gallery.no_photos') }}</strong>
+                    <p>{{ __('ui.gallery.empty_copy') }}</p>
+                </div>
+            @endif
+        </section>
+    </div>
 @endsection

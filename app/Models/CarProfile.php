@@ -44,4 +44,9 @@ class CarProfile extends Model
     {
         return $this->hasMany(CarPhoto::class)->latest();
     }
+
+    public function buildTimelineEntries(): HasMany
+    {
+        return $this->hasMany(BuildTimelineEntry::class)->latest('event_date')->latest();
+    }
 }

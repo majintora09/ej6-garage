@@ -12,6 +12,26 @@
             'genericModelPath' => "/models/generic/{$bodyType}.glb",
             'fallbackStlPath' => "/models/generic/{$bodyType}.stl",
         ];
+        $inspectionUiText = [
+            'customModelLoaded' => __('ui.inspection.custom_model_loaded'),
+            'genericModelLoaded' => __('ui.inspection.generic_model_loaded', ['type' => ':type']),
+            'placeholderLoaded' => __('ui.inspection.placeholder_loaded'),
+            'editorOn' => __('ui.inspection.editor_on'),
+            'editorOff' => __('ui.inspection.editor_off'),
+            'pointReadyTitle' => __('ui.inspection.point_ready_title'),
+            'pointReadyCopy' => __('ui.inspection.point_ready_copy'),
+            'noPositionTitle' => __('ui.inspection.no_position_title'),
+            'noPositionCopy' => __('ui.inspection.no_position_copy'),
+            'saveFailedTitle' => __('ui.inspection.save_failed_title'),
+            'saveFailedCopy' => __('ui.inspection.save_failed_copy'),
+            'categoryLabel' => __('ui.inspection.category_label'),
+            'statusLabel' => __('ui.inspection.status_label'),
+            'priorityLabel' => __('ui.inspection.priority_label'),
+            'unsorted' => __('ui.common.unsorted'),
+            'open' => __('ui.categories.open'),
+            'medium' => __('ui.categories.medium'),
+            'noNotes' => __('ui.common.no_notes'),
+        ];
     @endphp
 
     <div class="hero-card">
@@ -101,6 +121,7 @@
         window.maintenanceByCategory = @json($maintenances);
         window.csrfToken = "{{ csrf_token() }}";
         window.inspectionModelConfig = @json($inspectionModelConfig);
+        window.inspectionUiText = @json($inspectionUiText);
     </script>
 
     <script type="importmap">

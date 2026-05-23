@@ -39,40 +39,41 @@
                 <div class="form-grid">
                     <div>
                         <label>{{ __('ui.dashboard.make') }}</label>
-                        <input type="text" name="make" value="{{ old('make', $carProfile->make ?? '') }}" placeholder="Toyota, BMW, Nissan..." required>
+                        <input type="text" name="make" value="{{ old('make', $carProfile->make ?? '') }}" placeholder="{{ __('ui.setup.placeholder_make') }}" required>
                         <x-input-error :messages="$setupErrors->get('make')" class="auth-error" />
                     </div>
 
                     <div>
                         <label>{{ __('ui.dashboard.model') }}</label>
-                        <input type="text" name="model" value="{{ old('model', $carProfile->model ?? '') }}" placeholder="Supra, E36, Silvia..." required>
+                        <input type="text" name="model" value="{{ old('model', $carProfile->model ?? '') }}" placeholder="{{ __('ui.setup.placeholder_model') }}" required>
                         <x-input-error :messages="$setupErrors->get('model')" class="auth-error" />
                     </div>
 
                     <div>
                         <label>{{ __('ui.dashboard.chassis') }}</label>
-                        <input type="text" name="chassis" value="{{ old('chassis', $carProfile->chassis ?? '') }}" placeholder="JZA80, E36, S14...">
+                        <input type="text" name="chassis" value="{{ old('chassis', $carProfile->chassis ?? '') }}" placeholder="{{ __('ui.setup.placeholder_chassis') }}">
                     </div>
 
                     <div>
                         <label>{{ __('ui.dashboard.year') }}</label>
-                        <input type="number" name="year" value="{{ old('year', $carProfile->year ?? '') }}" placeholder="1997">
+                        <input type="number" name="year" value="{{ old('year', $carProfile->year ?? '') }}" placeholder="{{ __('ui.setup.placeholder_year') }}">
                     </div>
 
                     <div>
                         <label>{{ __('ui.dashboard.engine') }}</label>
-                        <input type="text" name="engine" value="{{ old('engine', $carProfile->engine ?? '') }}" placeholder="2JZ-GTE, M50, SR20DET...">
+                        <input type="text" name="engine" value="{{ old('engine', $carProfile->engine ?? '') }}" placeholder="{{ __('ui.setup.placeholder_engine') }}">
                     </div>
 
                     <div>
                         <label>{{ __('ui.dashboard.interior') }}</label>
-                        <input type="text" name="interior" value="{{ old('interior', $carProfile->interior ?? '') }}" placeholder="Black cloth, DK.GRAY, leather...">
+                        <input type="text" name="interior" value="{{ old('interior', $carProfile->interior ?? '') }}" placeholder="{{ __('ui.setup.placeholder_interior') }}">
                     </div>
 
                     <div>
                         <label>{{ __('ui.setup.body_type') }}</label>
                         <select name="body_type" required>
-                            @foreach (['coupe' => 'Coupe', 'hatchback' => 'Hatchback', 'sedan' => 'Sedan', 'suv' => 'SUV', 'pickup' => 'Pickup'] as $value => $label)
+                            @foreach (['coupe', 'hatchback', 'sedan', 'wagon', 'suv', 'pickup', 'motorcycle', 'other'] as $value)
+                                @php $label = __("ui.body_types.{$value}"); @endphp
                                 <option value="{{ $value }}" @selected(old('body_type', $carProfile->body_type ?? 'coupe') === $value)>{{ $label }}</option>
                             @endforeach
                         </select>
@@ -81,19 +82,19 @@
 
                     <div>
                         <label>{{ __('ui.setup.model_path') }}</label>
-                        <input type="text" name="model_path" value="{{ old('model_path', $carProfile->model_path ?? '') }}" placeholder="/models/my-car/model.glb">
+                        <input type="text" name="model_path" value="{{ old('model_path', $carProfile->model_path ?? '') }}" placeholder="{{ __('ui.setup.placeholder_model_path') }}">
                         <x-input-error :messages="$setupErrors->get('model_path')" class="auth-error" />
                         <p class="field-hint">{{ __('ui.setup.model_path_hint') }}</p>
                     </div>
 
                     <div>
                         <label>{{ __('ui.setup.color_name') }}</label>
-                        <input type="text" name="color_name" value="{{ old('color_name', $carProfile->color_name ?? '') }}" placeholder="Black, Midnight Purple, Championship White...">
+                        <input type="text" name="color_name" value="{{ old('color_name', $carProfile->color_name ?? '') }}" placeholder="{{ __('ui.setup.placeholder_color_name') }}">
                     </div>
 
                     <div>
                         <label>{{ __('ui.dashboard.color_code') }}</label>
-                        <input type="text" name="color_code" value="{{ old('color_code', $carProfile->color_code ?? '') }}" placeholder="202, LP2, NH-0...">
+                        <input type="text" name="color_code" value="{{ old('color_code', $carProfile->color_code ?? '') }}" placeholder="{{ __('ui.setup.placeholder_color_code') }}">
                     </div>
 
                     <div>
@@ -104,24 +105,24 @@
                 </div>
 
                 <label>{{ __('ui.setup.build_vibe') }}</label>
-                <textarea name="build_vibe" placeholder="Clean street build, track prep, OEM+ restoration...">{{ old('build_vibe', $carProfile->build_vibe ?? '') }}</textarea>
+                <textarea name="build_vibe" placeholder="{{ __('ui.setup.placeholder_build_vibe') }}">{{ old('build_vibe', $carProfile->build_vibe ?? '') }}</textarea>
 
                 <div class="form-grid">
                     <div>
                         <label>{{ __('ui.dashboard.known_issues') }}</label>
-                        <textarea name="known_issues" placeholder="One issue per line: brakes, leaks, bodywork, electrical...">{{ old('known_issues', $carProfile->known_issues ?? '') }}</textarea>
+                        <textarea name="known_issues" placeholder="{{ __('ui.setup.placeholder_known_issues') }}">{{ old('known_issues', $carProfile->known_issues ?? '') }}</textarea>
                         <p class="field-hint">{{ __('ui.setup.known_issues_hint') }}</p>
                     </div>
 
                     <div>
                         <label>{{ __('ui.dashboard.future_plans') }}</label>
-                        <textarea name="future_plans" placeholder="One plan per line: wheels, service, interior refresh...">{{ old('future_plans', $carProfile->future_plans ?? '') }}</textarea>
+                        <textarea name="future_plans" placeholder="{{ __('ui.setup.placeholder_future_plans') }}">{{ old('future_plans', $carProfile->future_plans ?? '') }}</textarea>
                         <p class="field-hint">{{ __('ui.setup.future_plans_hint') }}</p>
                     </div>
 
                     <div>
                         <label>{{ __('ui.dashboard.restoration_progress') }}</label>
-                        <input type="number" name="restoration_progress" min="0" max="100" value="{{ old('restoration_progress', $carProfile->restoration_progress ?? '') }}" placeholder="0-100">
+                        <input type="number" name="restoration_progress" min="0" max="100" value="{{ old('restoration_progress', $carProfile->restoration_progress ?? '') }}" placeholder="{{ __('ui.setup.placeholder_progress') }}">
                         <p class="field-hint">{{ __('ui.setup.progress_hint') }}</p>
                     </div>
                 </div>
@@ -152,10 +153,10 @@
                         <div class="profile-photo-grid">
                             @foreach ($carProfile->photos as $photo)
                                 <figure class="profile-photo-card">
-                                    <img src="{{ route('car-photos.show', $photo) }}" alt="{{ $carProfile->make }} {{ $carProfile->model }} color reference">
+                                    <img src="{{ route('car-photos.show', $photo) }}" alt="{{ $carProfile->make }} {{ $carProfile->model }} {{ __('ui.gallery.color_reference') }}">
                                     <figcaption>
                                         <span>{{ __('ui.setup.reference') }} {{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
-                                        <strong>{{ $photo->original_name ?: 'Color reference' }}</strong>
+                                        <strong>{{ $photo->original_name ?: __('ui.setup.color_reference_fallback') }}</strong>
                                     </figcaption>
                                     <form action="{{ route('car-photos.destroy', $photo) }}" method="POST">
                                         @csrf

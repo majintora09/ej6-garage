@@ -11,11 +11,11 @@
 @endphp
 
 <details class="language-switcher">
-    <summary aria-label="Choose language">
+    <summary aria-label="{{ __('ui.language.choose') }}">
         <span>{{ strtoupper($activeLocale) }}</span>
     </summary>
 
-    <div class="language-options" aria-label="Language choices">
+    <div class="language-options" aria-label="{{ __('ui.language.choices') }}">
         @foreach ($languageOptions as $locale => $label)
             <a
                 href="{{ route('language.switch', $locale) }}"

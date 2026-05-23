@@ -1,1 +1,1 @@
-<h1>Personal Garage</h1>
+<h1>{{ __('ui.dashboard.personal_garage') }}</h1>
