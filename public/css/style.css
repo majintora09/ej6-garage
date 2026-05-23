@@ -26,6 +26,12 @@
     --shadow: 0 22px 60px rgba(0, 0, 0, 0.34);
     --radius: 8px;
     --radius-sm: 6px;
+    --space-1: 6px;
+    --space-2: 10px;
+    --space-3: 14px;
+    --space-4: 18px;
+    --space-5: 24px;
+    --control-height: 42px;
 }
 
 html {
@@ -210,7 +216,7 @@ nav a.active {
 .container {
     width: min(1450px, 100%);
     margin: 0 auto;
-    padding: 28px 18px 44px;
+    padding: 24px 18px 44px;
 }
 
 .page-content {
@@ -322,15 +328,15 @@ body.page-leaving .page-content {
 .panel,
 .inspection-info,
 .mini-spec-card {
-    padding: 22px;
+    padding: var(--space-4);
 }
 
 .hero-card {
     position: relative;
     overflow: hidden;
     min-height: 230px;
-    margin-bottom: 18px;
-    padding: clamp(24px, 5vw, 48px);
+    margin-bottom: var(--space-4);
+    padding: clamp(24px, 4vw, 42px);
     display: flex;
     align-items: flex-end;
     background:
@@ -398,7 +404,7 @@ body.page-leaving .page-content {
 .parts-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 16px;
+    gap: var(--space-4);
 }
 
 .product-metrics {
@@ -513,8 +519,121 @@ body.page-leaving .page-content {
 .timeline-layout {
     display: grid;
     grid-template-columns: minmax(320px, 0.8fr) minmax(0, 1.2fr);
-    gap: 16px;
+    gap: var(--space-4);
     align-items: start;
+}
+
+.cars-layout {
+    display: grid;
+    grid-template-columns: minmax(320px, 0.86fr) minmax(0, 1.14fr);
+    gap: var(--space-4);
+    align-items: start;
+}
+
+.car-roster {
+    display: grid;
+    gap: var(--space-3);
+}
+
+.car-roster-card {
+    padding: var(--space-4);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: var(--radius);
+    background:
+        linear-gradient(140deg, rgba(var(--theme-rgb), 0.07), transparent 44%),
+        rgba(255, 255, 255, 0.035);
+    transition: border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
+}
+
+.car-roster-card:hover,
+.car-roster-card.active {
+    border-color: rgba(var(--theme-rgb), 0.28);
+    background:
+        linear-gradient(140deg, rgba(var(--theme-rgb), 0.12), rgba(255, 255, 255, 0.035)),
+        rgba(255, 255, 255, 0.04);
+}
+
+.car-roster-head,
+.car-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+}
+
+.car-roster-head {
+    align-items: flex-start;
+}
+
+.car-roster-head span {
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 950;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.car-roster-head h3 {
+    margin-top: 2px;
+    color: var(--green);
+    font-size: 20px;
+}
+
+.car-roster-head p {
+    color: var(--muted);
+}
+
+.car-theme-dots,
+.car-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.car-theme-dots i {
+    width: 18px;
+    height: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    background: var(--dot-color);
+    box-shadow: 0 0 18px color-mix(in srgb, var(--dot-color) 42%, transparent);
+}
+
+.car-actions {
+    align-items: center;
+    margin-top: var(--space-3);
+}
+
+.car-actions form,
+.car-actions details {
+    width: auto;
+}
+
+.car-actions details {
+    flex: 1 1 100%;
+}
+
+.car-actions summary {
+    width: fit-content;
+    min-height: var(--control-height);
+    padding: 9px 14px;
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--line-bright);
+    border-radius: var(--radius-sm);
+    background: rgba(var(--theme-rgb), 0.08);
+    color: var(--green);
+    cursor: pointer;
+    font-weight: 900;
+    list-style: none;
+}
+
+.car-actions summary::-webkit-details-marker {
+    display: none;
+}
+
+.gallery-upload-form {
+    display: grid;
+    gap: var(--space-3);
 }
 
 .build-timeline {
@@ -579,7 +698,7 @@ body.page-leaving .page-content {
 .card,
 .part-card,
 .panel {
-    margin-bottom: 16px;
+    margin-bottom: var(--space-4);
 }
 
 .card:hover,
@@ -690,7 +809,7 @@ input,
 textarea,
 select {
     width: 100%;
-    min-height: 44px;
+    min-height: var(--control-height);
     padding: 11px 12px;
     border: 1px solid rgba(255, 255, 255, 0.09);
     border-radius: var(--radius-sm);
@@ -720,17 +839,17 @@ button {
     align-items: center;
     justify-content: center;
     width: fit-content;
-    min-height: 42px;
-    padding: 10px 14px;
+    min-height: var(--control-height);
+    padding: 9px 14px;
     border: 1px solid rgba(198, 255, 215, 0.42);
     border-radius: var(--radius-sm);
     overflow: hidden;
-    background: linear-gradient(135deg, var(--green), #c7ffda);
+    background: linear-gradient(135deg, var(--theme), color-mix(in srgb, var(--theme) 42%, white));
     color: #06110a;
     cursor: pointer;
     font: inherit;
     font-weight: 900;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease, background 0.18s ease;
 }
 
 button:hover {
@@ -751,9 +870,9 @@ button:active {
 .page-head {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    gap: 18px;
+    gap: var(--space-4);
     align-items: stretch;
-    margin-bottom: 18px;
+    margin-bottom: var(--space-4);
 }
 
 .page-head p {
@@ -783,8 +902,8 @@ button:active {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 14px;
-    margin-bottom: 14px;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
 }
 
 .mods-layout {
@@ -984,7 +1103,7 @@ button:active {
     width: 35%;
     height: 100%;
     border-radius: 999px;
-    background: linear-gradient(90deg, var(--green), var(--purple));
+    background: linear-gradient(90deg, var(--theme), color-mix(in srgb, var(--theme) 55%, white));
     box-shadow: 0 0 18px rgba(var(--theme-rgb), 0.35);
 }
 
@@ -1269,7 +1388,8 @@ button:active {
     white-space: nowrap;
 }
 
-.profile-photo-card form {
+.profile-photo-card form,
+.car-photo-card form {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -1277,7 +1397,8 @@ button:active {
     padding: 0;
 }
 
-.profile-photo-card button {
+.profile-photo-card button,
+.car-photo-card form button {
     min-height: 32px;
     padding: 7px 9px;
     border-color: rgba(255, 91, 107, 0.52);
@@ -1285,6 +1406,14 @@ button:active {
     color: #ffd5d9;
     font-size: 11px;
     box-shadow: none;
+}
+
+.car-photo-card figcaption small {
+    color: var(--muted);
+    font-size: 11px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .color-reference-panel {
@@ -1579,7 +1708,8 @@ button:active {
     .garage-os-hero,
     .dashboard-command-grid,
     .dashboard-preview-grid,
-    .timeline-layout {
+    .timeline-layout,
+    .cars-layout {
         grid-template-columns: 1fr;
     }
 
@@ -1652,7 +1782,7 @@ button:active {
     }
 
     .container {
-        padding: 18px 12px 34px;
+        padding: 16px 12px 34px;
     }
 
     .hero-card {
@@ -1680,10 +1810,18 @@ button:active {
 
     .timeline-row,
     .signal-row,
-    .build-timeline-entry {
+    .build-timeline-entry,
+    .car-roster-head,
+    .car-actions {
         align-items: flex-start;
         grid-template-columns: 1fr;
         flex-direction: column;
+    }
+
+    .car-actions form,
+    .car-actions button,
+    .car-actions summary {
+        width: 100%;
     }
 
     .dashboard-photo-strip {
@@ -1695,7 +1833,7 @@ button:active {
     .panel,
     .inspection-info,
     .mini-spec-card {
-        padding: 18px;
+        padding: 16px;
     }
 
     .panel-title,

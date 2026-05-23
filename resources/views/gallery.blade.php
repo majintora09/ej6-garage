@@ -6,6 +6,7 @@
         $carName = trim(($car->year ? $car->year.' ' : '').$car->make.' '.$car->model);
         $priorityAlbum = $car->chassis ?: 'Profile';
         $photos = $car->photos ?? collect();
+        $galleryErrors = $errors ?? new \Illuminate\Support\ViewErrorBag;
     @endphp
 
     <div class="page-head">
@@ -21,6 +22,12 @@
             <small>{{ __('ui.gallery.sorted') }}</small>
         </div>
     </div>
+
+    @if (session('status'))
+        <div class="alert-card success-card">
+            <strong>{{ session('status') }}</strong>
+        </div>
+    @endif
 
     <div class="gallery-stats">
         <div class="card metric-card">
@@ -49,7 +56,7 @@
                 <h2>{{ $car->color_name ?: __('ui.common.unknown_color') }} {{ __('ui.gallery.checkpoint') }}</h2>
             </div>
 
-            <div class="color-chip" style="--chip-color: {{ $car->theme_color ?: '#76ff9f' }}">
+            <div class="color-chip" style="--chip-color: {{ $car->theme_color && strtolower($car->theme_color) !== '#76ff9f' ? $car->theme_color : '#8b5cf6' }}">
                 <span></span>
                 <strong>{{ $car->color_code ?: __('ui.common.theme') }}</strong>
             </div>
@@ -69,9 +76,17 @@
                     <figure class="car-photo-card">
                         <img src="{{ route('car-photos.show', $photo) }}" alt="{{ $carName }} {{ __('ui.gallery.color_reference') }}">
                         <figcaption>
-                            <span>{{ __('ui.gallery.paint_ref') }} {{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
-                            <strong>{{ $photo->original_name ?: __('ui.setup.color_reference_fallback') }}</strong>
+                            <span>{{ __("ui.gallery.categories.".($photo->category ?: 'exterior')) }} • {{ $photo->visibility ?: 'private' }}</span>
+                            <strong>{{ $photo->caption ?: ($photo->original_name ?: __('ui.setup.color_reference_fallback')) }}</strong>
+                            @if ($photo->notes)
+                                <small>{{ $photo->notes }}</small>
+                            @endif
                         </figcaption>
+                        <form action="{{ route('car-photos.destroy', $photo) }}" method="POST" onsubmit="return confirm('{{ __('ui.gallery.confirm_delete') }}');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="danger-btn">{{ __('ui.common.delete') }}</button>
+                        </form>
                     </figure>
                 @endforeach
             </div>
@@ -84,6 +99,60 @@
                 </div>
             </div>
         @endif
+    </section>
+
+    <section class="panel">
+        <div class="panel-title">
+            <div>
+                <p class="eyebrow">{{ __('ui.gallery.upload_queue') }}</p>
+                <h2>{{ __('ui.gallery.upload_title') }}</h2>
+            </div>
+        </div>
+
+        <form action="{{ route('car-photos.store') }}" method="POST" enctype="multipart/form-data" class="gallery-upload-form">
+            @csrf
+
+            <label class="photo-dropzone">
+                <input type="file" name="photos[]" accept="image/*" multiple required>
+                <span class="dropzone-icon">+</span>
+                <strong>{{ __('ui.gallery.upload_images') }}</strong>
+                <small>{{ __('ui.gallery.upload_hint') }}</small>
+                <x-input-error :messages="$galleryErrors->get('photos')" class="auth-error" />
+                <x-input-error :messages="$galleryErrors->get('photos.*')" class="auth-error" />
+            </label>
+
+            <div class="form-grid">
+                <div>
+                    <label>{{ __('ui.gallery.category') }}</label>
+                    <select name="category" required>
+                        @foreach (['exterior', 'interior', 'rust', 'maintenance', 'mods', 'receipts', 'inspiration'] as $category)
+                            <option value="{{ $category }}">{{ __("ui.gallery.categories.{$category}") }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label>{{ __('ui.cars.visibility') }}</label>
+                    <select name="visibility">
+                        @foreach (['private', 'unlisted', 'public'] as $visibility)
+                            <option value="{{ $visibility }}">{{ __("ui.cars.visibility_{$visibility}") }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label>{{ __('ui.gallery.caption') }}</label>
+                    <input type="text" name="caption" placeholder="{{ __('ui.gallery.caption_placeholder') }}">
+                </div>
+
+                <div>
+                    <label>{{ __('ui.gallery.notes') }}</label>
+                    <input type="text" name="notes" placeholder="{{ __('ui.gallery.notes_placeholder') }}">
+                </div>
+            </div>
+
+            <button type="submit">{{ __('ui.gallery.upload_button') }}</button>
+        </form>
     </section>
 
     <section class="panel">

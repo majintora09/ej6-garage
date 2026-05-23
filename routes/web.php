@@ -9,6 +9,7 @@ use App\Http\Controllers\CarPhotoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\BuildTimelineController;
+use App\Http\Controllers\CarProfileController;
 use App\Models\Mod;
 
 Route::get('/language/{locale}', function (string $locale) {
@@ -28,6 +29,11 @@ Route::get('/dashboard', function () {
 Route::middleware('auth')->group(function () {
     Route::get('/garage/setup', [GarageSetupController::class, 'create'])->name('garage.setup');
     Route::post('/garage/setup', [GarageSetupController::class, 'store'])->name('garage.setup.store');
+    Route::get('/cars', [CarProfileController::class, 'index'])->name('cars.index');
+    Route::post('/cars', [CarProfileController::class, 'store'])->name('cars.store');
+    Route::put('/cars/{car}', [CarProfileController::class, 'update'])->name('cars.update');
+    Route::post('/cars/{car}/select', [CarProfileController::class, 'select'])->name('cars.select');
+    Route::delete('/cars/{car}', [CarProfileController::class, 'destroy'])->name('cars.destroy');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -37,6 +43,7 @@ Route::middleware(['auth', 'garage.profile'])->group(function () {
     Route::get('/garage/details', [GarageSetupController::class, 'edit'])->name('garage.profile.edit');
     Route::put('/garage/details', [GarageSetupController::class, 'update'])->name('garage.profile.update');
     Route::get('/car-photos/{carPhoto}', [CarPhotoController::class, 'show'])->name('car-photos.show');
+    Route::post('/car-photos', [CarPhotoController::class, 'store'])->name('car-photos.store');
     Route::delete('/car-photos/{carPhoto}', [CarPhotoController::class, 'destroy'])->name('car-photos.destroy');
 
     Route::get('/maintenance', [MaintenanceController::class, 'index']);
@@ -64,11 +71,15 @@ Route::middleware(['auth', 'garage.profile'])->group(function () {
     });
 
     Route::get('/calculator', function () {
+        $carProfile = auth()->user()->activeCar();
         $mods = collect();
         $dbError = null;
 
         try {
-            $mods = Mod::latest()->get();
+            $mods = Mod::where('user_id', auth()->id())
+                ->where('car_profile_id', $carProfile->id)
+                ->latest()
+                ->get();
         } catch (\Throwable $e) {
             $dbError = $e->getMessage();
         }

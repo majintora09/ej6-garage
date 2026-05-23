@@ -29,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
 
             if (auth()->check()) {
                 try {
-                    $currentCarProfile = auth()->user()->carProfile;
+                    $currentCarProfile = auth()->user()->activeCar();
                 } catch (\Throwable $e) {
                     $currentCarProfile = null;
                 }

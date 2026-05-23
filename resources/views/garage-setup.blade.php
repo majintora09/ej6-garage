@@ -99,8 +99,22 @@
 
                     <div>
                         <label>{{ __('ui.setup.theme_color') }}</label>
-                        <input type="color" name="theme_color" value="{{ old('theme_color', $carProfile->theme_color ?? '#76ff9f') }}">
+                        <input type="color" name="theme_color" value="{{ old('theme_color', ($carProfile->theme_color ?? null) && strtolower($carProfile->theme_color) !== '#76ff9f' ? $carProfile->theme_color : '#8b5cf6') }}">
                         <p class="field-hint">{{ __('ui.setup.theme_hint') }}</p>
+                    </div>
+
+                    <div>
+                        <label>{{ __('ui.cars.secondary_theme') }}</label>
+                        <input type="color" name="secondary_theme_color" value="{{ old('secondary_theme_color', $carProfile->secondary_theme_color ?? '#38bdf8') }}">
+                    </div>
+
+                    <div>
+                        <label>{{ __('ui.cars.visibility') }}</label>
+                        <select name="visibility">
+                            @foreach (['private', 'unlisted', 'public'] as $visibility)
+                                <option value="{{ $visibility }}" @selected(old('visibility', $carProfile->visibility ?? 'private') === $visibility)>{{ __("ui.cars.visibility_{$visibility}") }}</option>
+                            @endforeach
+                        </select>
                     </div>
                 </div>
 

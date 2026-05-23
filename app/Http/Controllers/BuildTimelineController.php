@@ -13,7 +13,7 @@ class BuildTimelineController extends Controller
     public function index(): View
     {
         $user = auth()->user();
-        $carProfile = $user->carProfile;
+        $carProfile = $user->activeCar();
 
         $entries = BuildTimelineEntry::where('user_id', $user->id)
             ->where('car_profile_id', $carProfile->id)
@@ -27,7 +27,7 @@ class BuildTimelineController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $user = auth()->user();
-        $carProfile = $user->carProfile;
+        $carProfile = $user->activeCar();
 
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
@@ -60,7 +60,7 @@ class BuildTimelineController extends Controller
     public function destroy(BuildTimelineEntry $timelineEntry): RedirectResponse
     {
         abort_unless($timelineEntry->user_id === auth()->id(), 403);
-        abort_unless($timelineEntry->car_profile_id === auth()->user()->carProfile->id, 403);
+        abort_unless($timelineEntry->car_profile_id === auth()->user()->activeCar()->id, 403);
 
         if ($timelineEntry->image_path) {
             Storage::disk('public')->delete($timelineEntry->image_path);

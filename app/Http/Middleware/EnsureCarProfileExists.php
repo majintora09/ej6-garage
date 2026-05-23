@@ -10,7 +10,7 @@ class EnsureCarProfileExists
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user() && ! $request->user()->carProfile()->exists()) {
+        if ($request->user() && ! $request->user()->carProfiles()->exists()) {
             return redirect()->route('garage.setup');
         }
 

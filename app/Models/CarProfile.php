@@ -18,9 +18,12 @@ class CarProfile extends Model
         'color_name',
         'color_code',
         'theme_color',
+        'secondary_theme_color',
         'interior',
         'body_type',
         'model_path',
+        'visibility',
+        'slug',
         'build_vibe',
         'known_issues',
         'future_plans',
@@ -43,6 +46,21 @@ class CarProfile extends Model
     public function photos(): HasMany
     {
         return $this->hasMany(CarPhoto::class)->latest();
+    }
+
+    public function maintenances(): HasMany
+    {
+        return $this->hasMany(Maintenance::class)->latest();
+    }
+
+    public function mods(): HasMany
+    {
+        return $this->hasMany(Mod::class)->latest();
+    }
+
+    public function inspectionPoints(): HasMany
+    {
+        return $this->hasMany(InspectionPoint::class)->latest();
     }
 
     public function buildTimelineEntries(): HasMany

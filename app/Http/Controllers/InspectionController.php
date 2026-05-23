@@ -10,7 +10,7 @@ class InspectionController extends Controller
 {
     public function index()
     {
-        $carProfile = auth()->user()->carProfile;
+        $carProfile = auth()->user()->activeCar();
 
         if (! $carProfile) {
             return redirect()->route('garage.setup');
@@ -20,7 +20,9 @@ class InspectionController extends Controller
             ->latest()
             ->get();
 
-        $maintenances = Maintenance::latest()
+        $maintenances = Maintenance::where('user_id', auth()->id())
+            ->where('car_profile_id', $carProfile->id)
+            ->latest()
             ->get()
             ->groupBy('category');
 
@@ -45,7 +47,7 @@ class InspectionController extends Controller
 
         $point = InspectionPoint::create([
             ...$validated,
-            'car_profile_id' => auth()->user()->carProfile->id,
+            'car_profile_id' => auth()->user()->activeCar()->id,
         ]);
 
         return response()->json($point);
@@ -53,7 +55,7 @@ class InspectionController extends Controller
 
     public function destroy(InspectionPoint $inspectionPoint)
     {
-        abort_unless($inspectionPoint->car_profile_id === auth()->user()->carProfile->id, 403);
+        abort_unless($inspectionPoint->car_profile_id === auth()->user()->activeCar()->id, 403);
 
         $inspectionPoint->delete();
 

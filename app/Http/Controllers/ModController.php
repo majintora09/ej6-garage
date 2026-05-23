@@ -10,7 +10,7 @@ class ModController extends Controller
 {
     public function index()
     {
-        $carProfile = auth()->user()->carProfile;
+        $carProfile = auth()->user()->activeCar();
 
         if (! $carProfile) {
             return redirect()->route('garage.setup');
@@ -20,7 +20,10 @@ class ModController extends Controller
         $dbError = null;
 
         try {
-            $mods = Mod::latest()->get();
+            $mods = Mod::where('user_id', auth()->id())
+                ->where('car_profile_id', $carProfile->id)
+                ->latest()
+                ->get();
         } catch (Throwable $e) {
             $dbError = $e->getMessage();
         }
@@ -31,14 +34,20 @@ class ModController extends Controller
     public function store(Request $request)
     {
         try {
+            $validated = $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'category' => ['nullable', 'string', 'max:255'],
+                'price' => ['nullable', 'numeric', 'min:0'],
+                'priority' => ['nullable', 'string', 'max:255'],
+                'status' => ['nullable', 'string', 'max:255'],
+                'link' => ['nullable', 'string', 'max:255'],
+                'notes' => ['nullable', 'string'],
+            ]);
+
             Mod::create([
-                'name' => $request->name,
-                'category' => $request->category,
-                'price' => $request->price,
-                'priority' => $request->priority,
-                'status' => $request->status,
-                'link' => $request->link,
-                'notes' => $request->notes,
+                ...$validated,
+                'user_id' => auth()->id(),
+                'car_profile_id' => auth()->user()->activeCar()->id,
             ]);
         } catch (Throwable $e) {
             return redirect('/mods')->with('error', $e->getMessage());
@@ -50,6 +59,8 @@ class ModController extends Controller
     public function destroy(Mod $mod)
     {
         try {
+            abort_unless($mod->user_id === auth()->id(), 403);
+            abort_unless($mod->car_profile_id === auth()->user()->activeCar()->id, 403);
             $mod->delete();
         } catch (Throwable $e) {
             return redirect('/mods')->with('error', $e->getMessage());

@@ -21,15 +21,19 @@
         }
     }
 
-    $themeColor = data_get($activeCarProfile, 'theme_color') ?: '#76ff9f';
-    $themeColor = preg_match('/^#[0-9A-Fa-f]{6}$/', $themeColor) ? $themeColor : '#76ff9f';
+    $defaultGarageTheme = '#8b5cf6';
+    $themeColor = data_get($activeCarProfile, 'theme_color') ?: $defaultGarageTheme;
+    $themeColor = strtolower($themeColor) === '#76ff9f' ? $defaultGarageTheme : $themeColor;
+    $themeColor = preg_match('/^#[0-9A-Fa-f]{6}$/', $themeColor) ? $themeColor : $defaultGarageTheme;
+    $secondaryThemeColor = data_get($activeCarProfile, 'secondary_theme_color') ?: '#38bdf8';
+    $secondaryThemeColor = preg_match('/^#[0-9A-Fa-f]{6}$/', $secondaryThemeColor) ? $secondaryThemeColor : '#38bdf8';
     [$themeRed, $themeGreen, $themeBlue] = sscanf($themeColor, '#%02x%02x%02x');
     $profileColorName = data_get($activeCarProfile, 'color_name') ?: __('ui.common.unknown_color');
     $profileColorCode = data_get($activeCarProfile, 'color_code') ?: __('ui.common.no_color_code');
     $profileChassis = data_get($activeCarProfile, 'chassis') ?: 'GARAGE';
 @endphp
 <body
-    style="--theme: {{ $themeColor }}; --theme-rgb: {{ $themeRed }}, {{ $themeGreen }}, {{ $themeBlue }};"
+    style="--theme: {{ $themeColor }}; --theme-rgb: {{ $themeRed }}, {{ $themeGreen }}, {{ $themeBlue }}; --secondary-theme: {{ $secondaryThemeColor }};"
 >
 
 <header class="site-header">
@@ -57,6 +61,7 @@
 
         <nav aria-label="{{ __('ui.nav.primary') }}">
             <a href="/" class="{{ request()->is('/') ? 'active' : '' }}">{{ __('ui.nav.dashboard') }}</a>
+            <a href="/cars" class="{{ request()->is('cars') ? 'active' : '' }}">{{ __('ui.nav.manage_cars') }}</a>
             <a href="/garage/details" class="{{ request()->is('garage/details') || request()->is('garage/setup') ? 'active' : '' }}">{{ __('ui.nav.garage_details') }}</a>
             <a href="/maintenance" class="{{ request()->is('maintenance') ? 'active' : '' }}">{{ __('ui.nav.maintenance') }}</a>
             <a href="/mods" class="{{ request()->is('mods') ? 'active' : '' }}">{{ __('ui.nav.mods') }}</a>

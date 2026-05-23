@@ -15,14 +15,14 @@ class DashboardController extends Controller
     public function __invoke(): View|RedirectResponse
     {
         $user = auth()->user();
-        $carProfile = $user->carProfile;
+        $carProfile = $user->activeCar();
 
         if (! $carProfile) {
             return redirect()->route('garage.setup');
         }
 
-        $mods = Mod::latest()->get();
-        $maintenances = Maintenance::latest()->get();
+        $mods = Mod::where('user_id', $user->id)->where('car_profile_id', $carProfile->id)->latest()->get();
+        $maintenances = Maintenance::where('user_id', $user->id)->where('car_profile_id', $carProfile->id)->latest()->get();
         $inspectionPoints = InspectionPoint::where('car_profile_id', $carProfile->id)->latest()->get();
         $timelineEntries = BuildTimelineEntry::where('user_id', $user->id)
             ->where('car_profile_id', $carProfile->id)

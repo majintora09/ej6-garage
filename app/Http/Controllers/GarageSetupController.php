@@ -6,13 +6,14 @@ use App\Models\CarProfile;
 use App\Services\DominantColorExtractor;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class GarageSetupController extends Controller
 {
     public function create(): View|RedirectResponse
     {
-        if (auth()->user()->carProfile()->exists()) {
+        if (auth()->user()->carProfiles()->exists()) {
             return redirect()->route('garage.profile.edit');
         }
 
@@ -33,6 +34,7 @@ class GarageSetupController extends Controller
             'color_name' => ['nullable', 'string', 'max:255'],
             'color_code' => ['nullable', 'string', 'max:255'],
             'theme_color' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'secondary_theme_color' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'interior' => ['nullable', 'string', 'max:255'],
             'body_type' => ['required', 'in:coupe,hatchback,sedan,wagon,suv,pickup,motorcycle,other'],
             'model_path' => ['nullable', 'string', 'max:255', 'regex:/^\/(models|storage)\/.+\.(glb|gltf|stl)$/i'],
@@ -40,6 +42,7 @@ class GarageSetupController extends Controller
             'known_issues' => ['nullable', 'string', 'max:4000'],
             'future_plans' => ['nullable', 'string', 'max:4000'],
             'restoration_progress' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'visibility' => ['nullable', 'in:private,unlisted,public'],
             'car_photos' => ['nullable', 'array', 'max:6'],
             'car_photos.*' => ['image', 'max:8192'],
         ]);
@@ -48,10 +51,15 @@ class GarageSetupController extends Controller
 
         $themeColor = $this->resolveThemeColor($validated['theme_color'] ?? null, $request);
 
-        $carProfile = auth()->user()->carProfile()->create([
+        $carProfile = auth()->user()->carProfiles()->create([
             ...$validated,
             'theme_color' => $themeColor,
+            'secondary_theme_color' => $validated['secondary_theme_color'] ?? null,
+            'visibility' => $validated['visibility'] ?? 'private',
+            'slug' => $this->uniqueSlug($validated['year'] ?? null, $validated['make'], $validated['model']),
         ]);
+
+        auth()->user()->forceFill(['active_car_profile_id' => $carProfile->id])->save();
 
         $this->storeUploadedPhotos($request, $carProfile);
 
@@ -61,7 +69,7 @@ class GarageSetupController extends Controller
     public function edit(): View
     {
         return view('garage-setup', [
-            'carProfile' => auth()->user()->carProfile()->with('photos')->first(),
+            'carProfile' => auth()->user()->activeCar()?->load('photos'),
             'mode' => 'edit',
         ]);
     }
@@ -77,6 +85,7 @@ class GarageSetupController extends Controller
             'color_name' => ['nullable', 'string', 'max:255'],
             'color_code' => ['nullable', 'string', 'max:255'],
             'theme_color' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'secondary_theme_color' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'interior' => ['nullable', 'string', 'max:255'],
             'body_type' => ['required', 'in:coupe,hatchback,sedan,wagon,suv,pickup,motorcycle,other'],
             'model_path' => ['nullable', 'string', 'max:255', 'regex:/^\/(models|storage)\/.+\.(glb|gltf|stl)$/i'],
@@ -84,19 +93,23 @@ class GarageSetupController extends Controller
             'known_issues' => ['nullable', 'string', 'max:4000'],
             'future_plans' => ['nullable', 'string', 'max:4000'],
             'restoration_progress' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'visibility' => ['nullable', 'in:private,unlisted,public'],
             'car_photos' => ['nullable', 'array', 'max:6'],
             'car_photos.*' => ['image', 'max:8192'],
         ]);
 
         unset($validated['car_photos']);
 
-        $carProfile = auth()->user()->carProfile;
+        $carProfile = auth()->user()->activeCar();
 
         $themeColor = $this->resolveThemeColor($validated['theme_color'] ?? null, $request);
 
         $carProfile->update([
             ...$validated,
             'theme_color' => $themeColor,
+            'secondary_theme_color' => $validated['secondary_theme_color'] ?? null,
+            'visibility' => $validated['visibility'] ?? 'private',
+            'slug' => $carProfile->slug ?: $this->uniqueSlug($validated['year'] ?? null, $validated['make'], $validated['model'], $carProfile->id),
         ]);
 
         $this->storeUploadedPhotos($request, $carProfile);
@@ -126,9 +139,25 @@ class GarageSetupController extends Controller
     private function resolveThemeColor(?string $selectedColor, Request $request): string
     {
         if (! $selectedColor || strtolower($selectedColor) === '#76ff9f') {
-            return $this->extractThemeColor($request) ?: ($selectedColor ?: '#76ff9f');
+            return $this->extractThemeColor($request) ?: '#8b5cf6';
         }
 
         return $selectedColor;
+    }
+
+    private function uniqueSlug(?int $year, string $make, string $model, ?int $ignoreId = null): string
+    {
+        $base = Str::slug(trim(($year ? $year.' ' : '').$make.' '.$model)) ?: 'garage-car';
+        $slug = $base;
+        $suffix = 2;
+
+        while (CarProfile::where('user_id', auth()->id())
+            ->where('slug', $slug)
+            ->when($ignoreId, fn ($query) => $query->where('id', '!=', $ignoreId))
+            ->exists()) {
+            $slug = $base.'-'.$suffix++;
+        }
+
+        return $slug;
     }
 }
