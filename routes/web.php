@@ -10,6 +10,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\BuildTimelineController;
 use App\Http\Controllers\CarProfileController;
+use App\Http\Controllers\CommunityController;
+use App\Http\Controllers\PublicProfileController;
 use App\Models\Mod;
 
 Route::get('/language/{locale}', function (string $locale) {
@@ -26,6 +28,9 @@ Route::get('/dashboard', function () {
     return redirect('/');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/u/{slug}', [PublicProfileController::class, 'profile'])->name('public.profile');
+Route::get('/u/{userSlug}/garage/{carSlug}', [PublicProfileController::class, 'garage'])->name('public.garage');
+
 Route::middleware('auth')->group(function () {
     Route::get('/garage/setup', [GarageSetupController::class, 'create'])->name('garage.setup');
     Route::post('/garage/setup', [GarageSetupController::class, 'store'])->name('garage.setup.store');
@@ -40,6 +45,12 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth', 'garage.profile'])->group(function () {
+    Route::get('/community', [CommunityController::class, 'index'])->name('community.index');
+    Route::post('/community', [CommunityController::class, 'store'])->name('community.store');
+    Route::delete('/community/{post}', [CommunityController::class, 'destroy'])->name('community.destroy');
+    Route::post('/community/{post}/like', [CommunityController::class, 'toggleLike'])->name('community.like');
+    Route::post('/community/{post}/comments', [CommunityController::class, 'storeComment'])->name('community.comments.store');
+
     Route::get('/garage/details', [GarageSetupController::class, 'edit'])->name('garage.profile.edit');
     Route::put('/garage/details', [GarageSetupController::class, 'update'])->name('garage.profile.update');
     Route::get('/car-photos/{carPhoto}', [CarPhotoController::class, 'show'])->name('car-photos.show');

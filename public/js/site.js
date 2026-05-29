@@ -24,4 +24,24 @@ document.addEventListener("DOMContentLoaded", () => {
             }, 180);
         });
     });
+
+    document.querySelectorAll("[data-share-url]").forEach(button => {
+        button.addEventListener("click", async () => {
+            const url = button.getAttribute("data-share-url");
+
+            if (!url) {
+                return;
+            }
+
+            const shareUrl = new URL(url, window.location.origin).toString();
+
+            if (navigator.share) {
+                await navigator.share({ url: shareUrl });
+                return;
+            }
+
+            await navigator.clipboard.writeText(shareUrl);
+            button.textContent = button.getAttribute("data-copied-label") || button.textContent;
+        });
+    });
 });

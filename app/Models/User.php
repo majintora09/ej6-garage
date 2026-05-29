@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -23,6 +24,12 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'display_name',
+        'profile_slug',
+        'bio',
+        'location',
+        'avatar_path',
+        'banner_path',
         'email',
         'password',
         'active_car_profile_id',
@@ -80,5 +87,45 @@ class User extends Authenticatable
     public function buildTimelineEntries(): HasMany
     {
         return $this->hasMany(BuildTimelineEntry::class);
+    }
+
+    public function communityPosts(): HasMany
+    {
+        return $this->hasMany(CommunityPost::class)->latest();
+    }
+
+    public function communityPostLikes(): HasMany
+    {
+        return $this->hasMany(CommunityPostLike::class);
+    }
+
+    public function communityPostComments(): HasMany
+    {
+        return $this->hasMany(CommunityPostComment::class);
+    }
+
+    public function displayHandle(): string
+    {
+        return $this->display_name ?: $this->name;
+    }
+
+    public function ensureProfileSlug(): string
+    {
+        if ($this->profile_slug) {
+            return $this->profile_slug;
+        }
+
+        $base = Str::slug($this->displayHandle()) ?: 'driver-'.$this->id;
+        $slug = $base;
+        $suffix = 2;
+
+        while (self::where('profile_slug', $slug)->where('id', '!=', $this->id)->exists()) {
+            $slug = $base.'-'.$suffix;
+            $suffix++;
+        }
+
+        $this->forceFill(['profile_slug' => $slug])->save();
+
+        return $slug;
     }
 }

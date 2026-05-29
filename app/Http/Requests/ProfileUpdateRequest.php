@@ -26,6 +26,11 @@ class ProfileUpdateRequest extends FormRequest
                 'max:255',
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
+            'display_name' => ['nullable', 'string', 'max:80'],
+            'bio' => ['nullable', 'string', 'max:800'],
+            'location' => ['nullable', 'string', 'max:120'],
+            'avatar' => ['nullable', 'image', 'max:3072'],
+            'banner' => ['nullable', 'image', 'max:4096'],
         ];
     }
 }

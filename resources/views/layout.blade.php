@@ -31,6 +31,8 @@
     $profileColorName = data_get($activeCarProfile, 'color_name') ?: __('ui.common.unknown_color');
     $profileColorCode = data_get($activeCarProfile, 'color_code') ?: __('ui.common.no_color_code');
     $profileChassis = data_get($activeCarProfile, 'chassis') ?: 'GARAGE';
+    $authUser = auth()->user();
+    $authAvatar = $authUser?->avatar_path ? \Illuminate\Support\Facades\Storage::url($authUser->avatar_path) : null;
 @endphp
 <body
     style="--theme: {{ $themeColor }}; --theme-rgb: {{ $themeRed }}, {{ $themeGreen }}, {{ $themeBlue }}; --secondary-theme: {{ $secondaryThemeColor }};"
@@ -48,19 +50,39 @@
             </a>
         </div>
 
-        <div class="status-pill">
-            {{ __('ui.nav.system_online') }}
-        </div>
-
         @auth
-            <form class="logout-form" action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="logout-button">{{ __('ui.nav.logout') }}</button>
-            </form>
+            <div class="profile-menu-wrap">
+                <div class="status-pill">{{ __('ui.nav.system_online') }}</div>
+                <details class="profile-menu">
+                    <summary aria-label="{{ __('ui.profile.menu') }}">
+                        <span class="profile-avatar">
+                            @if ($authAvatar)
+                                <img src="{{ $authAvatar }}" alt="{{ $authUser->displayHandle() }}" loading="lazy">
+                            @else
+                                <span>{{ strtoupper(substr($authUser->displayHandle(), 0, 2)) }}</span>
+                            @endif
+                        </span>
+                        <span class="profile-menu-name">{{ $authUser->displayHandle() }}</span>
+                    </summary>
+                    <div class="profile-dropdown">
+                        <a href="{{ route('profile.edit') }}">{{ __('ui.profile.my_profile') }}</a>
+                        <a href="{{ route('cars.index') }}">{{ __('ui.nav.manage_cars') }}</a>
+                        <a href="{{ route('profile.edit') }}">{{ __('ui.profile.settings') }}</a>
+                        @if ($authUser->profile_slug)
+                            <a href="{{ route('public.profile', $authUser->profile_slug) }}">{{ __('ui.profile.view_public') }}</a>
+                        @endif
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button type="submit">{{ __('ui.nav.logout') }}</button>
+                        </form>
+                    </div>
+                </details>
+            </div>
         @endauth
 
         <nav aria-label="{{ __('ui.nav.primary') }}">
             <a href="/" class="{{ request()->is('/') ? 'active' : '' }}">{{ __('ui.nav.dashboard') }}</a>
+            <a href="/community" class="{{ request()->is('community') ? 'active' : '' }}">{{ __('ui.nav.community') }}</a>
             <a href="/cars" class="{{ request()->is('cars') ? 'active' : '' }}">{{ __('ui.nav.manage_cars') }}</a>
             <a href="/garage/details" class="{{ request()->is('garage/details') || request()->is('garage/setup') ? 'active' : '' }}">{{ __('ui.nav.garage_details') }}</a>
             <a href="/maintenance" class="{{ request()->is('maintenance') ? 'active' : '' }}">{{ __('ui.nav.maintenance') }}</a>

@@ -131,6 +131,10 @@
                                 </form>
                             @endif
 
+                            @if (auth()->user()->profile_slug && $car->slug && in_array($car->visibility, ['public', 'unlisted'], true))
+                                <a class="ghost-button" href="{{ route('public.garage', [auth()->user()->profile_slug, $car->slug]) }}">{{ __('ui.public.view_garage') }}</a>
+                            @endif
+
                             <details>
                                 <summary>{{ __('ui.cars.edit') }}</summary>
                                 <form action="{{ route('cars.update', $car) }}" method="POST" class="setup-form">
