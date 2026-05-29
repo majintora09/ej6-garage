@@ -14,9 +14,8 @@
         : null;
     $likedByUser = (bool) ($post->liked_by_user ?? false);
     $postBody = (string) $post->body;
-    $previewBody = \Illuminate\Support\Str::limit($postBody, 260);
-    $bodyToRender = $isPreview ? $previewBody : $postBody;
-    $longPost = ! $isPreview && \Illuminate\Support\Str::length($postBody) > 700;
+    $lineCount = substr_count($postBody, "\n") + 1;
+    $longPost = $isPreview && (\Illuminate\Support\Str::length($postBody) > 520 || $lineCount > 8);
     $imagePosition = in_array($post->image_position, ['center', 'top', 'bottom', 'left', 'right'], true) ? $post->image_position : 'center';
 @endphp
 
@@ -72,7 +71,7 @@
             </h2>
             @if ($postBody !== '')
                 <div class="post-copy {{ $longPost ? 'is-collapsed' : '' }}" data-expandable-post>
-                    {!! nl2br(e($bodyToRender)) !!}
+                    {!! nl2br(e($postBody)) !!}
                 </div>
                 @if ($longPost)
                     <button type="button" class="read-more-button" data-expand-button data-more-label="{{ __('ui.community.read_more') }}" data-less-label="{{ __('ui.community.show_less') }}">{{ __('ui.community.read_more') }}</button>
