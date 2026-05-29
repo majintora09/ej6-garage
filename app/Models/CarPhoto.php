@@ -15,6 +15,7 @@ class CarPhoto extends Model
         'caption',
         'notes',
         'visibility',
+        'image_position',
     ];
 
     public function carProfile(): BelongsTo

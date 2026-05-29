@@ -47,8 +47,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 button.textContent = button.getAttribute("data-copied-label") || button.textContent;
             } catch (error) {
-                window.prompt("Copy link", shareUrl);
+                window.prompt(button.getAttribute("data-copy-prompt-label") || button.getAttribute("data-copied-label") || shareUrl, shareUrl);
             }
+        });
+    });
+
+    document.querySelectorAll("[data-image-preview-input]").forEach(input => {
+        const previewId = input.getAttribute("data-preview-target");
+        const preview = previewId ? document.getElementById(previewId) : null;
+        const image = preview?.querySelector("img");
+
+        if (!preview || !image) {
+            return;
+        }
+
+        const updatePosition = () => {
+            const selector = document.querySelector(`[data-image-position-select][data-preview-target="${previewId}"]`);
+            image.style.objectPosition = selector?.value || "center";
+        };
+
+        input.addEventListener("change", () => {
+            const file = input.files?.[0];
+
+            if (!file) {
+                preview.hidden = true;
+                image.removeAttribute("src");
+                return;
+            }
+
+            image.src = URL.createObjectURL(file);
+            updatePosition();
+            preview.hidden = false;
+        });
+
+        document.querySelectorAll(`[data-image-position-select][data-preview-target="${previewId}"]`).forEach(selector => {
+            selector.addEventListener("change", updatePosition);
         });
     });
 

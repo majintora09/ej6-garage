@@ -44,7 +44,7 @@
             <div class="hero-action-row">
                 @if ($publicGarageUrl)
                     <a class="ghost-button" href="{{ $publicGarageUrl }}">{{ __('ui.public.view_my_garage') }}</a>
-                    <button type="button" data-share-url="{{ $publicGarageUrl }}" data-copied-label="{{ __('ui.public.copied') }}">{{ __('ui.public.copy_public_link') }}</button>
+                    <button type="button" data-share-url="{{ $publicGarageUrl }}" data-copied-label="{{ __('ui.public.copied') }}" data-copy-prompt-label="{{ __('ui.public.copy_prompt') }}">{{ __('ui.public.copy_public_link') }}</button>
                 @else
                     <a class="ghost-button" href="{{ route('cars.index') }}">{{ __('ui.public.make_public_to_share') }}</a>
                 @endif
@@ -307,7 +307,7 @@
                 <div class="dashboard-photo-strip">
                     @foreach ($recentPhotos as $photo)
                         @if (\Illuminate\Support\Facades\Storage::disk('public')->exists($photo->path))
-                            <img src="{{ route('media.show', ['path' => $photo->path]) }}" alt="{{ $make }} {{ $model }} {{ __('ui.gallery.color_reference') }}" loading="lazy">
+                            <img src="{{ route('media.show', ['path' => $photo->path]) }}" alt="{{ $make }} {{ $model }} {{ __('ui.gallery.color_reference') }}" loading="lazy" style="object-position: {{ in_array($photo->image_position, ['center', 'top', 'bottom', 'left', 'right'], true) ? $photo->image_position : 'center' }};">
                         @else
                             <div class="missing-media">{{ __('ui.common.media_missing') }}</div>
                         @endif

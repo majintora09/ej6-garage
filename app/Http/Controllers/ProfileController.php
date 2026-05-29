@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -43,26 +44,33 @@ class ProfileController extends Controller
             $user->email_verified_at = null;
         }
 
-        if ($request->hasFile('avatar')) {
-            if ($user->avatar_path) {
-                Storage::disk('public')->delete($user->avatar_path);
-            }
-
-            $user->avatar_path = $request->file('avatar')->store("profiles/{$user->id}/avatar", 'public');
-        }
-
-        if ($request->hasFile('banner')) {
-            if ($user->banner_path) {
-                Storage::disk('public')->delete($user->banner_path);
-            }
-
-            $user->banner_path = $request->file('banner')->store("profiles/{$user->id}/banner", 'public');
-        }
+        $this->replaceProfileImage($request, $user, 'avatar', 'avatar_path');
+        $this->replaceProfileImage($request, $user, 'banner', 'banner_path');
 
         $user->save();
         $user->ensureProfileSlug();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
+    }
+
+    private function replaceProfileImage(ProfileUpdateRequest $request, User $user, string $input, string $column): void
+    {
+        if (! $request->hasFile($input)) {
+            return;
+        }
+
+        $directory = "profiles/{$user->id}/{$input}";
+        $path = $request->file($input)->storePublicly($directory, 'public');
+
+        if (! $path) {
+            return;
+        }
+
+        if ($user->{$column}) {
+            Storage::disk('public')->delete($user->{$column});
+        }
+
+        $user->forceFill([$column => $path]);
     }
 
     /**

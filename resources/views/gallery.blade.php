@@ -78,7 +78,7 @@
                 @foreach ($albumPhotos as $photo)
                     <figure class="car-photo-card">
                         @if (\Illuminate\Support\Facades\Storage::disk('public')->exists($photo->path))
-                            <img src="{{ route('media.show', ['path' => $photo->path]) }}" alt="{{ $carName }} {{ __('ui.gallery.color_reference') }}" loading="lazy">
+                            <img src="{{ route('media.show', ['path' => $photo->path]) }}" alt="{{ $carName }} {{ __('ui.gallery.color_reference') }}" loading="lazy" style="object-position: {{ in_array($photo->image_position, ['center', 'top', 'bottom', 'left', 'right'], true) ? $photo->image_position : 'center' }};">
                         @else
                             <div class="missing-media">{{ __('ui.common.media_missing') }}</div>
                         @endif
@@ -119,7 +119,7 @@
             @csrf
 
             <label class="photo-dropzone">
-                <input type="file" name="photos[]" accept="image/*" multiple required>
+                <input type="file" name="photos[]" accept="image/*" multiple required data-image-preview-input data-preview-target="gallery-image-preview">
                 <span class="dropzone-icon">+</span>
                 <strong>{{ __('ui.gallery.upload_images') }}</strong>
                 <small>{{ __('ui.gallery.upload_hint') }}</small>
@@ -147,6 +147,15 @@
                 </div>
 
                 <div>
+                    <label for="gallery_image_position">{{ __('ui.common.image_position') }}</label>
+                    <select id="gallery_image_position" name="image_position" data-image-position-select data-preview-target="gallery-image-preview">
+                        @foreach (['center', 'top', 'bottom', 'left', 'right'] as $position)
+                            <option value="{{ $position }}" @selected(old('image_position', 'center') === $position)>{{ __("ui.common.positions.{$position}") }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
                     <label>{{ __('ui.gallery.caption') }}</label>
                     <input type="text" name="caption" placeholder="{{ __('ui.gallery.caption_placeholder') }}">
                 </div>
@@ -155,6 +164,11 @@
                     <label>{{ __('ui.gallery.notes') }}</label>
                     <input type="text" name="notes" placeholder="{{ __('ui.gallery.notes_placeholder') }}">
                 </div>
+            </div>
+
+            <div id="gallery-image-preview" class="image-position-preview wide" hidden>
+                <span>{{ __('ui.gallery.image_preview') }}</span>
+                <img alt="{{ __('ui.gallery.image_preview') }}">
             </div>
 
             <button type="submit">{{ __('ui.gallery.upload_button') }}</button>
@@ -178,7 +192,7 @@
                 <a class="gallery-bay album-folder {{ $activeAlbum === $category ? 'active' : '' }}" href="{{ url('/gallery?album='.$category) }}">
                     <span>{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</span>
                     @if ($cover && \Illuminate\Support\Facades\Storage::disk('public')->exists($cover->path))
-                        <img src="{{ route('media.show', ['path' => $cover->path]) }}" alt="{{ __("ui.gallery.categories.{$category}") }}" loading="lazy">
+                        <img src="{{ route('media.show', ['path' => $cover->path]) }}" alt="{{ __("ui.gallery.categories.{$category}") }}" loading="lazy" style="object-position: {{ in_array($cover->image_position, ['center', 'top', 'bottom', 'left', 'right'], true) ? $cover->image_position : 'center' }};">
                     @else
                         <div class="album-folder-placeholder">{{ strtoupper(substr(__("ui.gallery.categories.{$category}"), 0, 2)) }}</div>
                     @endif

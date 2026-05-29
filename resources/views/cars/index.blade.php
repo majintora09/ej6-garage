@@ -134,7 +134,7 @@
                             @if (auth()->user()->profile_slug && $car->slug && in_array($car->visibility, ['public', 'unlisted'], true))
                                 @php $carPublicUrl = route('public.garage', [auth()->user()->profile_slug, $car->slug]); @endphp
                                 <a class="ghost-button" href="{{ $carPublicUrl }}">{{ __('ui.public.view_garage') }}</a>
-                                <button type="button" data-share-url="{{ $carPublicUrl }}" data-copied-label="{{ __('ui.public.copied') }}">{{ __('ui.public.copy_public_link') }}</button>
+                                <button type="button" data-share-url="{{ $carPublicUrl }}" data-copied-label="{{ __('ui.public.copied') }}" data-copy-prompt-label="{{ __('ui.public.copy_prompt') }}">{{ __('ui.public.copy_public_link') }}</button>
                             @else
                                 <a class="ghost-button muted-action" href="{{ route('cars.index') }}#car-{{ $car->id }}">{{ __('ui.public.make_public_to_share') }}</a>
                             @endif

@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ProfileTest extends TestCase
@@ -59,6 +61,46 @@ class ProfileTest extends TestCase
             ->assertRedirect('/profile');
 
         $this->assertNotNull($user->refresh()->email_verified_at);
+    }
+
+    public function test_profile_avatar_and_banner_can_be_uploaded_and_rendered(): void
+    {
+        Storage::fake('public');
+
+        $user = User::factory()->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->patch('/profile', [
+                'name' => $user->name,
+                'email' => $user->email,
+                'avatar' => $this->fakePngUpload('avatar.png'),
+                'banner' => $this->fakePngUpload('banner.png'),
+            ]);
+
+        $response
+            ->assertSessionHasNoErrors()
+            ->assertRedirect('/profile');
+
+        $user->refresh();
+
+        $this->assertNotNull($user->avatar_path);
+        $this->assertNotNull($user->banner_path);
+        Storage::disk('public')->assertExists($user->avatar_path);
+        Storage::disk('public')->assertExists($user->banner_path);
+
+        $this->get(route('media.show', ['path' => $user->avatar_path]))->assertOk();
+        $this->get(route('media.show', ['path' => $user->banner_path]))->assertOk();
+    }
+
+    private function fakePngUpload(string $name): UploadedFile
+    {
+        $png = base64_decode(
+            'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=',
+            true
+        );
+
+        return UploadedFile::fake()->createWithContent($name, $png);
     }
 
     public function test_user_can_delete_their_account(): void

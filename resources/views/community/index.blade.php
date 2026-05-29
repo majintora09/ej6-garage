@@ -66,8 +66,24 @@
                 <x-input-error :messages="$errors->get('body')" class="auth-error" />
 
                 <label for="image">{{ __('ui.community.image') }}</label>
-                <input id="image" name="image" type="file" accept="image/*">
+                <input id="image" name="image" type="file" accept="image/*" data-image-preview-input data-preview-target="post-image-preview">
                 <x-input-error :messages="$errors->get('image')" class="auth-error" />
+
+                <div class="image-position-grid">
+                    <div>
+                        <label for="image_position">{{ __('ui.common.image_position') }}</label>
+                        <select id="image_position" name="image_position" data-image-position-select data-preview-target="post-image-preview">
+                            @foreach (['center', 'top', 'bottom', 'left', 'right'] as $position)
+                                <option value="{{ $position }}" @selected(old('image_position', 'center') === $position)>{{ __("ui.common.positions.{$position}") }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div id="post-image-preview" class="image-position-preview" hidden>
+                        <span>{{ __('ui.community.image_preview') }}</span>
+                        <img alt="{{ __('ui.community.image_preview') }}">
+                    </div>
+                </div>
 
                 <button type="submit">{{ __('ui.community.publish') }}</button>
             </form>

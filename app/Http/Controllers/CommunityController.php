@@ -59,6 +59,7 @@ class CommunityController extends Controller
             'category' => ['required', 'in:update,question,showcase,poll,trip,repair,mod'],
             'visibility' => ['required', 'in:public,unlisted,private'],
             'image' => ['nullable', 'image', 'max:4096'],
+            'image_position' => ['nullable', 'in:center,top,bottom,left,right'],
         ]);
 
         $imagePath = null;
@@ -75,6 +76,7 @@ class CommunityController extends Controller
             'category' => $validated['category'],
             'visibility' => $validated['visibility'],
             'image_path' => $imagePath,
+            'image_position' => $validated['image_position'] ?? 'center',
         ]);
 
         return back()->with('status', __('ui.community.posted'));

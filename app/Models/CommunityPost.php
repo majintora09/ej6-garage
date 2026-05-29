@@ -15,6 +15,7 @@ class CommunityPost extends Model
         'body',
         'category',
         'image_path',
+        'image_position',
         'visibility',
     ];
 

@@ -54,7 +54,7 @@
                             <div class="public-car-thumbs">
                                 @foreach ($car->photos as $photo)
                                     @if (\Illuminate\Support\Facades\Storage::disk('public')->exists($photo->path))
-                                        <img src="{{ route('media.show', ['path' => $photo->path]) }}" alt="{{ $photo->caption ?: $car->model }}" loading="lazy">
+                                        <img src="{{ route('media.show', ['path' => $photo->path]) }}" alt="{{ $photo->caption ?: $car->model }}" loading="lazy" style="object-position: {{ in_array($photo->image_position, ['center', 'top', 'bottom', 'left', 'right'], true) ? $photo->image_position : 'center' }};">
                                     @endif
                                 @endforeach
                             </div>

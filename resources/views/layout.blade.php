@@ -84,23 +84,24 @@
                             </div>
                         </div>
 
-                        <a href="{{ route('dashboard') }}">{{ __('ui.profile.my_garage') }}</a>
-                        @if ($authUser->profile_slug)
-                            <a href="{{ route('public.profile', $authUser->profile_slug) }}">{{ __('ui.profile.public_profile') }}</a>
-                        @endif
-                        @if ($activePublicGarageUrl)
-                            <a href="{{ $activePublicGarageUrl }}">{{ __('ui.public.view_my_garage') }}</a>
-                            <button type="button" data-share-url="{{ $activePublicGarageUrl }}" data-copied-label="{{ __('ui.public.copied') }}">{{ __('ui.public.copy_public_link') }}</button>
-                        @elseif ($activeCarProfile)
-                            <a href="{{ route('cars.index') }}">{{ __('ui.public.make_public_to_share') }}</a>
-                        @endif
-                        <a href="{{ route('cars.index') }}">{{ __('ui.nav.manage_cars') }}</a>
-                        <a href="{{ route('profile.edit') }}">{{ __('ui.profile.my_profile') }}</a>
-                        <a href="{{ route('profile.settings') }}">{{ __('ui.profile.settings') }}</a>
-                        <form action="{{ route('logout') }}" method="POST">
-                            @csrf
-                            <button type="submit">{{ __('ui.nav.logout') }}</button>
-                        </form>
+                        <div class="profile-dropdown-list">
+                            <a href="{{ route('dashboard') }}">{{ __('ui.profile.my_garage') }}</a>
+                            @if ($authUser->profile_slug)
+                                <a href="{{ route('public.profile', $authUser->profile_slug) }}">{{ __('ui.profile.public_profile') }}</a>
+                            @endif
+                            @if ($activePublicGarageUrl)
+                                <a href="{{ $activePublicGarageUrl }}">{{ __('ui.public.view_public_garage') }}</a>
+                                <button type="button" data-share-url="{{ $activePublicGarageUrl }}" data-copied-label="{{ __('ui.public.copied') }}" data-copy-prompt-label="{{ __('ui.public.copy_prompt') }}">{{ __('ui.public.copy_public_link') }}</button>
+                            @elseif ($activeCarProfile)
+                                <a href="{{ route('cars.index') }}">{{ __('ui.public.make_public_to_share') }}</a>
+                            @endif
+                            <a href="{{ route('cars.index') }}">{{ __('ui.nav.manage_cars') }}</a>
+                            <a href="{{ route('profile.settings') }}">{{ __('ui.profile.settings') }}</a>
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit">{{ __('ui.nav.logout') }}</button>
+                            </form>
+                        </div>
                     </div>
                 </details>
             </div>

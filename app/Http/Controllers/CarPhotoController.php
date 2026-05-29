@@ -29,6 +29,7 @@ class CarPhotoController extends Controller
             'caption' => ['nullable', 'string', 'max:255'],
             'notes' => ['nullable', 'string', 'max:2000'],
             'visibility' => ['nullable', 'in:private,unlisted,public'],
+            'image_position' => ['nullable', 'in:center,top,bottom,left,right'],
         ]);
 
         foreach ($request->file('photos', []) as $photo) {
@@ -41,6 +42,7 @@ class CarPhotoController extends Controller
                 'caption' => $validated['caption'] ?? null,
                 'notes' => $validated['notes'] ?? null,
                 'visibility' => $validated['visibility'] ?? 'private',
+                'image_position' => $validated['image_position'] ?? 'center',
             ]);
         }
 

@@ -14,14 +14,17 @@
         : null;
     $likedByUser = (bool) ($post->liked_by_user ?? false);
     $postBody = (string) $post->body;
-    $longPost = \Illuminate\Support\Str::length($postBody) > ($isPreview ? 320 : 700);
+    $previewBody = \Illuminate\Support\Str::limit($postBody, 260);
+    $bodyToRender = $isPreview ? $previewBody : $postBody;
+    $longPost = ! $isPreview && \Illuminate\Support\Str::length($postBody) > 700;
+    $imagePosition = in_array($post->image_position, ['center', 'top', 'bottom', 'left', 'right'], true) ? $post->image_position : 'center';
 @endphp
 
 <article class="feed-card {{ $imageUrl || $post->image_path ? 'has-media' : 'no-media' }} {{ $variant === 'detail' ? 'post-detail-card' : 'post-preview-card' }}">
     @if ($imageUrl)
-        <a class="feed-media" href="{{ route('community.show', $post) }}">
-            <img src="{{ $imageUrl }}" alt="{{ $post->title }}" loading="lazy">
-        </a>
+        <div class="feed-media">
+            <img src="{{ $imageUrl }}" alt="{{ $post->title }}" loading="lazy" style="object-position: {{ $imagePosition }};">
+        </div>
     @elseif ($post->image_path)
         <div class="missing-media feed-media">{{ __('ui.common.media_missing') }}</div>
     @endif
@@ -60,12 +63,18 @@
         </div>
 
         <div class="feed-body">
-            <h2><a href="{{ route('community.show', $post) }}">{{ $post->title }}</a></h2>
+            <h2>
+                @if ($isPreview)
+                    {{ $post->title }}
+                @else
+                    <a href="{{ route('community.show', $post) }}">{{ $post->title }}</a>
+                @endif
+            </h2>
             @if ($postBody !== '')
-                <div class="post-copy {{ $longPost && $isPreview ? 'is-collapsed' : '' }}" data-expandable-post>
-                    {!! nl2br(e($isPreview ? \Illuminate\Support\Str::limit($postBody, 900) : $postBody)) !!}
+                <div class="post-copy {{ $longPost ? 'is-collapsed' : '' }}" data-expandable-post>
+                    {!! nl2br(e($bodyToRender)) !!}
                 </div>
-                @if ($longPost && $isPreview)
+                @if ($longPost)
                     <button type="button" class="read-more-button" data-expand-button data-more-label="{{ __('ui.community.read_more') }}" data-less-label="{{ __('ui.community.show_less') }}">{{ __('ui.community.read_more') }}</button>
                 @endif
             @endif
@@ -103,23 +112,25 @@
             @endauth
         </div>
 
-        <div id="comments" class="comment-stack {{ $isPreview ? 'compact-comments' : '' }}">
-            @foreach ($post->comments->sortBy('created_at') as $comment)
-                <div class="comment-row">
-                    <strong>{{ $comment->user->displayHandle() }}</strong>
-                    <p>{!! nl2br(e($comment->body)) !!}</p>
-                </div>
-            @endforeach
+        @unless ($isPreview)
+            <div id="comments" class="comment-stack">
+                @foreach ($post->comments->sortBy('created_at') as $comment)
+                    <div class="comment-row">
+                        <strong>{{ $comment->user->displayHandle() }}</strong>
+                        <p>{!! nl2br(e($comment->body)) !!}</p>
+                    </div>
+                @endforeach
 
-            @auth
-                <form action="{{ route('community.comments.store', $post) }}" method="POST" class="comment-form">
-                    @csrf
-                    <input name="body" type="text" maxlength="1200" placeholder="{{ __('ui.community.comment_placeholder') }}" required>
-                    <button type="submit">{{ __('ui.community.comment') }}</button>
-                </form>
-            @else
-                <a class="ghost-button compact-action" href="{{ route('login') }}">{{ __('ui.community.login_to_comment') }}</a>
-            @endauth
-        </div>
+                @auth
+                    <form action="{{ route('community.comments.store', $post) }}" method="POST" class="comment-form">
+                        @csrf
+                        <input name="body" type="text" maxlength="1200" placeholder="{{ __('ui.community.comment_placeholder') }}" required>
+                        <button type="submit">{{ __('ui.community.comment') }}</button>
+                    </form>
+                @else
+                    <a class="ghost-button compact-action" href="{{ route('login') }}">{{ __('ui.community.login_to_comment') }}</a>
+                @endauth
+            </div>
+        @endunless
     </div>
 </article>
