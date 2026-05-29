@@ -110,6 +110,7 @@ const markerMaterial = new THREE.MeshStandardMaterial({
 
 const markerGeometry = new THREE.SphereGeometry(0.055, 24, 24);
 const markers = [];
+const markerById = new Map();
 let modelObject = null;
 
 loadInspectionModel();
@@ -268,6 +269,10 @@ function fitCameraToModel(model) {
 function renderInitialPoints() {
     const pointsToRender = savedPoints.length ? savedPoints : defaultPoints;
     pointsToRender.forEach(createMarker);
+
+    if (window.selectedInspectionPointId) {
+        window.setTimeout(() => focusInspectionPoint(window.selectedInspectionPointId), 250);
+    }
 }
 
 function createMarker(point) {
@@ -284,6 +289,10 @@ function createMarker(point) {
 
     carGroup.add(marker);
     markers.push(marker);
+
+    if (point.id) {
+        markerById.set(String(point.id), marker);
+    }
 }
 
 function pointToModelPosition(point) {
@@ -306,9 +315,9 @@ function normalizedToPosition(x, y, z) {
     const size = normalizedBounds.getSize(new THREE.Vector3());
 
     return new THREE.Vector3(
-        normalizedBounds.min.x + size.x * x,
-        normalizedBounds.min.y + size.y * y,
-        normalizedBounds.min.z + size.z * z
+        normalizedBounds.min.x + size.x * clamp(Number.isFinite(x) ? x : 0.5),
+        normalizedBounds.min.y + size.y * clamp(Number.isFinite(y) ? y : 0.62),
+        normalizedBounds.min.z + size.z * clamp(Number.isFinite(z) ? z : 0.88)
     );
 }
 
@@ -463,11 +472,14 @@ document.getElementById('save-point')?.addEventListener('click', async () => {
     const point = await response.json();
     createMarker(point);
     showPoint(point);
+    highlightPointRow(point.id);
     pendingPosition = null;
     pendingNormalizedPosition = null;
 });
 
 function showPoint(point) {
+    highlightPointRow(point.id);
+
     output.innerHTML = `
         <h3>${escapeHtml(point.name)}</h3>
         <p><strong>${escapeHtml(ui.categoryLabel || 'Category')}:</strong> ${escapeHtml(point.category || ui.unsorted || 'Unsorted')}</p>
@@ -475,8 +487,49 @@ function showPoint(point) {
         <p><strong>${escapeHtml(ui.priorityLabel || 'Priority')}:</strong> ${escapeHtml(point.priority || ui.medium || 'Medium')}</p>
         <hr>
         <p>${escapeHtml(point.description || ui.noNotes || 'No notes yet.')}</p>
+        ${point.id ? `
+            <div class="inspection-output-actions">
+                <a class="ghost-button compact-action" href="#inspection-point-${encodeURIComponent(point.id)}">${escapeHtml(ui.selectedFromList || 'Edit in point list')}</a>
+                <form action="/inspection-points/${encodeURIComponent(point.id)}/reset-position" method="POST">
+                    <input type="hidden" name="_token" value="${escapeHtml(window.csrfToken || '')}">
+                    <button type="submit">${escapeHtml(ui.resetPosition || 'Reset position')}</button>
+                </form>
+                <form action="/inspection-points/${encodeURIComponent(point.id)}" method="POST" onsubmit="return confirm('${escapeHtml(ui.confirmDeletePoint || 'Delete this inspection point?')}');">
+                    <input type="hidden" name="_token" value="${escapeHtml(window.csrfToken || '')}">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit" class="danger-btn">${escapeHtml(ui.delete || 'Delete')}</button>
+                </form>
+            </div>
+        ` : ''}
     `;
 }
+
+function focusInspectionPoint(id) {
+    const marker = markerById.get(String(id));
+
+    if (!marker) {
+        highlightPointRow(id);
+        const row = document.querySelector(`[data-inspection-point-row="${escapeAttribute(String(id))}"]`);
+        row?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+    }
+
+    const worldPosition = marker.getWorldPosition(new THREE.Vector3());
+    camera.lookAt(worldPosition);
+    showPoint(marker.userData);
+    const row = document.querySelector(`[data-inspection-point-row="${escapeAttribute(String(id))}"]`);
+    row?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function highlightPointRow(id) {
+    document.querySelectorAll('[data-inspection-point-row]').forEach(row => {
+        row.classList.toggle('active', row.dataset.inspectionPointRow === String(id));
+    });
+}
+
+document.querySelectorAll('[data-inspection-select]').forEach(button => {
+    button.addEventListener('click', () => focusInspectionPoint(button.dataset.inspectionSelect));
+});
 
 function escapeHtml(value) {
     return String(value)
@@ -485,6 +538,10 @@ function escapeHtml(value) {
         .replaceAll('>', '&gt;')
         .replaceAll('"', '&quot;')
         .replaceAll("'", '&#039;');
+}
+
+function escapeAttribute(value) {
+    return String(value).replaceAll('\\', '\\\\').replaceAll('"', '\\"');
 }
 
 window.addEventListener('resize', () => {

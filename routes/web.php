@@ -32,6 +32,7 @@ Route::get('/dashboard', function () {
 Route::get('/u/{slug}', [PublicProfileController::class, 'profile'])->name('public.profile');
 Route::get('/u/{userSlug}/garage/{carSlug}', [PublicProfileController::class, 'garage'])->name('public.garage');
 Route::get('/media/{path}', [MediaController::class, 'show'])->where('path', '.*')->name('media.show');
+Route::get('/community/posts/{post}', [CommunityController::class, 'show'])->name('community.show');
 
 Route::middleware('auth')->group(function () {
     Route::get('/garage/setup', [GarageSetupController::class, 'create'])->name('garage.setup');
@@ -70,7 +71,9 @@ Route::middleware(['auth', 'garage.profile'])->group(function () {
 
     Route::get('/inspection', [InspectionController::class, 'index']);
     Route::post('/inspection-points', [InspectionController::class, 'store']);
-    Route::delete('/inspection-points/{inspectionPoint}', [InspectionController::class, 'destroy']);
+    Route::put('/inspection-points/{inspectionPoint}', [InspectionController::class, 'update'])->name('inspection-points.update');
+    Route::post('/inspection-points/{inspectionPoint}/reset-position', [InspectionController::class, 'resetPosition'])->name('inspection-points.reset-position');
+    Route::delete('/inspection-points/{inspectionPoint}', [InspectionController::class, 'destroy'])->name('inspection-points.destroy');
 
     Route::get('/timeline', [BuildTimelineController::class, 'index'])->name('timeline.index');
     Route::post('/timeline', [BuildTimelineController::class, 'store'])->name('timeline.store');

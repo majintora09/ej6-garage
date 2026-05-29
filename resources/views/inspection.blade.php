@@ -31,7 +31,12 @@
             'open' => __('ui.categories.open'),
             'medium' => __('ui.categories.medium'),
             'noNotes' => __('ui.common.no_notes'),
+            'selectedFromList' => __('ui.inspection.selected_from_list'),
+            'resetPosition' => __('ui.inspection.reset_position'),
+            'confirmDeletePoint' => __('ui.inspection.confirm_delete_point'),
+            'delete' => __('ui.common.delete'),
         ];
+        $selectedPointId = request('point');
     @endphp
 
     <div class="hero-card">
@@ -80,6 +85,80 @@
                 {{ __('ui.inspection.none_selected') }}
             </div>
 
+            <div class="inspection-point-list">
+                <div class="panel-title compact-title">
+                    <div>
+                        <p class="eyebrow">{{ __('ui.inspection.saved_points') }}</p>
+                        <h3>{{ __('ui.inspection.point_management') }}</h3>
+                    </div>
+                </div>
+
+                @forelse ($points as $point)
+                    <article class="inspection-point-row" id="inspection-point-{{ $point->id }}" data-inspection-point-row="{{ $point->id }}">
+                        <button type="button" class="inspection-point-select" data-inspection-select="{{ $point->id }}">
+                            <strong>{{ $point->name }}</strong>
+                            <span>{{ $point->category ?: __('ui.common.unsorted') }} • {{ $point->status ?: __('ui.categories.open') }} • {{ $point->priority ?: __('ui.categories.medium') }}</span>
+                        </button>
+
+                        <details class="inspection-point-edit">
+                            <summary>{{ __('ui.cars.edit') }}</summary>
+                            <form action="{{ route('inspection-points.update', $point) }}" method="POST" class="setup-form">
+                                @csrf
+                                @method('PUT')
+
+                                <input type="hidden" name="x" value="{{ $point->x }}">
+                                <input type="hidden" name="y" value="{{ $point->y }}">
+                                <input type="hidden" name="z" value="{{ $point->z }}">
+                                <input type="hidden" name="normalized_x" value="{{ $point->normalized_x }}">
+                                <input type="hidden" name="normalized_y" value="{{ $point->normalized_y }}">
+                                <input type="hidden" name="normalized_z" value="{{ $point->normalized_z }}">
+
+                                <label>{{ __('ui.inspection.point_name') }}</label>
+                                <input name="name" value="{{ old('name', $point->name) }}" required>
+
+                                <div class="form-grid">
+                                    <div>
+                                        <label>{{ __('ui.inspection.category_label') }}</label>
+                                        <input name="category" value="{{ old('category', $point->category) }}">
+                                    </div>
+                                    <div>
+                                        <label>{{ __('ui.inspection.status_label') }}</label>
+                                        <input name="status" value="{{ old('status', $point->status) }}">
+                                    </div>
+                                    <div>
+                                        <label>{{ __('ui.inspection.priority_label') }}</label>
+                                        <input name="priority" value="{{ old('priority', $point->priority) }}">
+                                    </div>
+                                </div>
+
+                                <label>{{ __('ui.inspection.description') }}</label>
+                                <textarea name="description">{{ old('description', $point->description) }}</textarea>
+
+                                <button type="submit">{{ __('ui.inspection.update_point') }}</button>
+                            </form>
+                        </details>
+
+                        <div class="inspection-point-actions">
+                            <form action="{{ route('inspection-points.reset-position', $point) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="ghost-inline-button">{{ __('ui.inspection.reset_position') }}</button>
+                            </form>
+
+                            <form action="{{ route('inspection-points.destroy', $point) }}" method="POST" onsubmit="return confirm('{{ __('ui.inspection.confirm_delete_point') }}');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="danger-btn">{{ __('ui.common.delete') }}</button>
+                            </form>
+                        </div>
+                    </article>
+                @empty
+                    <div class="empty-state">
+                        <strong>{{ __('ui.inspection.no_points_title') }}</strong>
+                        <p>{{ __('ui.inspection.no_points_copy') }}</p>
+                    </div>
+                @endforelse
+            </div>
+
             <div id="editor-panel" class="editor-panel hidden">
                 <h3>{{ __('ui.inspection.create_point') }}</h3>
 
@@ -122,6 +201,7 @@
         window.csrfToken = "{{ csrf_token() }}";
         window.inspectionModelConfig = @json($inspectionModelConfig);
         window.inspectionUiText = @json($inspectionUiText);
+        window.selectedInspectionPointId = @json($selectedPointId);
     </script>
 
     <script type="importmap">

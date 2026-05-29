@@ -23,8 +23,15 @@ class PublicProfileController extends Controller
                     ]),
                 'communityPosts' => fn ($query) => $query
                     ->where('visibility', 'public')
-                    ->with('carProfile')
+                    ->with([
+                        'user',
+                        'carProfile',
+                        'comments' => fn ($comments) => $comments->with('user')->latest()->limit(2),
+                    ])
                     ->withCount(['likes', 'comments'])
+                    ->when(auth()->check(), fn ($posts) => $posts->withExists([
+                        'likes as liked_by_user' => fn ($likes) => $likes->where('user_id', auth()->id()),
+                    ]))
                     ->latest()
                     ->limit(6),
             ])
@@ -46,7 +53,15 @@ class PublicProfileController extends Controller
                 'buildTimelineEntries' => fn ($query) => $query->limit(5),
                 'communityPosts' => fn ($query) => $query
                     ->where('visibility', 'public')
+                    ->with([
+                        'user',
+                        'carProfile',
+                        'comments' => fn ($comments) => $comments->with('user')->latest()->limit(2),
+                    ])
                     ->withCount(['likes', 'comments'])
+                    ->when(auth()->check(), fn ($posts) => $posts->withExists([
+                        'likes as liked_by_user' => fn ($likes) => $likes->where('user_id', auth()->id()),
+                    ]))
                     ->latest()
                     ->limit(5),
             ])

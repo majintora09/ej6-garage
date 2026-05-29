@@ -82,20 +82,7 @@
 
             <div class="compact-feed">
                 @forelse ($user->communityPosts as $post)
-                    @php
-                        $postImageUrl = $post->image_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($post->image_path)
-                            ? route('media.show', ['path' => $post->image_path])
-                            : null;
-                    @endphp
-                    <article>
-                        @if ($postImageUrl)
-                            <img class="compact-feed-image" src="{{ $postImageUrl }}" alt="{{ $post->title }}" loading="lazy">
-                        @endif
-                        <span>{{ __("ui.community.categories.{$post->category}") }}</span>
-                        <h3>{{ $post->title }}</h3>
-                        <p>{{ $post->body ? \Illuminate\Support\Str::limit($post->body, 130) : __('ui.public.no_post_body') }}</p>
-                        <small>{{ $post->likes_count }} {{ __('ui.community.likes') }} • {{ $post->comments_count }} {{ __('ui.community.comments') }}</small>
-                    </article>
+                    @include('community.partials.post-card', ['post' => $post, 'variant' => 'compact'])
                 @empty
                     <div class="empty-state">
                         <strong>{{ __('ui.community.empty_title') }}</strong>

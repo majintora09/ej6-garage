@@ -91,6 +91,7 @@ class DashboardController extends Controller
             ->map(fn ($mod) => [
                 'title' => $mod->name,
                 'meta' => $mod->category ?: __('ui.common.no_category'),
+                'url' => '/mods',
             ]);
 
         $openInspection = $inspectionPoints
@@ -99,6 +100,7 @@ class DashboardController extends Controller
             ->map(fn ($point) => [
                 'title' => $point->name,
                 'meta' => $point->priority ?: __('ui.common.no_priority'),
+                'url' => '/inspection?point='.$point->id,
             ]);
 
         return $profilePlans->merge($priorityMods)->merge($openInspection)->take(6);

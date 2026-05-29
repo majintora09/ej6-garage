@@ -85,8 +85,6 @@
                         </div>
 
                         <a href="{{ route('dashboard') }}">{{ __('ui.profile.my_garage') }}</a>
-                        <a href="{{ route('cars.index') }}">{{ __('ui.nav.manage_cars') }}</a>
-                        <a href="{{ route('profile.edit') }}">{{ __('ui.profile.my_profile') }}</a>
                         @if ($authUser->profile_slug)
                             <a href="{{ route('public.profile', $authUser->profile_slug) }}">{{ __('ui.profile.public_profile') }}</a>
                         @endif
@@ -96,6 +94,8 @@
                         @elseif ($activeCarProfile)
                             <a href="{{ route('cars.index') }}">{{ __('ui.public.make_public_to_share') }}</a>
                         @endif
+                        <a href="{{ route('cars.index') }}">{{ __('ui.nav.manage_cars') }}</a>
+                        <a href="{{ route('profile.edit') }}">{{ __('ui.profile.my_profile') }}</a>
                         <a href="{{ route('profile.settings') }}">{{ __('ui.profile.settings') }}</a>
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf

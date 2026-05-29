@@ -10,6 +10,22 @@ use Illuminate\View\View;
 
 class CommunityController extends Controller
 {
+    public function show(Request $request, CommunityPost $post): View
+    {
+        abort_unless($post->isVisibleTo($request->user()), 404);
+
+        $post->load(['user', 'carProfile', 'comments.user'])
+            ->loadCount(['likes', 'comments']);
+
+        if ($request->user()) {
+            $post->loadExists([
+                'likes as liked_by_user' => fn ($query) => $query->where('user_id', $request->user()->id),
+            ]);
+        }
+
+        return view('community.show', compact('post'));
+    }
+
     public function index(Request $request): View
     {
         $posts = CommunityPost::query()

@@ -1284,6 +1284,81 @@ button:active {
     top: 102px;
 }
 
+.inspection-point-list {
+    display: grid;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.compact-title {
+    margin-bottom: 0;
+}
+
+.inspection-point-row {
+    display: grid;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.inspection-point-row.active {
+    border-color: var(--line-bright);
+    background: rgba(var(--theme-rgb), 0.1);
+}
+
+.inspection-point-select {
+    width: 100%;
+    justify-content: flex-start;
+    min-height: auto;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--text);
+    text-align: left;
+    box-shadow: none;
+}
+
+.inspection-point-select:hover {
+    box-shadow: none;
+    transform: none;
+}
+
+.inspection-point-select strong,
+.inspection-point-select span {
+    display: block;
+}
+
+.inspection-point-select span {
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.inspection-point-edit summary {
+    color: var(--green);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.inspection-point-actions,
+.inspection-output-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.ghost-inline-button {
+    min-height: 34px;
+    padding: 7px 10px;
+    border-color: var(--line-bright);
+    background: rgba(var(--theme-rgb), 0.08);
+    color: var(--green);
+}
+
 #inspection-output {
     min-height: 140px;
     margin-top: 16px;
@@ -1839,8 +1914,7 @@ button:active {
     gap: 14px;
 }
 
-.feed-card,
-.compact-feed article {
+.feed-card {
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius);
     background:
@@ -1851,7 +1925,23 @@ button:active {
 }
 
 .feed-card {
+    display: grid;
+    grid-template-columns: minmax(190px, 280px) minmax(0, 1fr);
     overflow: hidden;
+}
+
+.feed-card.no-media {
+    grid-template-columns: 1fr;
+}
+
+.post-detail-card {
+    grid-template-columns: minmax(280px, 0.8fr) minmax(0, 1fr);
+}
+
+.feed-content {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .feed-author,
@@ -1915,8 +2005,13 @@ button:active {
     line-height: 1.12;
 }
 
+.feed-body h2 a {
+    color: inherit;
+    text-decoration: none;
+}
+
 .feed-body p,
-.compact-feed p {
+.compact-feed > article:not(.feed-card) p {
     color: var(--soft-text);
 }
 
@@ -1950,13 +2045,25 @@ button:active {
     color: var(--green);
 }
 
-.feed-image {
+.feed-media {
     display: block;
     width: 100%;
-    max-height: 560px;
+    height: 100%;
+    min-height: 220px;
+    max-height: 320px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.post-detail-card .feed-media {
+    max-height: 520px;
+}
+
+.feed-media img {
+    display: block;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .missing-media {
@@ -1985,6 +2092,22 @@ button:active {
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
+.feed-actions a {
+    text-decoration: none;
+}
+
+.comment-link {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.compact-action {
+    min-height: 34px;
+    padding: 7px 10px;
+    font-size: 12px;
+}
+
 .feed-actions button {
     min-height: 34px;
     padding: 7px 10px;
@@ -2008,6 +2131,15 @@ button:active {
     display: grid;
     gap: 8px;
     padding: 14px;
+}
+
+.compact-comments .comment-row:nth-of-type(n+3) {
+    display: none;
+}
+
+.post-detail-shell {
+    max-width: 1120px;
+    margin: 0 auto;
 }
 
 .comment-row {
@@ -2088,7 +2220,7 @@ button:active {
     margin-top: 6px;
 }
 
-.compact-feed article {
+.compact-feed > article:not(.feed-card) {
     padding: 14px;
 }
 
@@ -2101,7 +2233,7 @@ button:active {
     border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
-.compact-feed span {
+.compact-feed > article:not(.feed-card) span {
     color: var(--green);
     font-size: 11px;
     font-weight: 900;
@@ -2109,13 +2241,13 @@ button:active {
     text-transform: uppercase;
 }
 
-.compact-feed h3 {
+.compact-feed > article:not(.feed-card) h3 {
     margin: 6px 0;
     color: var(--text);
     font-size: 16px;
 }
 
-.compact-feed small {
+.compact-feed > article:not(.feed-card) small {
     display: block;
     margin-top: 8px;
     color: var(--muted);
@@ -2468,6 +2600,21 @@ button:active {
 
     .feed-category {
         align-self: flex-start;
+    }
+
+    .feed-card,
+    .post-detail-card {
+        grid-template-columns: 1fr;
+    }
+
+    .feed-media {
+        height: auto;
+        min-height: 0;
+        max-height: 260px;
+    }
+
+    .feed-media img {
+        height: 240px;
     }
 
     .comment-form button,

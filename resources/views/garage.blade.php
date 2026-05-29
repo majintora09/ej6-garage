@@ -153,7 +153,11 @@
                 @forelse ($currentProjects as $project)
                     <article class="timeline-row">
                         <div>
-                            <strong>{{ $project['title'] }}</strong>
+                            @if (! empty($project['url']))
+                                <strong><a class="text-link" href="{{ $project['url'] }}">{{ $project['title'] }}</a></strong>
+                            @else
+                                <strong>{{ $project['title'] }}</strong>
+                            @endif
                             <span>{{ $project['meta'] }}</span>
                         </div>
                     </article>
