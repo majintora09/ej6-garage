@@ -95,7 +95,11 @@
                 @forelse ($entries as $entry)
                     <article class="build-timeline-entry">
                         @if ($entry->image_path)
-                            <img src="{{ asset('storage/'.$entry->image_path) }}" alt="{{ $entry->title }}">
+                            @if (\Illuminate\Support\Facades\Storage::disk('public')->exists($entry->image_path))
+                                <img src="{{ route('media.show', ['path' => $entry->image_path]) }}" alt="{{ $entry->title }}" loading="lazy">
+                            @else
+                                <div class="missing-media">{{ __('ui.common.media_missing') }}</div>
+                            @endif
                         @endif
 
                         <div>

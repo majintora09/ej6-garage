@@ -2,8 +2,12 @@
 
 @section('content')
     @php
-        $avatarUrl = $user->avatar_path ? \Illuminate\Support\Facades\Storage::url($user->avatar_path) : null;
-        $bannerUrl = $user->banner_path ? \Illuminate\Support\Facades\Storage::url($user->banner_path) : null;
+        $avatarUrl = $user->avatar_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->avatar_path)
+            ? route('media.show', ['path' => $user->avatar_path])
+            : null;
+        $bannerUrl = $user->banner_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->banner_path)
+            ? route('media.show', ['path' => $user->banner_path])
+            : null;
     @endphp
 
     <section class="public-hero" @if($bannerUrl) style="background-image: linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.78)), url('{{ $bannerUrl }}')" @endif>
@@ -46,6 +50,15 @@
                             <span>{{ $car->mods_count }} {{ __('ui.nav.mods') }}</span>
                             <span>{{ $car->community_posts_count }} {{ __('ui.community.posts') }}</span>
                         </div>
+                        @if ($car->photos->isNotEmpty())
+                            <div class="public-car-thumbs">
+                                @foreach ($car->photos as $photo)
+                                    @if (\Illuminate\Support\Facades\Storage::disk('public')->exists($photo->path))
+                                        <img src="{{ route('media.show', ['path' => $photo->path]) }}" alt="{{ $photo->caption ?: $car->model }}" loading="lazy">
+                                    @endif
+                                @endforeach
+                            </div>
+                        @endif
                         @if ($car->slug)
                             <a class="ghost-button" href="{{ route('public.garage', [$user->profile_slug, $car->slug]) }}">{{ __('ui.public.view_garage') }}</a>
                         @endif
@@ -69,7 +82,15 @@
 
             <div class="compact-feed">
                 @forelse ($user->communityPosts as $post)
+                    @php
+                        $postImageUrl = $post->image_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($post->image_path)
+                            ? route('media.show', ['path' => $post->image_path])
+                            : null;
+                    @endphp
                     <article>
+                        @if ($postImageUrl)
+                            <img class="compact-feed-image" src="{{ $postImageUrl }}" alt="{{ $post->title }}" loading="lazy">
+                        @endif
                         <span>{{ __("ui.community.categories.{$post->category}") }}</span>
                         <h3>{{ $post->title }}</h3>
                         <p>{{ $post->body ? \Illuminate\Support\Str::limit($post->body, 130) : __('ui.public.no_post_body') }}</p>

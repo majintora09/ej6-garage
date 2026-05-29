@@ -76,8 +76,12 @@
         <section class="feed-stack">
             @forelse ($posts as $post)
                 @php
-                    $avatarUrl = $post->user->avatar_path ? \Illuminate\Support\Facades\Storage::url($post->user->avatar_path) : null;
-                    $imageUrl = $post->image_path ? \Illuminate\Support\Facades\Storage::url($post->image_path) : null;
+                    $avatarUrl = $post->user->avatar_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($post->user->avatar_path)
+                        ? route('media.show', ['path' => $post->user->avatar_path])
+                        : null;
+                    $imageUrl = $post->image_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($post->image_path)
+                        ? route('media.show', ['path' => $post->image_path])
+                        : null;
                     $car = $post->carProfile;
                     $profileUrl = $post->user->profile_slug ? route('public.profile', $post->user->profile_slug) : null;
                     $garageUrl = $profileUrl && $car && $car->slug && in_array($car->visibility, ['public', 'unlisted'], true)
@@ -121,12 +125,19 @@
                     <div class="feed-body">
                         <h2>{{ $post->title }}</h2>
                         @if ($post->body)
-                            <p>{{ $post->body }}</p>
+                            <div class="post-copy {{ \Illuminate\Support\Str::length($post->body) > 420 ? 'is-collapsed' : '' }}" data-expandable-post>
+                                {!! nl2br(e($post->body)) !!}
+                            </div>
+                            @if (\Illuminate\Support\Str::length($post->body) > 420)
+                                <button type="button" class="read-more-button" data-expand-button data-more-label="{{ __('ui.community.read_more') }}" data-less-label="{{ __('ui.community.show_less') }}">{{ __('ui.community.read_more') }}</button>
+                            @endif
                         @endif
                     </div>
 
                     @if ($imageUrl)
                         <img class="feed-image" src="{{ $imageUrl }}" alt="{{ $post->title }}" loading="lazy">
+                    @elseif ($post->image_path)
+                        <div class="missing-media feed-missing-media">{{ __('ui.common.media_missing') }}</div>
                     @endif
 
                     <div class="feed-actions">

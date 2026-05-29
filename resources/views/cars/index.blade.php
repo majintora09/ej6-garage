@@ -132,10 +132,14 @@
                             @endif
 
                             @if (auth()->user()->profile_slug && $car->slug && in_array($car->visibility, ['public', 'unlisted'], true))
-                                <a class="ghost-button" href="{{ route('public.garage', [auth()->user()->profile_slug, $car->slug]) }}">{{ __('ui.public.view_garage') }}</a>
+                                @php $carPublicUrl = route('public.garage', [auth()->user()->profile_slug, $car->slug]); @endphp
+                                <a class="ghost-button" href="{{ $carPublicUrl }}">{{ __('ui.public.view_garage') }}</a>
+                                <button type="button" data-share-url="{{ $carPublicUrl }}" data-copied-label="{{ __('ui.public.copied') }}">{{ __('ui.public.copy_public_link') }}</button>
+                            @else
+                                <a class="ghost-button muted-action" href="{{ route('cars.index') }}#car-{{ $car->id }}">{{ __('ui.public.make_public_to_share') }}</a>
                             @endif
 
-                            <details>
+                            <details id="car-{{ $car->id }}">
                                 <summary>{{ __('ui.cars.edit') }}</summary>
                                 <form action="{{ route('cars.update', $car) }}" method="POST" class="setup-form">
                                     @csrf

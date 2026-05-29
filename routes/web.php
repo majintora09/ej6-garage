@@ -11,6 +11,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\BuildTimelineController;
 use App\Http\Controllers\CarProfileController;
 use App\Http\Controllers\CommunityController;
+use App\Http\Controllers\MediaController;
 use App\Http\Controllers\PublicProfileController;
 use App\Models\Mod;
 
@@ -30,6 +31,7 @@ Route::get('/dashboard', function () {
 
 Route::get('/u/{slug}', [PublicProfileController::class, 'profile'])->name('public.profile');
 Route::get('/u/{userSlug}/garage/{carSlug}', [PublicProfileController::class, 'garage'])->name('public.garage');
+Route::get('/media/{path}', [MediaController::class, 'show'])->where('path', '.*')->name('media.show');
 
 Route::middleware('auth')->group(function () {
     Route::get('/garage/setup', [GarageSetupController::class, 'create'])->name('garage.setup');
@@ -40,6 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/cars/{car}/select', [CarProfileController::class, 'select'])->name('cars.select');
     Route::delete('/cars/{car}', [CarProfileController::class, 'destroy'])->name('cars.destroy');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::get('/settings', [ProfileController::class, 'settings'])->name('profile.settings');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });

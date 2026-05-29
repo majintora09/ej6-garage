@@ -37,7 +37,7 @@ class GarageSetupController extends Controller
             'secondary_theme_color' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'interior' => ['nullable', 'string', 'max:255'],
             'body_type' => ['required', 'in:coupe,hatchback,sedan,wagon,suv,pickup,motorcycle,other'],
-            'model_path' => ['nullable', 'string', 'max:255', 'regex:/^\/(models|storage)\/.+\.(glb|gltf|stl)$/i'],
+            'model_path' => ['nullable', 'string', 'max:255', 'regex:/^\/?(models|storage)\/.+\.(glb|gltf|stl)$/i'],
             'build_vibe' => ['nullable', 'string', 'max:1000'],
             'known_issues' => ['nullable', 'string', 'max:4000'],
             'future_plans' => ['nullable', 'string', 'max:4000'],
@@ -48,6 +48,7 @@ class GarageSetupController extends Controller
         ]);
 
         unset($validated['car_photos']);
+        $validated['model_path'] = $this->normalizeModelPath($validated['model_path'] ?? null);
 
         $themeColor = $this->resolveThemeColor($validated['theme_color'] ?? null, $request);
 
@@ -88,7 +89,7 @@ class GarageSetupController extends Controller
             'secondary_theme_color' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'interior' => ['nullable', 'string', 'max:255'],
             'body_type' => ['required', 'in:coupe,hatchback,sedan,wagon,suv,pickup,motorcycle,other'],
-            'model_path' => ['nullable', 'string', 'max:255', 'regex:/^\/(models|storage)\/.+\.(glb|gltf|stl)$/i'],
+            'model_path' => ['nullable', 'string', 'max:255', 'regex:/^\/?(models|storage)\/.+\.(glb|gltf|stl)$/i'],
             'build_vibe' => ['nullable', 'string', 'max:1000'],
             'known_issues' => ['nullable', 'string', 'max:4000'],
             'future_plans' => ['nullable', 'string', 'max:4000'],
@@ -99,6 +100,7 @@ class GarageSetupController extends Controller
         ]);
 
         unset($validated['car_photos']);
+        $validated['model_path'] = $this->normalizeModelPath($validated['model_path'] ?? null);
 
         $carProfile = auth()->user()->activeCar();
 
@@ -143,6 +145,13 @@ class GarageSetupController extends Controller
         }
 
         return $selectedColor;
+    }
+
+    private function normalizeModelPath(?string $modelPath): ?string
+    {
+        $modelPath = trim((string) $modelPath);
+
+        return $modelPath === '' ? null : ltrim($modelPath, '/');
     }
 
     private function uniqueSlug(?int $year, string $make, string $model, ?int $ignoreId = null): string

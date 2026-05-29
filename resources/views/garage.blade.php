@@ -15,6 +15,9 @@
         $buildVibe = $carProfile->build_vibe ?: __('ui.common.empty_profile_text');
         $progress = $carProfile->restoration_progress ?? $garageHealth['score'];
         $formatMoney = fn ($value) => '€'.number_format((float) $value, 2);
+        $publicGarageUrl = auth()->user()->profile_slug && $carProfile->slug && in_array($carProfile->visibility, ['public', 'unlisted'], true)
+            ? route('public.garage', [auth()->user()->profile_slug, $carProfile->slug])
+            : null;
     @endphp
 
     @if (session('status'))
@@ -36,6 +39,15 @@
                 <span class="badge">{{ $bodyType }}</span>
                 <span class="badge">{{ $engine }}</span>
                 <span class="badge">{{ $chassis }}</span>
+            </div>
+
+            <div class="hero-action-row">
+                @if ($publicGarageUrl)
+                    <a class="ghost-button" href="{{ $publicGarageUrl }}">{{ __('ui.public.view_my_garage') }}</a>
+                    <button type="button" data-share-url="{{ $publicGarageUrl }}" data-copied-label="{{ __('ui.public.copied') }}">{{ __('ui.public.copy_public_link') }}</button>
+                @else
+                    <a class="ghost-button" href="{{ route('cars.index') }}">{{ __('ui.public.make_public_to_share') }}</a>
+                @endif
             </div>
         </div>
 
@@ -290,7 +302,11 @@
             @if ($recentPhotos->isNotEmpty())
                 <div class="dashboard-photo-strip">
                     @foreach ($recentPhotos as $photo)
-                        <img src="{{ route('car-photos.show', $photo) }}" alt="{{ $make }} {{ $model }} {{ __('ui.gallery.color_reference') }}">
+                        @if (\Illuminate\Support\Facades\Storage::disk('public')->exists($photo->path))
+                            <img src="{{ route('media.show', ['path' => $photo->path]) }}" alt="{{ $make }} {{ $model }} {{ __('ui.gallery.color_reference') }}" loading="lazy">
+                        @else
+                            <div class="missing-media">{{ __('ui.common.media_missing') }}</div>
+                        @endif
                     @endforeach
                 </div>
             @else

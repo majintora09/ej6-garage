@@ -32,7 +32,12 @@
     $profileColorCode = data_get($activeCarProfile, 'color_code') ?: __('ui.common.no_color_code');
     $profileChassis = data_get($activeCarProfile, 'chassis') ?: 'GARAGE';
     $authUser = auth()->user();
-    $authAvatar = $authUser?->avatar_path ? \Illuminate\Support\Facades\Storage::url($authUser->avatar_path) : null;
+    $authAvatar = $authUser?->avatar_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($authUser->avatar_path)
+        ? route('media.show', ['path' => $authUser->avatar_path])
+        : null;
+    $activePublicGarageUrl = $authUser && $activeCarProfile && $authUser->profile_slug && data_get($activeCarProfile, 'slug') && in_array(data_get($activeCarProfile, 'visibility'), ['public', 'unlisted'], true)
+        ? route('public.garage', [$authUser->profile_slug, data_get($activeCarProfile, 'slug')])
+        : null;
 @endphp
 <body
     style="--theme: {{ $themeColor }}; --theme-rgb: {{ $themeRed }}, {{ $themeGreen }}, {{ $themeBlue }}; --secondary-theme: {{ $secondaryThemeColor }};"
@@ -65,12 +70,33 @@
                         <span class="profile-menu-name">{{ $authUser->displayHandle() }}</span>
                     </summary>
                     <div class="profile-dropdown">
-                        <a href="{{ route('profile.edit') }}">{{ __('ui.profile.my_profile') }}</a>
+                        <div class="profile-dropdown-head">
+                            <span class="profile-avatar">
+                                @if ($authAvatar)
+                                    <img src="{{ $authAvatar }}" alt="{{ $authUser->displayHandle() }}" loading="lazy">
+                                @else
+                                    <span>{{ strtoupper(substr($authUser->displayHandle(), 0, 2)) }}</span>
+                                @endif
+                            </span>
+                            <div>
+                                <strong>{{ $authUser->displayHandle() }}</strong>
+                                <small>{{ $activeCarProfile ? trim(data_get($activeCarProfile, 'make').' '.data_get($activeCarProfile, 'model')) : __('ui.common.not_set') }}</small>
+                            </div>
+                        </div>
+
+                        <a href="{{ route('dashboard') }}">{{ __('ui.profile.my_garage') }}</a>
                         <a href="{{ route('cars.index') }}">{{ __('ui.nav.manage_cars') }}</a>
-                        <a href="{{ route('profile.edit') }}">{{ __('ui.profile.settings') }}</a>
+                        <a href="{{ route('profile.edit') }}">{{ __('ui.profile.my_profile') }}</a>
                         @if ($authUser->profile_slug)
-                            <a href="{{ route('public.profile', $authUser->profile_slug) }}">{{ __('ui.profile.view_public') }}</a>
+                            <a href="{{ route('public.profile', $authUser->profile_slug) }}">{{ __('ui.profile.public_profile') }}</a>
                         @endif
+                        @if ($activePublicGarageUrl)
+                            <a href="{{ $activePublicGarageUrl }}">{{ __('ui.public.view_my_garage') }}</a>
+                            <button type="button" data-share-url="{{ $activePublicGarageUrl }}" data-copied-label="{{ __('ui.public.copied') }}">{{ __('ui.public.copy_public_link') }}</button>
+                        @elseif ($activeCarProfile)
+                            <a href="{{ route('cars.index') }}">{{ __('ui.public.make_public_to_share') }}</a>
+                        @endif
+                        <a href="{{ route('profile.settings') }}">{{ __('ui.profile.settings') }}</a>
                         <form action="{{ route('logout') }}" method="POST">
                             @csrf
                             <button type="submit">{{ __('ui.nav.logout') }}</button>

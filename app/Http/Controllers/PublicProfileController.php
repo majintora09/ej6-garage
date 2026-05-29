@@ -15,8 +15,9 @@ class PublicProfileController extends Controller
             ->with([
                 'carProfiles' => fn ($query) => $query
                     ->where('visibility', 'public')
+                    ->with(['photos' => fn ($photos) => $photos->where('visibility', 'public')->limit(3)])
                     ->withCount([
-                        'photos',
+                        'photos' => fn ($photos) => $photos->where('visibility', 'public'),
                         'mods',
                         'communityPosts' => fn ($posts) => $posts->where('visibility', 'public'),
                     ]),
@@ -43,6 +44,11 @@ class PublicProfileController extends Controller
                 'photos' => fn ($query) => $query->where('visibility', 'public')->limit(9),
                 'mods' => fn ($query) => $query->limit(6),
                 'buildTimelineEntries' => fn ($query) => $query->limit(5),
+                'communityPosts' => fn ($query) => $query
+                    ->where('visibility', 'public')
+                    ->withCount(['likes', 'comments'])
+                    ->latest()
+                    ->limit(5),
             ])
             ->firstOrFail();
 

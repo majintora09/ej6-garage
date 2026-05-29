@@ -7,6 +7,9 @@
         $priorityAlbum = $car->chassis ?: 'Profile';
         $photos = $car->photos ?? collect();
         $galleryErrors = $errors ?? new \Illuminate\Support\ViewErrorBag;
+        $albumCategories = ['exterior', 'interior', 'rust', 'maintenance', 'mods', 'receipts', 'inspiration'];
+        $activeAlbum = in_array(request('album', 'exterior'), $albumCategories, true) ? request('album', 'exterior') : 'exterior';
+        $albumPhotos = $photos->where('category', $activeAlbum);
     @endphp
 
     <div class="page-head">
@@ -70,11 +73,15 @@
             <a class="text-link" href="{{ route('garage.profile.edit') }}">{{ __('ui.gallery.manage') }}</a>
         </div>
 
-        @if ($photos->isNotEmpty())
+        @if ($albumPhotos->isNotEmpty())
             <div class="car-photo-grid">
-                @foreach ($photos as $photo)
+                @foreach ($albumPhotos as $photo)
                     <figure class="car-photo-card">
-                        <img src="{{ route('car-photos.show', $photo) }}" alt="{{ $carName }} {{ __('ui.gallery.color_reference') }}">
+                        @if (\Illuminate\Support\Facades\Storage::disk('public')->exists($photo->path))
+                            <img src="{{ route('media.show', ['path' => $photo->path]) }}" alt="{{ $carName }} {{ __('ui.gallery.color_reference') }}" loading="lazy">
+                        @else
+                            <div class="missing-media">{{ __('ui.common.media_missing') }}</div>
+                        @endif
                         <figcaption>
                             <span>{{ __("ui.gallery.categories.".($photo->category ?: 'exterior')) }} • {{ $photo->visibility ?: 'private' }}</span>
                             <strong>{{ $photo->caption ?: ($photo->original_name ?: __('ui.setup.color_reference_fallback')) }}</strong>
@@ -93,9 +100,8 @@
         @else
             <div class="gallery-empty color-empty">
                 <div>
-                    <strong>{{ __('ui.gallery.no_photos') }}</strong>
-                    <p>{{ __('ui.gallery.empty_copy') }}</p>
-                    <a class="text-link" href="{{ route('garage.profile.edit') }}">{{ __('ui.gallery.add_photos') }}</a>
+                    <strong>{{ __('ui.gallery.empty_album_title', ['album' => __("ui.gallery.categories.{$activeAlbum}")]) }}</strong>
+                    <p>{{ __('ui.gallery.empty_album_copy') }}</p>
                 </div>
             </div>
         @endif
@@ -163,48 +169,24 @@
             </div>
         </div>
 
-        <div class="gallery-grid">
-            <article class="gallery-bay priority-bay">
-                <span>01</span>
-                <h3>{{ __('ui.gallery.bodywork') }}</h3>
-                <p>{{ __('ui.gallery.bodywork_copy') }}</p>
-                <small>{{ __('ui.gallery.high_priority') }}</small>
-            </article>
-
-            <article class="gallery-bay">
-                <span>02</span>
-                <h3>{{ __('ui.gallery.maintenance_receipts') }}</h3>
-                <p>{{ __('ui.gallery.maintenance_copy') }}</p>
-                <small>{{ __('ui.gallery.service_proof') }}</small>
-            </article>
-
-            <article class="gallery-bay">
-                <span>03</span>
-                <h3>{{ __('ui.gallery.parts_mods') }}</h3>
-                <p>{{ __('ui.gallery.parts_copy') }}</p>
-                <small>{{ __('ui.gallery.build_planner_link') }}</small>
-            </article>
-
-            <article class="gallery-bay">
-                <span>04</span>
-                <h3>{{ __('ui.gallery.paint_styling') }}</h3>
-                <p>{{ __('ui.gallery.paint_styling_copy', ['code' => $car->color_code ?: __('ui.common.color'), 'color' => $car->color_name ?: __('ui.common.style')]) }}</p>
-                <small>{{ __('ui.gallery.visual_direction') }}</small>
-            </article>
-
-            <article class="gallery-bay">
-                <span>05</span>
-                <h3>{{ __('ui.gallery.interior') }}</h3>
-                <p>{{ __('ui.gallery.interior_copy', ['interior' => $car->interior ?: __('ui.common.cabin')]) }}</p>
-                <small>{{ __('ui.gallery.cabin_archive') }}</small>
-            </article>
-
-            <article class="gallery-bay">
-                <span>06</span>
-                <h3>{{ __('ui.gallery.inspection_captures') }}</h3>
-                <p>{{ __('ui.gallery.inspection_copy') }}</p>
-                <small>{{ __('ui.gallery.linked_3d') }}</small>
-            </article>
+        <div class="gallery-grid album-grid">
+            @foreach ($albumCategories as $index => $category)
+                @php
+                    $cover = $photos->firstWhere('category', $category);
+                    $count = $photos->where('category', $category)->count();
+                @endphp
+                <a class="gallery-bay album-folder {{ $activeAlbum === $category ? 'active' : '' }}" href="{{ url('/gallery?album='.$category) }}">
+                    <span>{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</span>
+                    @if ($cover && \Illuminate\Support\Facades\Storage::disk('public')->exists($cover->path))
+                        <img src="{{ route('media.show', ['path' => $cover->path]) }}" alt="{{ __("ui.gallery.categories.{$category}") }}" loading="lazy">
+                    @else
+                        <div class="album-folder-placeholder">{{ strtoupper(substr(__("ui.gallery.categories.{$category}"), 0, 2)) }}</div>
+                    @endif
+                    <h3>{{ __("ui.gallery.categories.{$category}") }}</h3>
+                    <p>{{ trans_choice('ui.gallery.album_count', $count, ['count' => $count]) }}</p>
+                    <small>{{ $activeAlbum === $category ? __('ui.gallery.active_album') : __('ui.gallery.open_album') }}</small>
+                </a>
+            @endforeach
         </div>
     </section>
 

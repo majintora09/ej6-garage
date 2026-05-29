@@ -35,13 +35,44 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const shareUrl = new URL(url, window.location.origin).toString();
 
-            if (navigator.share) {
-                await navigator.share({ url: shareUrl });
+            try {
+                if (navigator.share) {
+                    await navigator.share({ url: shareUrl });
+                    return;
+                }
+
+                if (navigator.clipboard) {
+                    await navigator.clipboard.writeText(shareUrl);
+                }
+
+                button.textContent = button.getAttribute("data-copied-label") || button.textContent;
+            } catch (error) {
+                window.prompt("Copy link", shareUrl);
+            }
+        });
+    });
+
+    document.querySelectorAll("[data-expand-button]").forEach(button => {
+        button.addEventListener("click", () => {
+            const post = button.closest(".feed-body")?.querySelector("[data-expandable-post]");
+
+            if (!post) {
                 return;
             }
 
-            await navigator.clipboard.writeText(shareUrl);
-            button.textContent = button.getAttribute("data-copied-label") || button.textContent;
+            const expanded = post.classList.toggle("is-expanded");
+            post.classList.toggle("is-collapsed", !expanded);
+            button.textContent = expanded
+                ? button.getAttribute("data-less-label")
+                : button.getAttribute("data-more-label");
+        });
+    });
+
+    document.addEventListener("click", event => {
+        document.querySelectorAll(".profile-menu[open]").forEach(menu => {
+            if (!menu.contains(event.target)) {
+                menu.removeAttribute("open");
+            }
         });
     });
 });

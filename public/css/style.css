@@ -183,14 +183,16 @@ a {
 }
 
 .profile-menu summary {
-    min-height: 38px;
+    min-height: 44px;
     display: inline-flex;
     align-items: center;
     gap: 9px;
-    padding: 5px 9px 5px 5px;
+    padding: 5px 12px 5px 5px;
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius-sm);
-    background: rgba(255, 255, 255, 0.035);
+    background:
+        linear-gradient(135deg, rgba(var(--theme-rgb), 0.08), rgba(255, 255, 255, 0.025)),
+        rgba(255, 255, 255, 0.035);
     cursor: pointer;
     list-style: none;
 }
@@ -244,12 +246,40 @@ a {
     right: 0;
     top: calc(100% + 8px);
     z-index: 80;
-    min-width: 210px;
-    padding: 8px;
+    width: min(320px, calc(100vw - 24px));
+    padding: 10px;
     border: 1px solid var(--line-bright);
     border-radius: var(--radius);
-    background: rgba(6, 10, 8, 0.96);
+    background:
+        linear-gradient(135deg, rgba(var(--theme-rgb), 0.08), transparent 44%),
+        rgba(6, 10, 8, 0.97);
     box-shadow: var(--shadow);
+    backdrop-filter: blur(18px);
+}
+
+.profile-dropdown-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    padding: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.profile-dropdown-head strong,
+.profile-dropdown-head small {
+    display: block;
+}
+
+.profile-dropdown-head strong {
+    color: var(--text);
+}
+
+.profile-dropdown-head small {
+    color: var(--muted);
+    font-size: 12px;
 }
 
 .profile-dropdown a,
@@ -265,6 +295,7 @@ a {
     text-decoration: none;
     font-size: 13px;
     font-weight: 800;
+    min-height: 38px;
 }
 
 .profile-dropdown a:hover,
@@ -273,6 +304,10 @@ a {
     color: var(--green);
     box-shadow: none;
     transform: none;
+}
+
+.muted-action {
+    opacity: 0.72;
 }
 
 @keyframes statusPulse {
@@ -1885,6 +1920,36 @@ button:active {
     color: var(--soft-text);
 }
 
+.post-copy {
+    color: var(--soft-text);
+    line-height: 1.62;
+    white-space: normal;
+}
+
+.post-copy.is-collapsed {
+    max-height: 8.2em;
+    overflow: hidden;
+    position: relative;
+}
+
+.post-copy.is-collapsed::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 48px;
+    background: linear-gradient(180deg, transparent, rgba(7, 11, 9, 0.96));
+}
+
+.read-more-button {
+    margin-top: 10px;
+    min-height: 34px;
+    padding: 7px 10px;
+    background: rgba(var(--theme-rgb), 0.1);
+    color: var(--green);
+}
+
 .feed-image {
     display: block;
     width: 100%;
@@ -1892,6 +1957,26 @@ button:active {
     object-fit: cover;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.missing-media {
+    display: grid;
+    place-items: center;
+    min-height: 150px;
+    border: 1px dashed rgba(255, 255, 255, 0.13);
+    border-radius: var(--radius-sm);
+    background:
+        linear-gradient(135deg, rgba(var(--theme-rgb), 0.08), transparent),
+        rgba(255, 255, 255, 0.03);
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.feed-missing-media {
+    margin: 0 14px 14px;
 }
 
 .feed-actions {
@@ -2007,6 +2092,15 @@ button:active {
     padding: 14px;
 }
 
+.compact-feed-image {
+    display: block;
+    width: calc(100% + 28px);
+    max-height: 210px;
+    margin: -14px -14px 12px;
+    object-fit: cover;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
 .compact-feed span {
     color: var(--green);
     font-size: 11px;
@@ -2055,6 +2149,20 @@ button:active {
     font-weight: 800;
 }
 
+.public-car-thumbs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
+    margin: 12px 0;
+}
+
+.public-car-thumbs img {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+}
+
 .danger-panel {
     border-color: rgba(255, 91, 107, 0.2);
 }
@@ -2065,6 +2173,85 @@ button:active {
     border-radius: var(--radius-sm);
     background: rgba(255, 255, 255, 0.035);
     color: var(--soft-text);
+}
+
+.album-grid a {
+    text-decoration: none;
+}
+
+.album-folder {
+    overflow: hidden;
+}
+
+.album-folder.active {
+    border-color: var(--line-bright);
+    box-shadow: 0 0 0 1px rgba(var(--theme-rgb), 0.1), 0 22px 58px rgba(0, 0, 0, 0.28);
+}
+
+.album-folder img,
+.album-folder-placeholder {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    margin: 12px 0;
+    border-radius: var(--radius-sm);
+}
+
+.album-folder img {
+    display: block;
+    object-fit: cover;
+}
+
+.album-folder-placeholder {
+    display: grid;
+    place-items: center;
+    border: 1px dashed rgba(var(--theme-rgb), 0.24);
+    background: rgba(var(--theme-rgb), 0.08);
+    color: var(--green);
+    font-weight: 950;
+    letter-spacing: 0.18em;
+}
+
+.settings-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 0.72fr);
+    gap: 16px;
+}
+
+.settings-language-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+}
+
+.settings-language-grid a {
+    display: grid;
+    gap: 4px;
+    padding: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.035);
+    text-decoration: none;
+}
+
+.settings-language-grid a.active {
+    border-color: var(--line-bright);
+    background: rgba(var(--theme-rgb), 0.12);
+}
+
+.settings-language-grid strong {
+    color: var(--green);
+}
+
+.settings-language-grid span {
+    color: var(--soft-text);
+}
+
+.profile-settings-actions,
+.hero-action-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
 }
 
 .priority-bay {
@@ -2125,7 +2312,8 @@ button:active {
     .cars-layout,
     .community-layout,
     .profile-shell,
-    .public-grid {
+    .public-grid,
+    .settings-grid {
         grid-template-columns: 1fr;
     }
 
@@ -2284,6 +2472,8 @@ button:active {
 
     .comment-form button,
     .public-actions,
+    .hero-action-row,
+    .profile-settings-actions,
     .public-actions button,
     .public-actions a,
     .ghost-button {

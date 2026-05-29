@@ -5,7 +5,7 @@
         $car = $carProfile ?? $currentCarProfile;
         $carName = trim((($car?->year) ? $car->year.' ' : '').($car?->make ?? __('ui.mods.your_car')).' '.($car?->model ?? ''));
         $bodyType = $carProfile->body_type ?? 'coupe';
-        $customModelPath = $carProfile->model_path ?? null;
+        $customModelPath = $carProfile->model_path ? '/'.ltrim($carProfile->model_path, '/') : null;
         $inspectionModelConfig = [
             'bodyType' => $bodyType,
             'customModelPath' => $customModelPath,

@@ -3,7 +3,9 @@
 @section('content')
     @php
         $mainPhoto = $car->photos->first();
-        $mainPhotoUrl = $mainPhoto ? \Illuminate\Support\Facades\Storage::url($mainPhoto->path) : null;
+        $mainPhotoUrl = $mainPhoto && \Illuminate\Support\Facades\Storage::disk('public')->exists($mainPhoto->path)
+            ? route('media.show', ['path' => $mainPhoto->path])
+            : null;
         $carName = trim(($car->year ? $car->year.' ' : '').$car->make.' '.$car->model);
     @endphp
 
@@ -61,6 +63,39 @@
     <section class="panel">
         <div class="panel-title">
             <div>
+                <p class="eyebrow">{{ __('ui.public.recent_posts') }}</p>
+                <h2>{{ __('ui.community.title') }}</h2>
+            </div>
+        </div>
+
+        <div class="compact-feed">
+            @forelse ($car->communityPosts as $post)
+                @php
+                    $postImageUrl = $post->image_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($post->image_path)
+                        ? route('media.show', ['path' => $post->image_path])
+                        : null;
+                @endphp
+                <article>
+                    @if ($postImageUrl)
+                        <img class="compact-feed-image" src="{{ $postImageUrl }}" alt="{{ $post->title }}" loading="lazy">
+                    @endif
+                    <span>{{ __("ui.community.categories.{$post->category}") }}</span>
+                    <h3>{{ $post->title }}</h3>
+                    <p>{!! nl2br(e(\Illuminate\Support\Str::limit($post->body ?: __('ui.public.no_post_body'), 220))) !!}</p>
+                    <small>{{ $post->likes_count }} {{ __('ui.community.likes') }} • {{ $post->comments_count }} {{ __('ui.community.comments') }}</small>
+                </article>
+            @empty
+                <div class="empty-state">
+                    <strong>{{ __('ui.community.empty_title') }}</strong>
+                    <p>{{ __('ui.community.empty_copy') }}</p>
+                </div>
+            @endforelse
+        </div>
+    </section>
+
+    <section class="panel">
+        <div class="panel-title">
+            <div>
                 <p class="eyebrow">{{ __('ui.nav.gallery') }}</p>
                 <h2>{{ __('ui.public.public_gallery') }}</h2>
             </div>
@@ -69,7 +104,11 @@
         <div class="public-gallery-grid">
             @forelse ($car->photos as $photo)
                 <figure>
-                    <img src="{{ \Illuminate\Support\Facades\Storage::url($photo->path) }}" alt="{{ $photo->caption ?: $carName }}" loading="lazy">
+                    @if (\Illuminate\Support\Facades\Storage::disk('public')->exists($photo->path))
+                        <img src="{{ route('media.show', ['path' => $photo->path]) }}" alt="{{ $photo->caption ?: $carName }}" loading="lazy">
+                    @else
+                        <div class="missing-media">{{ __('ui.common.media_missing') }}</div>
+                    @endif
                     <figcaption>{{ $photo->caption ?: __("ui.gallery.categories.".($photo->category ?: 'exterior')) }}</figcaption>
                 </figure>
             @empty

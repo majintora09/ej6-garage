@@ -167,7 +167,11 @@
                         <div class="profile-photo-grid">
                             @foreach ($carProfile->photos as $photo)
                                 <figure class="profile-photo-card">
-                                    <img src="{{ route('car-photos.show', $photo) }}" alt="{{ $carProfile->make }} {{ $carProfile->model }} {{ __('ui.gallery.color_reference') }}">
+                                    @if (\Illuminate\Support\Facades\Storage::disk('public')->exists($photo->path))
+                                        <img src="{{ route('media.show', ['path' => $photo->path]) }}" alt="{{ $carProfile->make }} {{ $carProfile->model }} {{ __('ui.gallery.color_reference') }}" loading="lazy">
+                                    @else
+                                        <div class="missing-media">{{ __('ui.common.media_missing') }}</div>
+                                    @endif
                                     <figcaption>
                                         <span>{{ __('ui.setup.reference') }} {{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
                                         <strong>{{ $photo->original_name ?: __('ui.setup.color_reference_fallback') }}</strong>
