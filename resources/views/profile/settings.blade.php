@@ -20,7 +20,7 @@
 
             <div class="settings-language-grid">
                 @foreach (['en' => 'English', 'de' => 'Deutsch', 'fr' => 'Français', 'pt' => 'Português', 'lb' => 'Lëtzebuergesch'] as $locale => $label)
-                    <a class="{{ app()->getLocale() === $locale ? 'active' : '' }}" href="{{ route('language.switch', $locale) }}">
+                    <a class="{{ app()->getLocale() === $locale ? 'active' : '' }}" href="{{ route('language.switch', ['locale' => $locale, 'redirect' => request()->getRequestUri()]) }}" data-no-transition>
                         <strong>{{ strtoupper($locale) }}</strong>
                         <span>{{ $label }}</span>
                     </a>

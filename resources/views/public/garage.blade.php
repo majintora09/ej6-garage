@@ -3,9 +3,7 @@
 @section('content')
     @php
         $mainPhoto = $car->photos->first();
-        $mainPhotoUrl = $mainPhoto && \Illuminate\Support\Facades\Storage::disk('public')->exists($mainPhoto->path)
-            ? route('media.show', ['path' => $mainPhoto->path])
-            : null;
+        $mainPhotoUrl = \App\Support\UploadedMedia::url($mainPhoto?->path);
         $carName = trim(($car->year ? $car->year.' ' : '').$car->make.' '.$car->model);
     @endphp
 
@@ -91,8 +89,8 @@
         <div class="public-gallery-grid">
             @forelse ($car->photos as $photo)
                 <figure>
-                    @if (\Illuminate\Support\Facades\Storage::disk('public')->exists($photo->path))
-                        <img src="{{ route('media.show', ['path' => $photo->path]) }}" alt="{{ $photo->caption ?: $carName }}" loading="lazy" style="object-position: {{ in_array($photo->image_position, ['center', 'top', 'bottom', 'left', 'right'], true) ? $photo->image_position : 'center' }};">
+                    @if ($photoUrl = \App\Support\UploadedMedia::url($photo->path))
+                        <img src="{{ $photoUrl }}" alt="{{ $photo->caption ?: $carName }}" loading="lazy" style="object-position: {{ \App\Support\UploadedMedia::position($photo->image_position) }};">
                     @else
                         <div class="missing-media">{{ __('ui.common.media_missing') }}</div>
                     @endif

@@ -18,8 +18,9 @@
     <div class="language-options" aria-label="{{ __('ui.language.choices') }}">
         @foreach ($languageOptions as $locale => $label)
             <a
-                href="{{ route('language.switch', $locale) }}"
+                href="{{ route('language.switch', ['locale' => $locale, 'redirect' => request()->getRequestUri()]) }}"
                 class="{{ $activeLocale === $locale ? 'active' : '' }}"
+                data-no-transition
                 lang="{{ $locale === 'pt' ? 'pt-PT' : $locale }}"
             >
                 {{ $label }}

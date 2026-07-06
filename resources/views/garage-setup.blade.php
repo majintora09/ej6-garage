@@ -167,8 +167,8 @@
                         <div class="profile-photo-grid">
                             @foreach ($carProfile->photos as $photo)
                                 <figure class="profile-photo-card">
-                                    @if (\Illuminate\Support\Facades\Storage::disk('public')->exists($photo->path))
-                                        <img src="{{ route('media.show', ['path' => $photo->path]) }}" alt="{{ $carProfile->make }} {{ $carProfile->model }} {{ __('ui.gallery.color_reference') }}" loading="lazy" style="object-position: {{ in_array($photo->image_position, ['center', 'top', 'bottom', 'left', 'right'], true) ? $photo->image_position : 'center' }};">
+                                    @if ($photoUrl = \App\Support\UploadedMedia::url($photo->path))
+                                        <img src="{{ $photoUrl }}" alt="{{ $carProfile->make }} {{ $carProfile->model }} {{ __('ui.gallery.color_reference') }}" loading="lazy" style="object-position: {{ \App\Support\UploadedMedia::position($photo->image_position) }};">
                                     @else
                                         <div class="missing-media">{{ __('ui.common.media_missing') }}</div>
                                     @endif

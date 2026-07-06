@@ -2,12 +2,8 @@
 
 @section('content')
     @php
-        $avatarUrl = $user->avatar_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->avatar_path)
-            ? route('media.show', ['path' => $user->avatar_path])
-            : null;
-        $bannerUrl = $user->banner_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->banner_path)
-            ? route('media.show', ['path' => $user->banner_path])
-            : null;
+        $avatarUrl = \App\Support\UploadedMedia::url($user->avatar_path);
+        $bannerUrl = \App\Support\UploadedMedia::url($user->banner_path);
         $initials = strtoupper(substr($user->displayHandle(), 0, 2));
     @endphp
 

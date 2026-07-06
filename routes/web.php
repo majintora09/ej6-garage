@@ -14,13 +14,25 @@ use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\PublicProfileController;
 use App\Models\Mod;
+use Illuminate\Http\Request;
 
-Route::get('/language/{locale}', function (string $locale) {
+Route::get('/language/{locale}', function (Request $request, string $locale) {
     abort_unless(in_array($locale, ['en', 'de', 'fr', 'pt', 'lb'], true), 404);
 
     session(['locale' => $locale]);
 
-    return back();
+    $redirect = $request->query('redirect');
+
+    if (
+        is_string($redirect)
+        && str_starts_with($redirect, '/')
+        && ! str_starts_with($redirect, '//')
+        && ! str_starts_with($redirect, '/language/')
+    ) {
+        return redirect()->to($redirect);
+    }
+
+    return redirect()->back();
 })->name('language.switch');
 
 Route::get('/', DashboardController::class)->middleware('auth');

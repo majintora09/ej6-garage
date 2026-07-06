@@ -2,12 +2,8 @@
 
 @section('content')
     @php
-        $avatarUrl = $user->avatar_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->avatar_path)
-            ? route('media.show', ['path' => $user->avatar_path])
-            : null;
-        $bannerUrl = $user->banner_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($user->banner_path)
-            ? route('media.show', ['path' => $user->banner_path])
-            : null;
+        $avatarUrl = \App\Support\UploadedMedia::url($user->avatar_path);
+        $bannerUrl = \App\Support\UploadedMedia::url($user->banner_path);
     @endphp
 
     <section class="public-hero" @if($bannerUrl) style="background-image: linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.78)), url('{{ $bannerUrl }}')" @endif>
@@ -53,8 +49,8 @@
                         @if ($car->photos->isNotEmpty())
                             <div class="public-car-thumbs">
                                 @foreach ($car->photos as $photo)
-                                    @if (\Illuminate\Support\Facades\Storage::disk('public')->exists($photo->path))
-                                        <img src="{{ route('media.show', ['path' => $photo->path]) }}" alt="{{ $photo->caption ?: $car->model }}" loading="lazy" style="object-position: {{ in_array($photo->image_position, ['center', 'top', 'bottom', 'left', 'right'], true) ? $photo->image_position : 'center' }};">
+                                    @if ($photoUrl = \App\Support\UploadedMedia::url($photo->path))
+                                        <img src="{{ $photoUrl }}" alt="{{ $photo->caption ?: $car->model }}" loading="lazy" style="object-position: {{ \App\Support\UploadedMedia::position($photo->image_position) }};">
                                     @endif
                                 @endforeach
                             </div>

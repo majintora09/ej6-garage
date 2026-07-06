@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
         link.addEventListener("click", event => {
             const url = link.getAttribute("href");
 
-            if (url === window.location.pathname || link.target === "_blank") {
+            if (link.hasAttribute("data-no-transition") || url === window.location.pathname || link.target === "_blank") {
                 return;
             }
 

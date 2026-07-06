@@ -306,8 +306,8 @@
             @if ($recentPhotos->isNotEmpty())
                 <div class="dashboard-photo-strip">
                     @foreach ($recentPhotos as $photo)
-                        @if (\Illuminate\Support\Facades\Storage::disk('public')->exists($photo->path))
-                            <img src="{{ route('media.show', ['path' => $photo->path]) }}" alt="{{ $make }} {{ $model }} {{ __('ui.gallery.color_reference') }}" loading="lazy" style="object-position: {{ in_array($photo->image_position, ['center', 'top', 'bottom', 'left', 'right'], true) ? $photo->image_position : 'center' }};">
+                        @if ($photoUrl = \App\Support\UploadedMedia::url($photo->path))
+                            <img src="{{ $photoUrl }}" alt="{{ $make }} {{ $model }} {{ __('ui.gallery.color_reference') }}" loading="lazy" style="object-position: {{ \App\Support\UploadedMedia::position($photo->image_position) }};">
                         @else
                             <div class="missing-media">{{ __('ui.common.media_missing') }}</div>
                         @endif

@@ -1,12 +1,8 @@
 @php
     $variant = $variant ?? 'feed';
     $isPreview = $variant !== 'detail';
-    $avatarUrl = $post->user->avatar_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($post->user->avatar_path)
-        ? route('media.show', ['path' => $post->user->avatar_path])
-        : null;
-    $imageUrl = $post->image_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($post->image_path)
-        ? route('media.show', ['path' => $post->image_path])
-        : null;
+    $avatarUrl = \App\Support\UploadedMedia::url($post->user->avatar_path);
+    $imageUrl = \App\Support\UploadedMedia::url($post->image_path);
     $car = $post->carProfile;
     $profileUrl = $post->user->profile_slug ? route('public.profile', $post->user->profile_slug) : null;
     $garageUrl = $profileUrl && $car && $car->slug && in_array($car->visibility, ['public', 'unlisted'], true)
@@ -16,7 +12,7 @@
     $postBody = (string) $post->body;
     $lineCount = substr_count($postBody, "\n") + 1;
     $longPost = $isPreview && (\Illuminate\Support\Str::length($postBody) > 520 || $lineCount > 8);
-    $imagePosition = in_array($post->image_position, ['center', 'top', 'bottom', 'left', 'right'], true) ? $post->image_position : 'center';
+    $imagePosition = \App\Support\UploadedMedia::position($post->image_position);
 @endphp
 
 <article class="feed-card {{ $imageUrl || $post->image_path ? 'has-media' : 'no-media' }} {{ $variant === 'detail' ? 'post-detail-card' : 'post-preview-card' }}">

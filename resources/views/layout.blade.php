@@ -32,9 +32,7 @@
     $profileColorCode = data_get($activeCarProfile, 'color_code') ?: __('ui.common.no_color_code');
     $profileChassis = data_get($activeCarProfile, 'chassis') ?: 'GARAGE';
     $authUser = auth()->user();
-    $authAvatar = $authUser?->avatar_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($authUser->avatar_path)
-        ? route('media.show', ['path' => $authUser->avatar_path])
-        : null;
+    $authAvatar = \App\Support\UploadedMedia::url($authUser?->avatar_path);
     $activePublicGarageUrl = $authUser && $activeCarProfile && $authUser->profile_slug && data_get($activeCarProfile, 'slug') && in_array(data_get($activeCarProfile, 'visibility'), ['public', 'unlisted'], true)
         ? route('public.garage', [$authUser->profile_slug, data_get($activeCarProfile, 'slug')])
         : null;
